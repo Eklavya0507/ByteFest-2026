@@ -1,7 +1,159 @@
-const params=new URLSearchParams(location.search), eventEl=document.getElementById('event'), members=document.getElementById('members'), list=document.getElementById('memberList'), addBtn=document.getElementById('addBtn'); let count=0;
-if(params.get('event')) eventEl.value=params.get('event');
-function update(){members.style.display=eventEl.value==='Checkmate'?'none':'block'; if(eventEl.value==='Checkmate'){list.innerHTML='';count=0}}
-eventEl.addEventListener('change',update);
-addBtn.addEventListener('click',()=>{if(count>=2)return;count++;let d=document.createElement('div');d.className='member';d.innerHTML=`<b>Member ${count+1}</b><div class="formgrid"><label>Name<input required placeholder="Full name"></label><label>Email<input type="email" required placeholder="member@example.com"></label><label>Phone<div class="phone"><span>+91</span><input inputmode="numeric" maxlength="10" pattern="[6-9][0-9]{9}" required placeholder="10-digit number"></div></label></div>`;list.appendChild(d)});
-document.getElementById('form').addEventListener('submit',e=>{e.preventDefault();const p=document.getElementById('phone');if(!/^[6-9][0-9]{9}$/.test(p.value)){alert('Enter a valid 10-digit Indian mobile number.');p.focus();return} alert('Registration form accepted. Payment will be connected in Phase 2.');});
-update();
+const params = new URLSearchParams(window.location.search);
+
+const eventEl = document.getElementById("event");
+const members = document.getElementById("members");
+const list = document.getElementById("memberList");
+const addBtn = document.getElementById("addBtn");
+
+let memberCount = 0;
+
+// Automatically select event from events page
+if (params.get("event")) {
+    eventEl.value = params.get("event");
+}
+
+function updateEvent() {
+    if (eventEl.value === "Checkmate") {
+        members.style.display = "none";
+        list.innerHTML = "";
+        memberCount = 0;
+    } else {
+        members.style.display = "block";
+    }
+}
+
+eventEl.addEventListener("change", updateEvent);
+
+updateEvent();
+
+// Add team member
+addBtn.addEventListener("click", () => {
+
+    if (memberCount >= 2) {
+        alert("Maximum 3 members allowed.");
+        return;
+    }
+
+    memberCount++;
+
+    const member = document.createElement("div");
+
+    member.className = "member";
+
+    member.innerHTML = `
+        <b>Member ${memberCount + 1}</b>
+
+        <div class="formgrid">
+
+            <label>
+                Name
+                <input class="member-name" required placeholder="Full name">
+            </label>
+
+            <label>
+                Email
+                <input class="member-email" type="email" required placeholder="Email">
+            </label>
+
+            <label>
+                Phone
+                <div class="phone">
+                    <span>+91</span>
+                    <input
+                        class="member-phone"
+                        inputmode="numeric"
+                        maxlength="10"
+                        pattern="[6-9][0-9]{9}"
+                        required
+                        placeholder="10-digit number">
+                </div>
+            </label>
+
+        </div>
+    `;
+
+    list.appendChild(member);
+});
+
+
+// SUBMIT REGISTRATION
+document.getElementById("form").addEventListener("submit", async (e) => {
+
+    e.preventDefault();
+
+    const phone = document.getElementById("phone").value;
+
+    if (!/^[6-9][0-9]{9}$/.test(phone)) {
+        alert("Enter a valid 10-digit Indian mobile number.");
+        return;
+    }
+
+    const participant = {
+        name: document.querySelector('input[placeholder="Full name"]').value,
+        email: document.querySelector('input[placeholder="you@example.com"]').value,
+        phone: phone,
+        department: document.querySelector('input[value="CSE (DS)"]').value,
+        year: document.querySelector("select:last-of-type").value
+    };
+
+    const memberElements = document.querySelectorAll(".member");
+
+    const memberData = [];
+
+    memberElements.forEach(member => {
+
+        memberData.push({
+            name: member.querySelector(".member-name").value,
+            email: member.querySelector(".member-email").value,
+            phone: member.querySelector(".member-phone").value
+        });
+
+    });
+
+    const data = {
+        event: eventEl.value,
+        participant: participant,
+        members: memberData
+    };
+
+    try {
+
+        const response = await fetch(
+            "http://localhost:5000/api/registrations",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            alert(result.message || "Registration failed.");
+            return;
+        }
+
+        alert(
+            "Registration successful!\n\n" +
+            "Registration ID: " +
+            result.registrationId +
+            "\n\nPayment status: " +
+            result.paymentStatus
+        );
+
+        console.log(result);
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Cannot connect to BYTEFEST server.\n" +
+            "Make sure the backend is running."
+        );
+    }
+
+});
