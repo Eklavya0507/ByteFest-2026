@@ -1,17 +1,19 @@
-# ByteFest 2026 — Frontend Phase 1
+# BYTEFEST 2026 — Frontend Phase 1 (V2)
 
-Open `index.html` directly or use VS Code Live Server.
+Pages are separate:
+- `index.html` — Home
+- `events.html` — Events
+- `details.html` — Event details, college, fee, prizes and coordinators
+- `register.html` — Registration form
 
-This phase is frontend-only. The ₹150 payment button is a demo and does NOT process real payments.
+Registration is intentionally simple in Phase 1. It collects one participant first and allows up to 2 additional members for team events.
 
-Included:
-- New dark blue / cyan / violet / orange theme
-- Uploaded Invictus Tech Club logo used as an animated 3D-style floating element
-- Home, Events, About, Registration, Payment preview and Success preview
-- Participant 1 fields
-- Up to 2 additional team members
-- Checkmate automatically switches to individual registration
-- ₹150 fee display
-- Responsive mobile layout
+Phone:
+- +91 prefix
+- 10 digits
+- Must start with 6–9
+- `tel:` links are included on the details page
 
-Phase 2 will add the backend, database, real payment gateway/webhooks, email, PDF receipt, Google-only admin login and CSV export.
+The payment system is NOT real yet. Phase 2 will connect a real payment gateway, verify payment server-side, store registrations, send email/PDF receipts and provide protected admin access.
+
+Upload the whole folder to GitHub Pages.

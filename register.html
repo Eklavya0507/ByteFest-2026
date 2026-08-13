@@ -1,0 +1,15 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Register | BYTEFEST 2026</title><link rel="stylesheet" href="style.css"></head>
+<body><header><a class="brand" href="index.html"><b>BF</b><span>BYTEFEST<small>2026 · INVICTUS TECH CLUB</small></span></a><nav><a href="index.html">Home</a><a href="events.html">Events</a><a href="details.html">Details</a></nav></header>
+<main><section><p class="eyebrow">REGISTRATION · STEP 01</p><h2>Register your <i>spot.</i></h2><p class="lead">Enter the details of the first participant. Add up to 2 members for team events.</p>
+<form id="form"><div class="formgrid">
+<label>Event<select id="event" required><option value="">Select event</option><option>UI/UX Arena</option><option>Code Sprint</option><option>Bug Hunt</option><option>Checkmate</option></select></label>
+<label>Participant Name<input required placeholder="Full name"></label>
+<label>Email<input type="email" required placeholder="you@example.com"></label>
+<label>Phone Number<div class="phone"><span>+91</span><input id="phone" inputmode="numeric" maxlength="10" pattern="[6-9][0-9]{9}" required placeholder="10-digit mobile number"></div></label>
+<label>Department<input required value="CSE (DS)" placeholder="Department"></label>
+<label>Year<select required><option value="">Select year</option><option>1st Year</option><option>2nd Year</option><option>3rd Year</option><option>4th Year</option></select></label>
+</div>
+<div id="members" class="members"><div class="memberhead"><b>Additional Members</b><button type="button" id="addBtn">+ Add Member</button></div><p>Maximum 2 additional members (3 people total).</p><div id="memberList"></div></div>
+<div class="fee"><span>Registration Fee</span><b>₹150</b></div>
+<button class="btn primary full" type="submit">Continue →</button></form>
+</section></main><script src="register.js"></script></body></html>
