@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BYTEFEST 2026 | Invictus Tech Club</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header><a class="brand" href="#home"><b>BF</b><span>BYTEFEST<small>2026 · INVICTUS TECH CLUB</small></span></a>
+<nav><a href="#home">Home</a><a href="#events">Events</a><a href="#about">About</a><a class="cta" href="#register">Register · ₹150</a></nav></header>
+
+<main>
+<section id="home" class="hero">
+<div class="copy"><p class="eyebrow">CSE (DS) · TECH EVENT 2026</p>
+<h1>CODE.<br><i>CREATE.</i><br>COMPETE.</h1>
+<p class="lead">A high-energy technical event for creators, coders, bug hunters and strategic thinkers.</p>
+<div class="actions"><a class="btn primary" href="#register">Register Now ↗</a><a class="btn" href="#events">Explore Events</a></div>
+<div class="stats"><span><b>29 AUG 2026</b>Event Date</span><span><b>₹150</b>Registration Fee</span><span><b>OFFLINE</b>Mode</span></div></div>
+<div class="visual"><div class="orbit o1"></div><div class="orbit o2"></div><div class="logo3d"><div class="glow"></div><img src="assets/invictus-logo.jpg" alt="Invictus Tech Club logo"></div><span class="chip c1">AI × DS</span><span class="chip c2">BUILD</span><span class="chip c3">WIN</span></div>
+</section>
+
+<section id="events"><div class="heading"><div><p class="eyebrow">CHOOSE YOUR CHALLENGE</p><h2>Four events. <i>One arena.</i></h2></div><p>Every event is 3 hours. Team events support up to 3 members; Checkmate is individual.</p></div>
+<div class="grid">
+<article class="card orange"><b>01</b><strong>✦</strong><h3>UI/UX ARENA</h3><p>Imagine · Design · Transform</p><small>TEAM: 2–3 MEMBERS<br>3 HOURS</small><a href="#register" onclick="pick('UI/UX Arena')">Register →</a></article>
+<article class="card cyan"><b>02</b><strong>&lt;/&gt;</strong><h3>CODE SPRINT</h3><p>Think Fast · Code Smart · Win</p><small>TEAM: 2–3 MEMBERS<br>3 HOURS</small><a href="#register" onclick="pick('Code Sprint')">Register →</a></article>
+<article class="card green"><b>03</b><strong>⌕</strong><h3>BUG HUNT</h3><p>Find · Fix · Conquer</p><small>TEAM: 2–3 MEMBERS<br>3 HOURS</small><a href="#register" onclick="pick('Bug Hunt')">Register →</a></article>
+<article class="card purple"><b>04</b><strong>♞</strong><h3>CHECKMATE</h3><p>Think Ahead · Play Smart</p><small>INDIVIDUAL<br>3 HOURS</small><a href="#register" onclick="pick('Checkmate')">Register →</a></article>
+</div></section>
+
+<section id="about"><div class="aboutbox"><img src="assets/invictus-logo.jpg" alt="Invictus Tech Club"><div><p class="eyebrow">HOSTED BY INVICTUS TECH CLUB</p><h2>Technical skill meets <i>competition.</i></h2><p class="lead">BYTEFEST 2026 is a club event from the CSE (DS) community, built around code, creativity, debugging and strategy.</p><p><b>East Point College of Engineering & Technology</b><br>CSE (DS)<br>An Autonomous Institution, Affiliated to VTU, Approved by AICTE · NAAC Grade A · NBA Accredited</p></div></div></section>
+
+<section id="register"><div class="heading"><div><p class="eyebrow">STEP 01 · REGISTRATION</p><h2>Claim your <i>spot.</i></h2></div><p>Registration fee: <b>₹150</b>. Real payment is connected in Phase 2.</p></div>
+<form id="form"><div class="formgrid">
+<label>Event<select id="event" required><option value="">Select event</option><option>UI/UX Arena</option><option>Code Sprint</option><option>Bug Hunt</option><option>Checkmate</option></select></label>
+<label>Full Name<input required placeholder="Participant name"></label><label>Email<input type="email" required placeholder="you@example.com"></label>
+<label>Phone<input type="tel" required placeholder="10-digit mobile"></label><label>Department<input required placeholder="CSE (DS)"></label>
+<label>Year<select required><option value="">Select year</option><option>1st Year</option><option>2nd Year</option><option>3rd Year</option><option>4th Year</option></select></label></div>
+<div id="members" class="members"><div class="memberhead"><b>Additional Members</b><button type="button" onclick="addMember()">+ Add Member</button></div><p>Up to 2 additional members for team events.</p><div id="memberList"></div></div>
+<div class="fee"><span>Registration Fee</span><b>₹150</b></div>
+<button class="btn primary full" type="submit">Continue to Payment →</button></form></section>
+
+<section id="payment" class="payment hidden"><div class="paybox"><div class="round">₹</div><p class="eyebrow">STEP 02 · PAYMENT</p><h2>Secure your registration.</h2><p>Phase 1 frontend preview. The real UPI/payment gateway and verification will be added in Phase 2.</p><div class="fee"><span id="payEvent">—</span><b>₹150</b></div><button class="btn primary full" onclick="demoSuccess()">Pay ₹150 ↗</button></div></section>
+<section id="success" class="payment hidden"><div class="paybox"><div class="round">✓</div><p class="eyebrow">DEMO CONFIRMATION</p><h2>You're on the list.</h2><p>Real confirmation and receipt generation will happen only after verified payment in Phase 2.</p><div class="demoid">BF26-DEMO</div></div></section>
+</main>
+<footer><b>BYTEFEST 2026</b><span>Code · Create · Compete · Invictus Tech Club</span></footer>
+<script src="script.js"></script>
+</body></html>
