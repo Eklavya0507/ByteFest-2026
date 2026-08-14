@@ -93,7 +93,7 @@ document.getElementById("form").addEventListener("submit", async (e) => {
         email: document.querySelector('input[placeholder="you@example.com"]').value,
         phone: phone,
         department: document.querySelector('input[value="CSE (DS)"]').value,
-        year: document.querySelector("select:last-of-type").value
+        year: document.getElementById("year").value
     };
 
     const memberElements = document.querySelectorAll(".member");
