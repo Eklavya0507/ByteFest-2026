@@ -137,14 +137,14 @@ document.getElementById("form").addEventListener("submit", async (e) => {
         }
 
         alert(
-            "Registration successful!\n\n" +
-            "Registration ID: " +
-            result.registrationId +
-            "\n\nPayment status: " +
-            result.paymentStatus
-        );
+    "Registration successful!\n\n" +
+    "Registration ID: " +
+    result.registrationId
+);
 
-        console.log(result);
+window.location.href =
+    "payment.html?registrationId=" +
+    encodeURIComponent(result.registrationId);
 
     } catch (error) {
 

@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Payment | BYTEFEST 2026</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+
+.payment-box {
+    max-width: 650px;
+    margin: auto;
+}
+
+.payment-card {
+    background: #0b1220;
+    border: 1px solid #1e293b;
+    border-radius: 15px;
+    padding: 25px;
+    margin-top: 25px;
+}
+
+.registration-id {
+    font-size: 20px;
+    color: #67e8f9;
+    font-weight: bold;
+}
+
+.upi-box {
+    background: #111827;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+}
+
+.upi-id {
+    font-size: 20px;
+    font-weight: bold;
+    color: #67e8f9;
+    word-break: break-all;
+}
+
+.payment-note {
+    color: #94a3b8;
+    font-size: 14px;
+    margin-top: 8px;
+}
+
+.form-section {
+    margin-top: 25px;
+}
+
+.form-section label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.form-section input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #334155;
+    background: #0b1220;
+    color: white;
+}
+
+.success-box {
+    display: none;
+    background: #052e16;
+    border: 1px solid #166534;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<a class="brand" href="index.html">
+    <b>BF</b>
+    <span>
+        BYTEFEST
+        <small>2026 · INVICTUS TECH CLUB</small>
+    </span>
+</a>
+
+<nav>
+    <a href="index.html">Home</a>
+    <a href="events.html">Events</a>
+    <a href="details.html">Details</a>
+</nav>
+
+</header>
+
+
+<main>
+
+<section class="payment-box">
+
+<p class="eyebrow">REGISTRATION · STEP 02</p>
+
+<h2>
+Complete your <i>payment.</i>
+</h2>
+
+<p class="lead">
+Your registration has been created successfully.
+Complete the payment and submit your UTR.
+</p>
+
+
+<div class="payment-card">
+
+<p>Registration ID</p>
+
+<div
+    id="registrationId"
+    class="registration-id">
+    Loading...
+</div>
+
+
+<div class="upi-box">
+
+<p>Registration Fee</p>
+
+<h2>₹150</h2>
+
+<p>Pay using UPI</p>
+
+<div class="upi-id">
+YOUR-UPI-ID@upi
+</div>
+
+<p class="payment-note">
+Replace this UPI ID with the official BYTEFEST payment UPI ID.
+</p>
+
+</div>
+
+
+<form id="paymentForm">
+
+<div class="form-section">
+
+<label for="utr">
+UPI Transaction ID / UTR
+</label>
+
+<input
+    id="utr"
+    required
+    maxlength="50"
+    placeholder="Enter your UTR / transaction ID"
+>
+
+</div>
+
+
+<div class="form-section">
+
+<label for="screenshot">
+Payment Screenshot
+</label>
+
+<input
+    id="screenshot"
+    type="file"
+    accept="image/*"
+    required
+>
+
+<p class="payment-note">
+Upload a clear screenshot showing the successful payment.
+</p>
+
+</div>
+
+
+<button
+    class="btn primary full"
+    type="submit">
+    Submit Payment
+</button>
+
+</form>
+
+
+<div
+    id="successBox"
+    class="success-box">
+
+<h3>Payment submitted successfully.</h3>
+
+<p>
+Your payment is currently
+<strong>PENDING</strong>.
+</p>
+
+<p>
+The BYTEFEST admin team will verify your UTR and screenshot.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+
+<script>
+
+const params =
+    new URLSearchParams(window.location.search);
+
+const registrationId =
+    params.get("registrationId");
+
+
+document.getElementById("registrationId").textContent =
+    registrationId || "Not available";
+
+
+document
+    .getElementById("paymentForm")
+    .addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+        const utr =
+            document.getElementById("utr").value.trim();
+
+        const screenshot =
+            document.getElementById("screenshot").files[0];
+
+
+        if (!registrationId) {
+
+            alert("Registration ID is missing.");
+
+            return;
+
+        }
+
+
+        if (!utr) {
+
+            alert("Please enter your UTR.");
+
+            return;
+
+        }
+
+
+        if (!screenshot) {
+
+            alert("Please upload your payment screenshot.");
+
+            return;
+
+        }
+
+
+        /*
+         * TEMPORARY STEP
+         *
+         * We will connect this form to the backend
+         * after the payment upload API is created.
+         */
+
+        console.log({
+            registrationId,
+            utr,
+            screenshot
+        });
+
+
+        document.getElementById("paymentForm").style.display =
+            "none";
+
+        document.getElementById("successBox").style.display =
+            "block";
+
+    });
+
+</script>
+
+</body>
+
+</html>
