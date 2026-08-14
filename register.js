@@ -136,16 +136,9 @@ document.getElementById("form").addEventListener("submit", async (e) => {
             return;
         }
 
-        alert(
-    "Registration successful!\n\n" +
-    "Registration ID: " +
-    result.registrationId
-);
-
-window.location.href =
+        window.location.href =
     "payment.html?registrationId=" +
     encodeURIComponent(result.registrationId);
-
     } catch (error) {
 
         console.error(error);
