@@ -2,14 +2,62 @@
 <html lang="en">
 
 <head>
+
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+>
 
 <title>Admin | BYTEFEST 2026</title>
 
-<link rel="stylesheet" href="style.css">
+<link
+    rel="stylesheet"
+    href="style.css"
+>
 
 <style>
+
+.admin-login {
+    max-width: 500px;
+    margin: 80px auto;
+}
+
+.login-box {
+    background: #0b1220;
+    border: 1px solid #334155;
+    border-radius: 15px;
+    padding: 30px;
+}
+
+.login-box input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px;
+    margin: 10px 0 15px;
+    border-radius: 8px;
+    border: 1px solid #334155;
+    background: #111827;
+    color: white;
+}
+
+.login-box button {
+    width: 100%;
+    padding: 14px;
+    border: 0;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #06b6d4;
+    color: #001018;
+    font-weight: bold;
+}
+
+.login-message {
+    margin-top: 15px;
+    color: #fbbf24;
+}
+
 .admin-tools {
     display: flex;
     flex-wrap: wrap;
@@ -79,8 +127,6 @@
     color: #4ade80;
     font-weight: bold;
 }
-
-/* Modal */
 
 .modal {
     display: none;
@@ -157,6 +203,7 @@
 }
 
 @media(max-width:700px) {
+
     .detail-grid {
         grid-template-columns: 1fr;
     }
@@ -164,57 +211,183 @@
     .admin-tools input {
         width: 100%;
     }
+
 }
+
 </style>
 
 </head>
 
+
 <body>
+
 
 <header>
 
-<a class="brand" href="index.html">
+<a
+    class="brand"
+    href="index.html"
+>
+
     <b>BF</b>
+
     <span>
+
         BYTEFEST
-        <small>2026 · ADMIN PANEL</small>
+
+        <small>
+            2026 · ADMIN PANEL
+        </small>
+
     </span>
+
 </a>
 
+
 <nav>
-    <a href="index.html">Website</a>
-    <a href="#" id="logout">Logout</a>
+
+    <a href="index.html">
+        Website
+    </a>
+
+    <a
+        href="#"
+        id="logout"
+        style="display:none"
+    >
+        Logout
+    </a>
+
 </nav>
 
 </header>
 
 
-<main>
+<!-- ================================================= -->
+<!-- ADMIN LOGIN -->
+<!-- ================================================= -->
+
+<main
+    id="adminLogin"
+    class="admin-login"
+>
 
 <section>
 
-<p class="eyebrow">ADMINISTRATION</p>
+<p class="eyebrow">
+    ADMINISTRATION
+</p>
 
 <h2>
-Registration <i>Dashboard.</i>
+    Admin <i>Login.</i>
+</h2>
+
+<div class="login-box">
+
+<p class="lead">
+    Enter your authorized admin email to access the BYTEFEST registration dashboard.
+</p>
+
+
+<form id="adminLoginForm">
+
+<label>
+
+    Admin Email
+
+    <input
+        id="adminEmail"
+        type="email"
+        required
+        autocomplete="email"
+        placeholder="gautamkushwaha4467@gmail.com"
+    >
+
+</label>
+
+
+<button
+    type="submit"
+>
+    Continue to Admin Dashboard
+</button>
+
+
+<div
+    id="loginMessage"
+    class="login-message"
+></div>
+
+</form>
+
+</div>
+
+</section>
+
+</main>
+
+
+<!-- ================================================= -->
+<!-- ADMIN DASHBOARD -->
+<!-- ================================================= -->
+
+<main
+    id="adminDashboard"
+    style="display:none"
+>
+
+<section>
+
+<p class="eyebrow">
+    ADMINISTRATION
+</p>
+
+<h2>
+    Registration <i>Dashboard.</i>
 </h2>
 
 
-<div id="stats" class="formgrid">
+<div
+    id="stats"
+    class="formgrid"
+>
 
 <div class="fee">
-    <span>Total</span>
-    <b id="total">0</b>
+
+    <span>
+        Total
+    </span>
+
+    <b id="total">
+        0
+    </b>
+
 </div>
 
-<div class="fee">
-    <span>Pending</span>
-    <b id="pending">0</b>
-</div>
 
 <div class="fee">
-    <span>Paid</span>
-    <b id="paid">0</b>
+
+    <span>
+        Pending
+    </span>
+
+    <b id="pending">
+        0
+    </b>
+
+</div>
+
+
+<div class="fee">
+
+    <span>
+        Paid
+    </span>
+
+    <b id="paid">
+        0
+    </b>
+
 </div>
 
 </div>
@@ -228,39 +401,57 @@ Registration <i>Dashboard.</i>
     placeholder="Search name, email, phone or ID..."
 >
 
+
 <select id="eventFilter">
-    <option value="">All Events</option>
-    <option value="UI/UX Arena">UI/UX Arena</option>
-    <option value="Code Sprint">Code Sprint</option>
-    <option value="Bug Hunt">Bug Hunt</option>
-    <option value="Checkmate">Checkmate</option>
+
+    <option value="">
+        All Events
+    </option>
+
+    <option value="UI/UX Arena">
+        UI/UX Arena
+    </option>
+
+    <option value="Code Sprint">
+        Code Sprint
+    </option>
+
+    <option value="Bug Hunt">
+        Bug Hunt
+    </option>
+
+    <option value="Checkmate">
+        Checkmate
+    </option>
+
 </select>
 
+
 <select id="paymentFilter">
-    <option value="">All Payments</option>
-    <option value="PENDING">Pending</option>
-    <option value="PAID">Paid</option>
+
+    <option value="">
+        All Payments
+    </option>
+
+    <option value="PENDING">
+        Pending
+    </option>
+
+    <option value="PAID">
+        Paid
+    </option>
+
 </select>
+
 
 <button id="refreshBtn">
     ↻ Refresh
 </button>
 
+
 <button id="exportBtn">
     Export CSV
 </button>
-
-<label>
-    <input
-        type="file"
-        id="importFile"
-        accept=".csv"
-        style="display:none"
-    >
-    <button type="button" id="importBtn">
-        Import CSV
-    </button>
-</label>
 
 </div>
 
@@ -276,25 +467,56 @@ Registration <i>Dashboard.</i>
 <thead>
 
 <tr>
-<th>Registration ID</th>
-<th>Event</th>
-<th>Name</th>
-<th>Email</th>
-<th>Phone</th>
-<th>Department</th>
-<th>Year</th>
-<th>Payment</th>
-<th>Details</th>
+
+<th>
+    Registration ID
+</th>
+
+<th>
+    Event
+</th>
+
+<th>
+    Name
+</th>
+
+<th>
+    Email
+</th>
+
+<th>
+    Phone
+</th>
+
+<th>
+    Department
+</th>
+
+<th>
+    Year
+</th>
+
+<th>
+    Payment
+</th>
+
+<th>
+    Details
+</th>
+
 </tr>
 
 </thead>
 
+
 <tbody id="rows">
 
 <tr>
+
 <td colspan="9">
-Loading...
+    Loading...
 </td>
+
 </tr>
 
 </tbody>
@@ -308,31 +530,45 @@ Loading...
 </main>
 
 
+<!-- ================================================= -->
 <!-- DETAILS MODAL -->
+<!-- ================================================= -->
 
-<div id="detailsModal" class="modal">
+<div
+    id="detailsModal"
+    class="modal"
+>
 
 <div class="modal-box">
 
 <div class="modal-header">
 
-<h2>Registration Details</h2>
+<h2>
+    Registration Details
+</h2>
+
 
 <button
     class="close-btn"
     id="closeModal"
 >
+
     ×
+
 </button>
 
 </div>
+
 
 <div id="detailsContent"></div>
 
 </div>
 
 </div>
-<script src="admin.js?v=2"></script>
+
+
+<script src="admin.js?v=3"></script>
+
 </body>
 
 </html>
