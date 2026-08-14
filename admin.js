@@ -1,13 +1,17 @@
+// =====================================================
+// BYTEFEST 2026 - ADMIN SYSTEM
+// =====================================================
+
 const API_URL = "https://byte-fest-backend.onrender.com";
+const ADMIN_STORAGE_KEY = "bytefest_admin";
+const ADMIN_EMAIL_KEY = "bytefest_admin_email";
 
 let registrations = [];
 let displayedRegistrations = [];
 
-const ADMIN_STORAGE_KEY = "bytefest_admin";
-
 
 // =====================================================
-// AUTH
+// AUTH STORAGE
 // =====================================================
 
 function getAdminToken() {
@@ -15,23 +19,37 @@ function getAdminToken() {
 }
 
 
-function getAuthHeaders() {
-    const token = getAdminToken();
-
-    return token
-        ? {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        }
-        : {
-            "Content-Type": "application/json"
-        };
+function getAdminEmail() {
+    return sessionStorage.getItem(ADMIN_EMAIL_KEY);
 }
 
 
+function getAuthHeaders() {
+
+    const token = getAdminToken();
+
+    return {
+        "Content-Type": "application/json",
+        ...(token
+            ? {
+                "Authorization": `Bearer ${token}`
+            }
+            : {})
+    };
+}
+
+
+// =====================================================
+// LOGIN / DASHBOARD UI
+// =====================================================
+
 function showLogin() {
-    const login = document.getElementById("adminLogin");
-    const dashboard = document.getElementById("adminDashboard");
+
+    const login =
+        document.getElementById("adminLogin");
+
+    const dashboard =
+        document.getElementById("adminDashboard");
 
     if (login) {
         login.style.display = "block";
@@ -44,8 +62,12 @@ function showLogin() {
 
 
 function showDashboard() {
-    const login = document.getElementById("adminLogin");
-    const dashboard = document.getElementById("adminDashboard");
+
+    const login =
+        document.getElementById("adminLogin");
+
+    const dashboard =
+        document.getElementById("adminDashboard");
 
     if (login) {
         login.style.display = "none";
@@ -69,20 +91,31 @@ async function adminLogin(event) {
         document.getElementById("adminEmail");
 
     const loginMessage =
+        document.getElementById("adminMessage") ||
         document.getElementById("loginMessage");
+
+    if (!emailInput) {
+        console.error("Admin email input not found.");
+        return;
+    }
 
     const email =
         emailInput.value.trim().toLowerCase();
 
     if (!email) {
-        loginMessage.textContent =
-            "Please enter your admin email.";
+
+        if (loginMessage) {
+            loginMessage.textContent =
+                "Please enter your admin email.";
+        }
 
         return;
     }
 
-    loginMessage.textContent =
-        "Checking admin access...";
+    if (loginMessage) {
+        loginMessage.textContent =
+            "Checking admin access...";
+    }
 
     try {
 
@@ -91,44 +124,76 @@ async function adminLogin(event) {
                 `${API_URL}/api/admin/check`,
                 {
                     method: "POST",
+
                     headers: {
                         "Content-Type": "application/json"
                     },
+
                     body: JSON.stringify({
                         email
                     })
                 }
             );
 
+
         const data =
             await response.json();
 
-        if (!response.ok || !data.allowed || !data.token) {
 
-            loginMessage.textContent =
-                data.message ||
-                "This email is not an approved admin.";
+        console.log("Admin login response:", data);
+
+
+        if (
+            !response.ok ||
+            !data.allowed ||
+            !data.token
+        ) {
+
+            if (loginMessage) {
+                loginMessage.textContent =
+                    data.message ||
+                    "This email is not an approved admin.";
+            }
 
             return;
         }
 
-        // Store the authentication token
+
+        // =================================================
+        // SAVE TOKEN
+        // =================================================
+
         sessionStorage.setItem(
             ADMIN_STORAGE_KEY,
             data.token
         );
 
+
         sessionStorage.setItem(
-            "bytefest_admin_email",
+            ADMIN_EMAIL_KEY,
             data.email || email
         );
 
-        loginMessage.textContent =
-            "Login successful.";
 
-        showDashboard();
+        // Keep compatibility with old code
+        sessionStorage.setItem(
+            "bytefestAdminEmail",
+            data.email || email
+        );
 
-        await loadRegistrations();
+
+        if (loginMessage) {
+            loginMessage.textContent =
+                "Login successful. Opening admin dashboard...";
+        }
+
+
+        // =================================================
+        // OPEN DASHBOARD
+        // =================================================
+
+        window.location.href = "admin.html";
+
 
     } catch (error) {
 
@@ -137,8 +202,10 @@ async function adminLogin(event) {
             error
         );
 
-        loginMessage.textContent =
-            "Cannot connect to BYTEFEST server.";
+        if (loginMessage) {
+            loginMessage.textContent =
+                "Cannot connect to BYTEFEST server.";
+        }
     }
 }
 
@@ -154,13 +221,49 @@ function logout() {
     );
 
     sessionStorage.removeItem(
-        "bytefest_admin_email"
+        ADMIN_EMAIL_KEY
+    );
+
+    sessionStorage.removeItem(
+        "bytefestAdminEmail"
     );
 
     registrations = [];
     displayedRegistrations = [];
 
-    showLogin();
+    window.location.href =
+        "admin-login.html";
+}
+
+
+// =====================================================
+// ADMIN PAGE GUARD
+// =====================================================
+
+function protectAdminPage() {
+
+    const dashboard =
+        document.getElementById("adminDashboard");
+
+    // If this is not the dashboard page,
+    // don't perform dashboard protection.
+    if (!dashboard) {
+        return;
+    }
+
+    const token =
+        getAdminToken();
+
+    if (!token) {
+
+        window.location.replace(
+            "admin-login.html"
+        );
+
+        return;
+    }
+
+    showDashboard();
 }
 
 
@@ -177,15 +280,20 @@ async function loadRegistrations() {
         return;
     }
 
+
     const token =
         getAdminToken();
 
+
     if (!token) {
 
-        showLogin();
+        window.location.replace(
+            "admin-login.html"
+        );
 
         return;
     }
+
 
     rows.innerHTML = `
         <tr>
@@ -194,6 +302,7 @@ async function loadRegistrations() {
             </td>
         </tr>
     `;
+
 
     try {
 
@@ -207,14 +316,26 @@ async function loadRegistrations() {
             );
 
 
-        if (response.status === 401 ||
-            response.status === 403) {
+        if (
+            response.status === 401 ||
+            response.status === 403
+        ) {
 
             sessionStorage.removeItem(
                 ADMIN_STORAGE_KEY
             );
 
-            showLogin();
+            sessionStorage.removeItem(
+                ADMIN_EMAIL_KEY
+            );
+
+            sessionStorage.removeItem(
+                "bytefestAdminEmail"
+            );
+
+            window.location.replace(
+                "admin-login.html"
+            );
 
             return;
         }
@@ -223,19 +344,26 @@ async function loadRegistrations() {
         if (!response.ok) {
 
             const data =
-                await response.json().catch(
-                    () => ({})
-                );
+                await response
+                    .json()
+                    .catch(() => ({}));
+
 
             throw new Error(
                 data.message ||
-                "Unable to load registrations"
+                "Unable to load registrations."
             );
         }
 
 
         registrations =
             await response.json();
+
+
+        console.log(
+            "Registrations loaded:",
+            registrations
+        );
 
 
         applyFilters();
@@ -247,6 +375,7 @@ async function loadRegistrations() {
             "Load registrations error:",
             error
         );
+
 
         rows.innerHTML = `
             <tr>
@@ -267,22 +396,34 @@ async function loadRegistrations() {
 
 function applyFilters() {
 
+    const searchElement =
+        document.getElementById("search");
+
+    const eventElement =
+        document.getElementById("eventFilter");
+
+    const paymentElement =
+        document.getElementById("paymentFilter");
+
+
     const search =
-        document
-            .getElementById("search")
-            .value
-            .trim()
-            .toLowerCase();
+        searchElement
+            ? searchElement.value
+                .trim()
+                .toLowerCase()
+            : "";
+
 
     const event =
-        document.getElementById(
-            "eventFilter"
-        ).value;
+        eventElement
+            ? eventElement.value
+            : "";
+
 
     const payment =
-        document.getElementById(
-            "paymentFilter"
-        ).value;
+        paymentElement
+            ? paymentElement.value
+            : "";
 
 
     displayedRegistrations =
@@ -291,6 +432,7 @@ function applyFilters() {
 
                 const participant =
                     registration.participant || {};
+
 
                 const members =
                     Array.isArray(
@@ -378,34 +520,44 @@ function updateStats() {
 
     const pending =
         registrations.filter(
-            x =>
-                (x.payment?.status ||
-                    "PENDING") ===
-                "PENDING"
+            registration =>
+                (
+                    registration.payment?.status ||
+                    "PENDING"
+                ) === "PENDING"
         ).length;
 
 
     const paid =
         registrations.filter(
-            x =>
-                x.payment?.status ===
-                "PAID"
+            registration =>
+                registration.payment?.status === "PAID"
         ).length;
 
 
-    document.getElementById(
-        "total"
-    ).textContent = total;
+    const totalElement =
+        document.getElementById("total");
+
+    const pendingElement =
+        document.getElementById("pending");
+
+    const paidElement =
+        document.getElementById("paid");
 
 
-    document.getElementById(
-        "pending"
-    ).textContent = pending;
+    if (totalElement) {
+        totalElement.textContent = total;
+    }
 
 
-    document.getElementById(
-        "paid"
-    ).textContent = paid;
+    if (pendingElement) {
+        pendingElement.textContent = pending;
+    }
+
+
+    if (paidElement) {
+        paidElement.textContent = paid;
+    }
 }
 
 
@@ -417,6 +569,11 @@ function renderTable() {
 
     const rows =
         document.getElementById("rows");
+
+
+    if (!rows) {
+        return;
+    }
 
 
     if (!displayedRegistrations.length) {
@@ -442,9 +599,11 @@ function renderTable() {
                         registration.participant ||
                         {};
 
+
                     const payment =
                         registration.payment ||
                         {};
+
 
                     const status =
                         payment.status ||
@@ -582,8 +741,8 @@ async function approvePayment(
 
     const registration =
         registrations.find(
-            x =>
-                x.registrationId ===
+            registration =>
+                registration.registrationId ===
                 registrationId
         );
 
@@ -599,10 +758,11 @@ async function approvePayment(
 
 
     const participant =
-        registration.participant || {};
+        registration.participant ||
+        {};
 
 
-    const confirmApproval =
+    const confirmed =
         confirm(
             `Approve payment for ${
                 participant.name ||
@@ -620,7 +780,7 @@ async function approvePayment(
         );
 
 
-    if (!confirmApproval) {
+    if (!confirmed) {
         return;
     }
 
@@ -640,7 +800,9 @@ async function approvePayment(
 
 
         const data =
-            await response.json();
+            await response
+                .json()
+                .catch(() => ({}));
 
 
         if (
@@ -652,7 +814,13 @@ async function approvePayment(
                 ADMIN_STORAGE_KEY
             );
 
-            showLogin();
+            sessionStorage.removeItem(
+                ADMIN_EMAIL_KEY
+            );
+
+            window.location.replace(
+                "admin-login.html"
+            );
 
             return;
         }
@@ -662,7 +830,7 @@ async function approvePayment(
 
             throw new Error(
                 data.message ||
-                "Payment approval failed"
+                "Payment approval failed."
             );
         }
 
@@ -710,9 +878,11 @@ function showDetails(index) {
         registration.participant ||
         {};
 
+
     const payment =
         registration.payment ||
         {};
+
 
     const members =
         Array.isArray(
@@ -725,7 +895,7 @@ function showDetails(index) {
     let membersHtml = "";
 
 
-    if (members.length === 0) {
+    if (!members.length) {
 
         membersHtml = `
             <p>
@@ -738,58 +908,51 @@ function showDetails(index) {
         membersHtml =
             members
                 .map(
-                    (member, i) => {
+                    (member, i) => `
+                        <div class="member">
 
-                        return `
-                            <div class="member">
+                            <h4>
+                                Member ${i + 1}
+                            </h4>
 
-                                <h4>
-                                    Member ${i + 1}
-                                </h4>
+                            <p>
+                                <b>Name:</b>
+                                ${escapeHtml(
+                                    member.name || ""
+                                )}
+                            </p>
 
-                                <p>
-                                    <b>Name:</b>
-                                    ${escapeHtml(
-                                        member.name ||
-                                        ""
-                                    )}
-                                </p>
+                            <p>
+                                <b>Email:</b>
+                                ${escapeHtml(
+                                    member.email || ""
+                                )}
+                            </p>
 
-                                <p>
-                                    <b>Email:</b>
-                                    ${escapeHtml(
-                                        member.email ||
-                                        ""
-                                    )}
-                                </p>
+                            <p>
+                                <b>Phone:</b>
+                                ${escapeHtml(
+                                    member.phone || ""
+                                )}
+                            </p>
 
-                                <p>
-                                    <b>Phone:</b>
-                                    ${escapeHtml(
-                                        member.phone ||
-                                        ""
-                                    )}
-                                </p>
-
-                            </div>
-                        `;
-                    }
+                        </div>
+                    `
                 )
                 .join("");
     }
 
 
-    // =================================================
-    // PAYMENT SCREENSHOT
-    // =================================================
-
     let screenshotHtml = "";
+
 
     if (payment.screenshot) {
 
         screenshotHtml = `
-            <div class="detail-card"
-                 style="grid-column:1/-1">
+            <div
+                class="detail-card"
+                style="grid-column:1/-1"
+            >
 
                 <span>
                     Payment Screenshot
@@ -832,8 +995,10 @@ function showDetails(index) {
     } else {
 
         screenshotHtml = `
-            <div class="detail-card"
-                 style="grid-column:1/-1">
+            <div
+                class="detail-card"
+                style="grid-column:1/-1"
+            >
 
                 <span>
                     Payment Screenshot
@@ -847,10 +1012,6 @@ function showDetails(index) {
         `;
     }
 
-
-    // =================================================
-    // UTR
-    // =================================================
 
     const utrHtml = `
         <div class="detail-card">
@@ -870,10 +1031,6 @@ function showDetails(index) {
     `;
 
 
-    // =================================================
-    // PAYMENT ID
-    // =================================================
-
     const paymentIdHtml = `
         <div class="detail-card">
 
@@ -892,10 +1049,6 @@ function showDetails(index) {
     `;
 
 
-    // =================================================
-    // GROUP LINK
-    // =================================================
-
     let groupLinkHtml = "";
 
 
@@ -905,7 +1058,6 @@ function showDetails(index) {
     ) {
 
         groupLinkHtml = `
-
             <div class="detail-card">
 
                 <span>
@@ -931,20 +1083,12 @@ function showDetails(index) {
     }
 
 
-    // =================================================
-    // PAYMENT ACTION
-    // =================================================
-
     let paymentActionHtml = "";
 
 
-    if (
-        payment.status !==
-        "PAID"
-    ) {
+    if (payment.status !== "PAID") {
 
         paymentActionHtml = `
-
             <div
                 style="
                     margin-top:20px;
@@ -974,9 +1118,18 @@ function showDetails(index) {
     }
 
 
-    document.getElementById(
-        "detailsContent"
-    ).innerHTML = `
+    const detailsContent =
+        document.getElementById(
+            "detailsContent"
+        );
+
+
+    if (!detailsContent) {
+        return;
+    }
+
+
+    detailsContent.innerHTML = `
 
         <div class="detail-grid">
 
@@ -1107,6 +1260,7 @@ function showDetails(index) {
 
             ${paymentIdHtml}
 
+
             <div class="detail-card">
 
                 <span>
@@ -1149,10 +1303,15 @@ function showDetails(index) {
     `;
 
 
-    document.getElementById(
-        "detailsModal"
-    ).style.display =
-        "block";
+    const modal =
+        document.getElementById(
+            "detailsModal"
+        );
+
+
+    if (modal) {
+        modal.style.display = "block";
+    }
 }
 
 
@@ -1162,10 +1321,15 @@ function showDetails(index) {
 
 function closeModal() {
 
-    document.getElementById(
-        "detailsModal"
-    ).style.display =
-        "none";
+    const modal =
+        document.getElementById(
+            "detailsModal"
+        );
+
+
+    if (modal) {
+        modal.style.display = "none";
+    }
 }
 
 
@@ -1228,9 +1392,11 @@ function exportCSV() {
                 registration.participant ||
                 {};
 
+
             const payment =
                 registration.payment ||
                 {};
+
 
             const members =
                 Array.isArray(
@@ -1243,73 +1409,51 @@ function exportCSV() {
             const member1 =
                 members[0] || {};
 
+
             const member2 =
                 members[1] || {};
 
 
             const row = [
 
-                registration.registrationId ||
-                "",
+                registration.registrationId || "",
 
-                registration.event ||
-                "",
+                registration.event || "",
 
-                participant.name ||
-                "",
+                participant.name || "",
 
-                participant.email ||
-                "",
+                participant.email || "",
 
-                participant.phone ||
-                "",
+                participant.phone || "",
 
-                participant.department ||
-                "",
+                participant.department || "",
 
-                participant.year ||
-                "",
+                participant.year || "",
 
-                payment.status ||
-                "PENDING",
+                payment.status || "PENDING",
 
-                payment.amount ||
-                150,
+                payment.amount || 150,
 
-                payment.utr ||
-                "",
+                payment.utr || "",
 
-                payment.paymentId ||
-                "",
+                payment.paymentId || "",
 
-                payment.screenshot ||
-                "",
+                payment.screenshot || "",
 
-                member1.name ||
-                "",
+                member1.name || "",
+                member1.email || "",
+                member1.phone || "",
 
-                member1.email ||
-                "",
+                member2.name || "",
+                member2.email || "",
+                member2.phone || "",
 
-                member1.phone ||
-                "",
-
-                member2.name ||
-                "",
-
-                member2.email ||
-                "",
-
-                member2.phone ||
-                "",
-
-                registration.groupLink ||
-                "",
+                registration.groupLink || "",
 
                 registration.createdAt
                     ? new Date(
                         registration.createdAt
-                      ).toLocaleString()
+                    ).toLocaleString()
                     : ""
 
             ];
@@ -1351,15 +1495,11 @@ function exportCSV() {
         "BYTEFEST-registrations.csv";
 
 
-    document.body.appendChild(
-        link
-    );
+    document.body.appendChild(link);
 
     link.click();
 
-    document.body.removeChild(
-        link
-    );
+    document.body.removeChild(link);
 
     URL.revokeObjectURL(url);
 }
@@ -1394,15 +1534,24 @@ function csvEscape(value) {
 
 
 // =====================================================
-// HTML SECURITY
+// SECURITY HELPERS
 // =====================================================
 
 function escapeHtml(value) {
 
     return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
         .replace(
             /"/g,
             "&quot;"
@@ -1463,31 +1612,25 @@ function escapeAttribute(value) {
 
 
 // =====================================================
-// START
+// INITIALIZE
 // =====================================================
 
 document.addEventListener(
     "DOMContentLoaded",
     () => {
 
+        console.log(
+            "BYTEFEST admin.js loaded."
+        );
+
+
+        // -------------------------------------------------
+        // LOGIN FORM
+        // -------------------------------------------------
+
         const loginForm =
             document.getElementById(
                 "adminLoginForm"
-            );
-
-        const logoutBtn =
-            document.getElementById(
-                "logout"
-            );
-
-        const closeBtn =
-            document.getElementById(
-                "closeModal"
-            );
-
-        const modal =
-            document.getElementById(
-                "detailsModal"
             );
 
 
@@ -1498,6 +1641,16 @@ document.addEventListener(
                 adminLogin
             );
         }
+
+
+        // -------------------------------------------------
+        // LOGOUT
+        // -------------------------------------------------
+
+        const logoutBtn =
+            document.getElementById(
+                "logout"
+            );
 
 
         if (logoutBtn) {
@@ -1514,6 +1667,16 @@ document.addEventListener(
         }
 
 
+        // -------------------------------------------------
+        // CLOSE MODAL
+        // -------------------------------------------------
+
+        const closeBtn =
+            document.getElementById(
+                "closeModal"
+            );
+
+
         if (closeBtn) {
 
             closeBtn.addEventListener(
@@ -1521,6 +1684,12 @@ document.addEventListener(
                 closeModal
             );
         }
+
+
+        const modal =
+            document.getElementById(
+                "detailsModal"
+            );
 
 
         if (modal) {
@@ -1540,10 +1709,15 @@ document.addEventListener(
         }
 
 
+        // -------------------------------------------------
+        // SEARCH
+        // -------------------------------------------------
+
         const search =
             document.getElementById(
                 "search"
             );
+
 
         if (search) {
 
@@ -1554,10 +1728,15 @@ document.addEventListener(
         }
 
 
+        // -------------------------------------------------
+        // EVENT FILTER
+        // -------------------------------------------------
+
         const eventFilter =
             document.getElementById(
                 "eventFilter"
             );
+
 
         if (eventFilter) {
 
@@ -1568,10 +1747,15 @@ document.addEventListener(
         }
 
 
+        // -------------------------------------------------
+        // PAYMENT FILTER
+        // -------------------------------------------------
+
         const paymentFilter =
             document.getElementById(
                 "paymentFilter"
             );
+
 
         if (paymentFilter) {
 
@@ -1582,10 +1766,15 @@ document.addEventListener(
         }
 
 
+        // -------------------------------------------------
+        // REFRESH
+        // -------------------------------------------------
+
         const refreshBtn =
             document.getElementById(
                 "refreshBtn"
             );
+
 
         if (refreshBtn) {
 
@@ -1596,10 +1785,15 @@ document.addEventListener(
         }
 
 
+        // -------------------------------------------------
+        // EXPORT
+        // -------------------------------------------------
+
         const exportBtn =
             document.getElementById(
                 "exportBtn"
             );
+
 
         if (exportBtn) {
 
@@ -1610,19 +1804,54 @@ document.addEventListener(
         }
 
 
+        // -------------------------------------------------
+        // DETERMINE PAGE
+        // -------------------------------------------------
+
+        const dashboard =
+            document.getElementById(
+                "adminDashboard"
+            );
+
+
         const token =
             getAdminToken();
 
 
-        if (token) {
+        // Dashboard page
+        if (dashboard) {
+
+            if (!token) {
+
+                window.location.replace(
+                    "admin-login.html"
+                );
+
+                return;
+            }
+
 
             showDashboard();
 
             loadRegistrations();
 
-        } else {
+            return;
+        }
+
+
+        // Login page
+        if (loginForm) {
 
             showLogin();
+
+            // If already logged in,
+            // go directly to dashboard.
+            if (token) {
+
+                window.location.replace(
+                    "admin.html"
+                );
+            }
         }
     }
 );
