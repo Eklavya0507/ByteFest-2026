@@ -119,7 +119,7 @@ document.getElementById("form").addEventListener("submit", async (e) => {
     try {
 
         const response = await fetch(
-            "http://localhost:5000/api/registrations",
+            "https://byte-fest-backend.onrender.com/api/registrations",
             {
                 method: "POST",
                 headers: {
