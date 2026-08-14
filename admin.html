@@ -1,56 +1,280 @@
 <!doctype html>
 <html lang="en">
+
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>Admin | BYTEFEST 2026</title>
+
 <link rel="stylesheet" href="style.css">
+
+<style>
+.admin-tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 25px 0;
+}
+
+.admin-tools input,
+.admin-tools select,
+.admin-tools button {
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid #334155;
+    background: #0b1220;
+    color: white;
+}
+
+.admin-tools input {
+    min-width: 240px;
+}
+
+.admin-tools button {
+    cursor: pointer;
+}
+
+.admin-tools button:hover {
+    opacity: 0.85;
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+#registrationTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#registrationTable th,
+#registrationTable td {
+    padding: 13px 10px;
+    border-bottom: 1px solid #1e293b;
+    text-align: left;
+    white-space: nowrap;
+}
+
+#registrationTable th {
+    color: #67e8f9;
+}
+
+.view-btn {
+    padding: 7px 12px;
+    border: 0;
+    border-radius: 6px;
+    cursor: pointer;
+    background: #06b6d4;
+    color: #001018;
+    font-weight: bold;
+}
+
+.status-pending {
+    color: #fbbf24;
+    font-weight: bold;
+}
+
+.status-paid {
+    color: #4ade80;
+    font-weight: bold;
+}
+
+/* Modal */
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 9999;
+    padding: 30px;
+    overflow-y: auto;
+}
+
+.modal-box {
+    max-width: 800px;
+    margin: 40px auto;
+    background: #0b1220;
+    border: 1px solid #334155;
+    border-radius: 15px;
+    padding: 25px;
+    color: white;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.close-btn {
+    border: 0;
+    background: transparent;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+}
+
+.detail-card {
+    background: #111827;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.detail-card span {
+    display: block;
+    color: #94a3b8;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.detail-card b {
+    color: white;
+}
+
+.member-box {
+    margin-top: 20px;
+    padding: 15px;
+    background: #111827;
+    border-radius: 8px;
+}
+
+.member {
+    padding: 12px 0;
+    border-bottom: 1px solid #334155;
+}
+
+.member:last-child {
+    border-bottom: none;
+}
+
+@media(max-width:700px) {
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-tools input {
+        width: 100%;
+    }
+}
+</style>
+
 </head>
 
 <body>
 
 <header>
-    <a class="brand" href="index.html">
-        <b>BF</b>
-        <span>BYTEFEST<small>2026 · ADMIN PANEL</small></span>
-    </a>
 
-    <nav>
-        <a href="index.html">Website</a>
-        <a href="#" id="logout">Logout</a>
-    </nav>
+<a class="brand" href="index.html">
+    <b>BF</b>
+    <span>
+        BYTEFEST
+        <small>2026 · ADMIN PANEL</small>
+    </span>
+</a>
+
+<nav>
+    <a href="index.html">Website</a>
+    <a href="#" id="logout">Logout</a>
+</nav>
+
 </header>
+
 
 <main>
 
 <section>
-    <p class="eyebrow">ADMINISTRATION</p>
-    <h2>Registration <i>Dashboard.</i></h2>
 
-    <div id="stats" class="formgrid">
-        <div class="fee">
-            <span>Total</span>
-            <b id="total">0</b>
-        </div>
+<p class="eyebrow">ADMINISTRATION</p>
 
-        <div class="fee">
-            <span>Pending</span>
-            <b id="pending">0</b>
-        </div>
+<h2>
+Registration <i>Dashboard.</i>
+</h2>
 
-        <div class="fee">
-            <span>Paid</span>
-            <b id="paid">0</b>
-        </div>
-    </div>
+
+<div id="stats" class="formgrid">
+
+<div class="fee">
+    <span>Total</span>
+    <b id="total">0</b>
+</div>
+
+<div class="fee">
+    <span>Pending</span>
+    <b id="pending">0</b>
+</div>
+
+<div class="fee">
+    <span>Paid</span>
+    <b id="paid">0</b>
+</div>
+
+</div>
+
+
+<div class="admin-tools">
+
+<input
+    id="search"
+    type="text"
+    placeholder="Search name, email, phone or ID..."
+>
+
+<select id="eventFilter">
+    <option value="">All Events</option>
+    <option value="UI/UX Arena">UI/UX Arena</option>
+    <option value="Code Sprint">Code Sprint</option>
+    <option value="Bug Hunt">Bug Hunt</option>
+    <option value="Checkmate">Checkmate</option>
+</select>
+
+<select id="paymentFilter">
+    <option value="">All Payments</option>
+    <option value="PENDING">Pending</option>
+    <option value="PAID">Paid</option>
+</select>
+
+<button id="refreshBtn">
+    ↻ Refresh
+</button>
+
+<button id="exportBtn">
+    Export CSV
+</button>
+
+<label>
+    <input
+        type="file"
+        id="importFile"
+        accept=".csv"
+        style="display:none"
+    >
+    <button type="button" id="importBtn">
+        Import CSV
+    </button>
+</label>
+
+</div>
+
 </section>
+
 
 <section>
 
-<div style="overflow-x:auto">
+<div class="table-wrap">
 
 <table id="registrationTable">
+
 <thead>
+
 <tr>
 <th>Registration ID</th>
 <th>Event</th>
@@ -60,13 +284,19 @@
 <th>Department</th>
 <th>Year</th>
 <th>Payment</th>
+<th>Details</th>
 </tr>
+
 </thead>
 
 <tbody id="rows">
+
 <tr>
-<td colspan="8">Loading...</td>
+<td colspan="9">
+Loading...
+</td>
 </tr>
+
 </tbody>
 
 </table>
@@ -77,7 +307,35 @@
 
 </main>
 
+
+<!-- DETAILS MODAL -->
+
+<div id="detailsModal" class="modal">
+
+<div class="modal-box">
+
+<div class="modal-header">
+
+<h2>Registration Details</h2>
+
+<button
+    class="close-btn"
+    id="closeModal"
+>
+    ×
+</button>
+
+</div>
+
+<div id="detailsContent"></div>
+
+</div>
+
+</div>
+
+
 <script src="admin.js"></script>
 
 </body>
+
 </html>
