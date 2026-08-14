@@ -1,4 +1,3 @@
-```javascript
 const API_URL = "https://byte-fest-backend.onrender.com";
 
 let registrations = [];
@@ -1456,4 +1455,3 @@ document
 // =====================================================
 
 loadRegistrations();
-```
