@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin | BYTEFEST 2026</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+    <a class="brand" href="index.html">
+        <b>BF</b>
+        <span>BYTEFEST<small>2026 · ADMIN PANEL</small></span>
+    </a>
+
+    <nav>
+        <a href="index.html">Website</a>
+        <a href="#" id="logout">Logout</a>
+    </nav>
+</header>
+
+<main>
+
+<section>
+    <p class="eyebrow">ADMINISTRATION</p>
+    <h2>Registration <i>Dashboard.</i></h2>
+
+    <div id="stats" class="formgrid">
+        <div class="fee">
+            <span>Total</span>
+            <b id="total">0</b>
+        </div>
+
+        <div class="fee">
+            <span>Pending</span>
+            <b id="pending">0</b>
+        </div>
+
+        <div class="fee">
+            <span>Paid</span>
+            <b id="paid">0</b>
+        </div>
+    </div>
+</section>
+
+<section>
+
+<div style="overflow-x:auto">
+
+<table id="registrationTable">
+<thead>
+<tr>
+<th>Registration ID</th>
+<th>Event</th>
+<th>Name</th>
+<th>Email</th>
+<th>Phone</th>
+<th>Department</th>
+<th>Year</th>
+<th>Payment</th>
+</tr>
+</thead>
+
+<tbody id="rows">
+<tr>
+<td colspan="8">Loading...</td>
+</tr>
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+</main>
+
+<script src="admin.js"></script>
+
+</body>
+</html>
