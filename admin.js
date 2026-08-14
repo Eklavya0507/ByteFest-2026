@@ -1,3 +1,13 @@
+
+// Admin access guard
+const adminEmail = sessionStorage.getItem("bytefestAdminEmail");
+if (!adminEmail) { window.location.replace("admin-login.html"); }
+
+document.getElementById("logout")?.addEventListener("click", e => {
+    e.preventDefault();
+    sessionStorage.removeItem("bytefestAdminEmail");
+    window.location.href = "admin-login.html";
+});
 const API_URL = "https://byte-fest-backend.onrender.com";
 
 let registrations = [];

@@ -1,0 +1,7 @@
+BYTEFEST 2026 FRONTEND
+
+Navigation:
+Home | Events | Details | Admin Login / My Registration | Register · ₹150
+
+IMPORTANT:
+The current backend ZIP does not yet contain /api/registrations/lookup, nor real UTR/screenshot upload/storage. The My Registration page is ready for that endpoint, but it will show an API error until the backend is updated. Admin login currently uses the existing /api/admin/check endpoint (email allow-list only), not secure password authentication.
