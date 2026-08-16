@@ -11,7 +11,9 @@
     const addMemberButton = document.getElementById("addMemberButton");
     const submitButton = document.getElementById("registerButton");
     const statusBox = document.getElementById("registrationStatus");
+    const membersHelp = document.getElementById("membersHelp");
     const allowedEvents = ["UI/UX Arena", "Code Sprint", "Bug Hunt", "Checkmate"];
+    const exactThreeEvents = new Set(["UI/UX Arena", "Code Sprint"]);
 
     function showStatus(message, type = "") {
         statusBox.textContent = message;
@@ -28,11 +30,14 @@
     }
 
     function updateMemberLabels() {
+        const exactThree = exactThreeEvents.has(eventInput.value);
+
         memberCards().forEach((card, index) => {
             card.querySelector("[data-member-title]").textContent = `Member ${index + 2}`;
+            card.querySelector("[data-remove-member]").disabled = exactThree;
         });
 
-        addMemberButton.disabled = memberCards().length >= 2;
+        addMemberButton.disabled = exactThree || memberCards().length >= 2;
     }
 
     function addMember() {
@@ -65,12 +70,24 @@
 
     function updateEventMode() {
         const individual = eventInput.value === "Checkmate";
+        const exactThree = exactThreeEvents.has(eventInput.value);
         membersSection.classList.toggle("hidden", individual);
 
         if (individual) {
             memberList.replaceChildren();
-        } else if (eventInput.value && memberCards().length === 0) {
-            addMember();
+            membersHelp.textContent = "Checkmate is an individual event.";
+        } else if (eventInput.value) {
+            const minimumMembers = exactThree ? 2 : 1;
+
+            while (memberCards().length < minimumMembers) {
+                addMember();
+            }
+
+            membersHelp.textContent = exactThree
+                ? `${eventInput.value} requires exactly 3 participants in total.`
+                : "Bug Hunt requires 2–3 participants in total.";
+        } else {
+            membersHelp.textContent = "UI/UX Arena and Code Sprint require 3 people; Bug Hunt requires 2–3.";
         }
 
         updateMemberLabels();
@@ -127,8 +144,13 @@
             return;
         }
 
-        if (selectedEvent !== "Checkmate" && (members.length < 1 || members.length > 2)) {
-            showStatus("Team events require 2–3 participants in total.", "error");
+        if (exactThreeEvents.has(selectedEvent) && members.length !== 2) {
+            showStatus(`${selectedEvent} requires exactly 3 participants in total.`, "error");
+            return;
+        }
+
+        if (selectedEvent === "Bug Hunt" && (members.length < 1 || members.length > 2)) {
+            showStatus("Bug Hunt requires 2–3 participants in total.", "error");
             return;
         }
 

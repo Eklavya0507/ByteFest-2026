@@ -438,22 +438,62 @@
     }
 
     function csvCell(value) {
-        return `"${String(value ?? "").replaceAll('"', '""')}"`;
+        const text = String(value ?? "");
+        const safeText = /^[=+\-@]/.test(text) ? `'${text}` : text;
+        return `"${safeText.replaceAll('"', '""')}"`;
+    }
+
+    function exportPhone(value) {
+        const digits = String(value || "").replace(/\D/g, "").slice(-10);
+        return digits ? `+91 ${digits}` : "";
     }
 
     function exportCsv() {
-        const headers = ["Registration ID", "Event", "Lead Name", "Email", "Phone", "Department", "Year", "Team Size", "Payment", "Amount", "UTR", "Proof Submitted", "Email Notification", "SMS Notification", "Created At", "Approved At"];
+        const headers = [
+            "Registration ID",
+            "Event",
+            "Lead Name",
+            "Lead Email",
+            "Lead Phone",
+            "Department",
+            "Year",
+            "Member 2 Name",
+            "Member 2 Email",
+            "Member 2 Phone",
+            "Member 3 Name",
+            "Member 3 Email",
+            "Member 3 Phone",
+            "Team Size",
+            "Payment",
+            "Amount",
+            "UTR",
+            "Proof Submitted",
+            "Email Notification",
+            "SMS Notification",
+            "Created At",
+            "Approved At"
+        ];
         const rows = visibleRegistrations.map(item => {
             const payment = item.payment || {};
+            const members = Array.isArray(item.members) ? item.members : [];
+            const member2 = members[0] || {};
+            const member3 = members[1] || {};
+
             return [
                 item.registrationId,
                 item.event,
                 item.participant?.name,
                 item.participant?.email,
-                item.participant?.phone,
+                exportPhone(item.participant?.phone),
                 item.participant?.department,
                 item.participant?.year,
-                1 + (item.members?.length || 0),
+                member2.name || "",
+                member2.email || "",
+                exportPhone(member2.phone),
+                member3.name || "",
+                member3.email || "",
+                exportPhone(member3.phone),
+                1 + members.length,
                 payment.status || "PENDING",
                 payment.amount || 150,
                 payment.utr || "",

@@ -7,10 +7,10 @@ BYTEFEST 2026 FRONTEND — COMPLETE BUILD
 5. In GitHub Pages, wait for the new deployment to complete, then hard-refresh with Ctrl+F5.
 
 PUBLIC FLOW
-Register -> generated registration ID -> scan QR -> submit UTR and screenshot -> pending -> admin approves -> Brevo email/optional SMS -> participant sees PAID and group link.
+Register -> generated registration ID -> scan payment QR -> submit UTR and screenshot -> pending -> admin approves -> Brevo email/optional SMS with private group links -> participant sees PAID and checks email/SMS.
 
 ADMIN FLOW
 Open admin-login.html -> approved email + Render ADMIN_LOGIN_PASSWORD -> review UTR/screenshot -> approve -> notification result shown.
 
 EVENT COUNTDOWN
-config.js is set to 29 August 2026 at 9:00 AM India time. Update EVENT_START there if the official event time changes.
+config.js counts down to reporting opening on 29 August 2026 at 9:10 AM India time. The public reporting window is 9:10 AM–9:30 AM.
