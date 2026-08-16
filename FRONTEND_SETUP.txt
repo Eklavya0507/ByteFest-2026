@@ -1,7 +1,16 @@
-BYTEFEST 2026 FRONTEND
+BYTEFEST 2026 FRONTEND — COMPLETE BUILD
 
-Navigation:
-Home | Events | Details | Admin Login / My Registration | Register · ₹150
+1. Deploy the rebuilt backend to Render first.
+2. Confirm https://byte-fest-backend.onrender.com returns status OK.
+3. Upload every file and the complete assets folder to the frontend GitHub repository.
+4. Keep assets/bytefest-payment-qr.jpeg in the repository.
+5. In GitHub Pages, wait for the new deployment to complete, then hard-refresh with Ctrl+F5.
 
-IMPORTANT:
-The current backend ZIP does not yet contain /api/registrations/lookup, nor real UTR/screenshot upload/storage. The My Registration page is ready for that endpoint, but it will show an API error until the backend is updated. Admin login currently uses the existing /api/admin/check endpoint (email allow-list only), not secure password authentication.
+PUBLIC FLOW
+Register -> generated registration ID -> scan QR -> submit UTR and screenshot -> pending -> admin approves -> Brevo email/optional SMS -> participant sees PAID and group link.
+
+ADMIN FLOW
+Open admin-login.html -> approved email + Render ADMIN_LOGIN_PASSWORD -> review UTR/screenshot -> approve -> notification result shown.
+
+EVENT COUNTDOWN
+config.js is set to 29 August 2026 at 9:00 AM India time. Update EVENT_START there if the official event time changes.

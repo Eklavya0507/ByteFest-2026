@@ -1,18 +1,102 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Event Details | BYTEFEST 2026</title><link rel="stylesheet" href="style.css"></head>
-<body><header><a class="brand" href="index.html"><b>BF</b><span>BYTEFEST<small>2026 · INVICTUS TECH CLUB</small></span></a><nav>
-    <a href="index.html">Home</a>
-    <a href="events.html">Events</a>
-    <a href="details.html">Details</a>
-    <a href="admin-login.html">Admin Login / My Registration</a>
-    <a class="cta" href="register.html">Register · ₹150</a>
-</nav></header>
-<main><section><p class="eyebrow">EVENT INFORMATION</p><h2>Everything you <i>need to know.</i></h2>
-<div class="infoGrid">
-<div class="info"><b>DATE</b><h3>29 AUG 2026</h3></div><div class="info"><b>REGISTRATION</b><h3>₹150</h3></div><div class="info"><b>MODE</b><h3>OFFLINE</h3></div><div class="info"><b>DURATION</b><h3>3 HOURS / EVENT</h3></div>
-</div>
-<div class="aboutbox simple"><div><h3>College & Department</h3><p>East Point College of Engineering & Technology</p><p>An Autonomous Institution, Affiliated to VTU, Approved by AICTE · NAAC Grade A · NBA Accredited</p><p><b>Department: CSE (DS)</b></p></div></div>
-<div class="aboutbox simple"><div><h3>Registration</h3><p>Register one participant first. For team events, you can add up to 2 more members. Checkmate is individual.</p><p>Registration fee is <b>₹150 per registration.</b></p></div></div>
-<div class="aboutbox simple"><div><h3>Exciting Prizes</h3><p>Participants can look forward to exciting prizes and recognition for their performance.</p></div></div>
-<div class="aboutbox simple"><div><h3>Student Coordinators</h3><p>Gautam — <a href="tel:+919939886361">+91 99398 86361</a></p><p>Gagan — <a href="tel:+919739474741">+91 97394 74741</a></p></div></div>
-<a class="btn primary" href="register.html">Register for BYTEFEST →</a>
-</section></main><footer><b>BYTEFEST 2026</b><span>Code · Create · Compete · Invictus Tech Club</span></footer></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="BYTEFEST 2026 event format, rules, team size, judging guidance and participant information.">
+    <title>Event Details | BYTEFEST 2026</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="config.js" defer></script>
+    <script src="site.js" defer></script>
+</head>
+<body>
+    <header class="site-header">
+        <a class="brand" href="index.html" aria-label="BYTEFEST home"><span class="brand-mark">BF</span><span class="brand-copy">BYTEFEST<small>2026 · INVICTUS TECH CLUB</small></span></a>
+        <button class="menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="siteNav">Menu</button>
+        <nav class="site-nav" id="siteNav" data-site-nav aria-label="Primary navigation">
+            <a href="index.html">Home</a><a href="events.html">Events</a><a href="details.html">Details</a><a href="my-registration.html">My Registration</a><a href="admin-login.html">Admin</a>
+            <a class="nav-register" href="register.html"><span class="register-icon">✦</span><span>Register <small>₹150 · BOOK A SPOT</small></span></a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="section">
+            <p class="eyebrow">EVENT INFORMATION</p>
+            <h2>Everything you <i>need to know.</i></h2>
+            <p class="lead">Use this page to choose your event and prepare your team. Final problem statements, pairing format and venue instructions announced by the organizers on event day take priority.</p>
+
+            <div class="info-grid">
+                <div class="info-tile"><b>Date & time</b><h3>29 Aug · 9 AM IST</h3></div>
+                <div class="info-tile"><b>Registration</b><h3>₹150</h3></div>
+                <div class="info-tile"><b>Mode</b><h3>Offline</h3></div>
+                <div class="info-tile"><b>Duration</b><h3>3 hours / event</h3></div>
+            </div>
+
+            <div class="detail-stack">
+                <article class="detail-card accent-orange" id="uiux">
+                    <div class="detail-card-header"><h3>01 · UI/UX Arena</h3><span class="detail-badge">2–3 members</span></div>
+                    <p class="lead">Create a useful, clear and visually strong digital experience from a problem statement revealed at the venue.</p>
+                    <div class="detail-columns">
+                        <div><h3>Challenge format</h3><ul class="rule-list"><li>Understand the user problem and define a focused solution.</li><li>Prepare key screens, a navigable prototype or a clearly connected flow.</li><li>Present the design choices, target user and expected impact.</li><li>Use a design tool available on your own laptop.</li></ul></div>
+                        <div><h3>Judging focus</h3><ul class="rule-list"><li>Problem understanding and originality.</li><li>Usability, information flow and accessibility.</li><li>Visual consistency and completeness.</li><li>Clarity of the final presentation.</li></ul></div>
+                    </div>
+                    <div class="payment-warning"><b>Bring:</b> charged laptop, charger and your preferred design software. Pre-built final submissions are not allowed; the competition work must be produced during the event.</div>
+                    <div class="actions"><a class="btn btn-primary" href="register.html?event=UI%2FUX%20Arena">Register for UI/UX Arena</a></div>
+                </article>
+
+                <article class="detail-card accent-cyan" id="code-sprint">
+                    <div class="detail-card-header"><h3>02 · Code Sprint</h3><span class="detail-badge">2–3 members</span></div>
+                    <p class="lead">Convert logic into working solutions while balancing correctness, speed and readable implementation.</p>
+                    <div class="detail-columns">
+                        <div><h3>Challenge format</h3><ul class="rule-list"><li>Teams receive programming problems at the start.</li><li>Solutions are evaluated against the official inputs and expected outputs.</li><li>Teams may divide analysis, coding and testing among members.</li><li>Supported languages and submission instructions are announced at the venue.</li></ul></div>
+                        <div><h3>Scoring focus</h3><ul class="rule-list"><li>Number of correctly solved problems.</li><li>Correctness across all test cases.</li><li>Completion time and applicable penalties.</li><li>Rule compliance and originality of submitted work.</li></ul></div>
+                    </div>
+                    <div class="payment-warning"><b>Bring:</b> charged laptop and charger. Internet availability is not guaranteed; keep the toolchain you need installed before arrival.</div>
+                    <div class="actions"><a class="btn btn-primary" href="register.html?event=Code%20Sprint">Register for Code Sprint</a></div>
+                </article>
+
+                <article class="detail-card accent-green" id="bug-hunt">
+                    <div class="detail-card-header"><h3>03 · Bug Hunt</h3><span class="detail-badge">2–3 members</span></div>
+                    <p class="lead">Track down logical, syntax and runtime defects in supplied programs, then prove that your fixes work.</p>
+                    <div class="detail-columns">
+                        <div><h3>Challenge format</h3><ul class="rule-list"><li>Teams receive code containing a set of defects.</li><li>Identify the cause, apply a valid fix and test the result.</li><li>Do not remove required functionality merely to pass a visible example.</li><li>Submit in the format announced by the organizing team.</li></ul></div>
+                        <div><h3>Scoring focus</h3><ul class="rule-list"><li>Number and difficulty of correctly fixed defects.</li><li>Behavior on official test cases.</li><li>Quality and safety of the correction.</li><li>Time taken when teams finish with equal scores.</li></ul></div>
+                    </div>
+                    <div class="payment-warning"><b>Bring:</b> charged laptop, charger and a working code editor. The organizers’ test results and judges’ decisions are final.</div>
+                    <div class="actions"><a class="btn btn-primary" href="register.html?event=Bug%20Hunt">Register for Bug Hunt</a></div>
+                </article>
+
+                <article class="detail-card accent-purple" id="checkmate">
+                    <div class="detail-card-header"><h3>04 · Checkmate</h3><span class="detail-badge">Individual</span></div>
+                    <p class="lead">A focused chess competition for players who can calculate accurately, manage time and stay composed.</p>
+                    <div class="detail-columns">
+                        <div><h3>Match format</h3><ul class="rule-list"><li>Pairing structure depends on the final number of participants.</li><li>Time control and round instructions are announced before play begins.</li><li>Standard touch-move and fair-play expectations apply.</li><li>Players must report the result to the assigned coordinator.</li></ul></div>
+                        <div><h3>Player rules</h3><ul class="rule-list"><li>Phones and outside assistance are not allowed during play.</li><li>Respect the clock, board and opponent.</li><li>Do not disturb games in progress.</li><li>The arbiter’s decision is final for disputes.</li></ul></div>
+                    </div>
+                    <div class="payment-warning"><b>Bring:</b> college ID and arrive before the reporting time. Chess boards and clocks will be managed according to venue availability.</div>
+                    <div class="actions"><a class="btn btn-primary" href="register.html?event=Checkmate">Register for Checkmate</a></div>
+                </article>
+
+                <article class="detail-card" id="general-rules">
+                    <div class="detail-card-header"><h3>General rules</h3><span class="detail-badge">All participants</span></div>
+                    <div class="detail-columns">
+                        <div><h3>Registration & payment</h3><ul class="rule-list"><li>Registration fee is ₹150 per registration.</li><li>Team events require one lead participant plus 1–2 additional members.</li><li>Checkmate accepts one participant per registration.</li><li>Registration is confirmed only after the admin verifies the UTR and screenshot.</li><li>Keep the generated registration ID for status checks.</li></ul></div>
+                        <div><h3>At the venue</h3><ul class="rule-list"><li>Carry a valid college ID and report on time.</li><li>Follow coordinator instructions and use only permitted resources.</li><li>Plagiarism, impersonation or disruptive behavior can lead to disqualification.</li><li>Organizers may make reasonable format changes based on participation and venue needs.</li><li>Judges’ and organizers’ decisions are final.</li></ul></div>
+                    </div>
+                </article>
+
+                <article class="detail-card">
+                    <div class="detail-card-header"><h3>Venue & coordinators</h3><span class="detail-badge">Need help?</span></div>
+                    <p><b>East Point College of Engineering & Technology</b><br>Department of Computer Science & Engineering (Data Science)<br>An Autonomous Institution · Affiliated to VTU · Approved by AICTE · NAAC Grade A · NBA Accredited</p>
+                    <div class="detail-columns">
+                        <div><h3>Gautam</h3><p><a href="tel:+919939886361">+91 99398 86361</a></p></div>
+                        <div><h3>Gagan</h3><p><a href="tel:+919739474741">+91 97394 74741</a></p></div>
+                    </div>
+                    <div class="actions"><a class="btn btn-primary" href="register.html">Register for BYTEFEST →</a><a class="btn" href="my-registration.html">Check registration status</a></div>
+                </article>
+            </div>
+        </section>
+    </main>
+    <footer class="site-footer"><b>BYTEFEST 2026</b><span>Code · Create · Compete · Invictus Tech Club</span></footer>
+</body>
+</html>

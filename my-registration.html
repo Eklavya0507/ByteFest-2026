@@ -1,7 +1,46 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>My Registration | BYTEFEST 2026</title><link rel="stylesheet" href="style.css"></head><body><header><a class="brand" href="index.html"><b>BF</b><span>BYTEFEST<small>2026 · INVICTUS TECH CLUB</small></span></a><nav>
-    <a href="index.html">Home</a>
-    <a href="events.html">Events</a>
-    <a href="details.html">Details</a>
-    <a href="admin-login.html">Admin Login / My Registration</a>
-    <a class="cta" href="register.html">Register · ₹150</a>
-</nav></header><main><section><p class="eyebrow">PARTICIPANT</p><h2>My <i>Registration.</i></h2><p class="lead">Enter your Registration ID and the email used during registration.</p><form id="lookupForm"><div class="formgrid"><label>Registration ID<input id="registrationId" required placeholder="BF26-XXXXXX"></label><label>Email<input id="email" type="email" required placeholder="you@example.com"></label></div><button class="btn primary full" type="submit">Check Registration</button></form><div id="result" style="margin-top:30px"></div></section></main><script>const API_URL="https://byte-fest-backend.onrender.com";document.getElementById("lookupForm").addEventListener("submit",async e=>{e.preventDefault();const id=document.getElementById("registrationId").value.trim();const email=document.getElementById("email").value.trim().toLowerCase();const box=document.getElementById("result");box.innerHTML="<p>Checking...</p>";try{const r=await fetch(API_URL+"/api/registrations/lookup",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({registrationId:id,email})});const d=await r.json();if(!r.ok){box.innerHTML="<p>"+(d.message||"Registration not found.")+"</p>";return}const p=d.participant||{};const pay=d.payment||{};box.innerHTML=`<div class="fee"><b>${d.registrationId}</b><p>Event: ${d.event||""}</p><p>Name: ${p.name||""}</p><p>Email: ${p.email||""}</p><p>Department: ${p.department||""}</p><p>Year: ${p.year||""}</p><p>Payment: <strong>${pay.status||"PENDING"}</strong></p><p>Amount: ₹${pay.amount||150}</p>${d.groupLink?`<p><a class="btn primary" href="${d.groupLink}" target="_blank" rel="noopener">Join Group</a></p>`:""}</div>`}catch(err){console.error(err);box.innerHTML="<p>Cannot connect to BYTEFEST server.</p>"}});</script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Check BYTEFEST 2026 registration and payment approval status.">
+    <title>My Registration | BYTEFEST 2026</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="config.js" defer></script>
+    <script src="site.js" defer></script>
+    <script src="my-registration.js" defer></script>
+</head>
+<body>
+    <header class="site-header">
+        <a class="brand" href="index.html" aria-label="BYTEFEST home"><span class="brand-mark">BF</span><span class="brand-copy">BYTEFEST<small>2026 · INVICTUS TECH CLUB</small></span></a>
+        <button class="menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="siteNav">Menu</button>
+        <nav class="site-nav" id="siteNav" data-site-nav aria-label="Primary navigation">
+            <a href="index.html">Home</a><a href="events.html">Events</a><a href="details.html">Details</a><a href="my-registration.html">My Registration</a><a href="admin-login.html">Admin</a>
+            <a class="nav-register" href="register.html"><span class="register-icon">✦</span><span>Register <small>₹150 · BOOK A SPOT</small></span></a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="section">
+            <p class="eyebrow">PARTICIPANT PORTAL</p>
+            <h2>My <i>registration.</i></h2>
+            <p class="lead">Enter the registration ID and lead participant email. This is separate from the administrator login.</p>
+
+            <form class="lookup-card" id="lookupForm" novalidate>
+                <div class="form-grid">
+                    <label class="field" for="lookupId">Registration ID
+                        <input id="lookupId" autocomplete="off" required placeholder="BF26-XXXXXXXX">
+                    </label>
+                    <label class="field" for="lookupEmail">Registration email
+                        <input id="lookupEmail" type="email" autocomplete="email" required placeholder="you@example.com">
+                    </label>
+                </div>
+                <div class="form-status" id="lookupStatus" role="status" aria-live="polite"></div>
+                <button class="btn btn-primary btn-full" id="lookupButton" type="submit">Check registration →</button>
+            </form>
+            <div class="lookup-result" id="lookupResult" aria-live="polite"></div>
+        </section>
+    </main>
+    <footer class="site-footer"><b>BYTEFEST 2026</b><span>Your group link appears only after payment approval.</span></footer>
+</body>
+</html>

@@ -1,19 +1,45 @@
-# BYTEFEST 2026 — Frontend Phase 1 (V2)
+# BYTEFEST 2026 Frontend
 
-Pages are separate:
-- `index.html` — Home
-- `events.html` — Events
-- `details.html` — Event details, college, fee, prizes and coordinators
-- `register.html` — Registration form
+Static GitHub Pages frontend for the complete participant and administrator flow.
 
-Registration is intentionally simple in Phase 1. It collects one participant first and allows up to 2 additional members for team events.
+## Included pages
 
-Phone:
-- +91 prefix
-- 10 digits
-- Must start with 6–9
-- `tel:` links are included on the details page
+- `index.html` — unique registration CTA, event summary and live countdown to 29 August 2026
+- `events.html` — all four event choices
+- `details.html` — expanded format, preparation and rules
+- `register.html` — participant/team registration
+- `payment.html` — supplied QR, UTR and compressed screenshot upload
+- `my-registration.html` — participant status lookup and approved group link
+- `admin-login.html` — separate administrator login
+- `admin.html` — protected registration/payment dashboard
 
-The payment system is NOT real yet. Phase 2 will connect a real payment gateway, verify payment server-side, store registrations, send email/PDF receipts and provide protected admin access.
+## Configuration
 
-Upload the whole folder to GitHub Pages.
+Edit `config.js` only if the Render URL or event start time changes:
+
+```js
+window.BYTEFEST_CONFIG = Object.freeze({
+    API_URL: "https://byte-fest-backend.onrender.com",
+    EVENT_START: "2026-08-29T09:00:00+05:30",
+    EVENT_DATE_LABEL: "29 August 2026 · 9:00 AM IST",
+    REGISTRATION_FEE: 150
+});
+```
+
+The countdown currently assumes a 9:00 AM start in India. Change `EVENT_START` if the official reporting time is different.
+
+## Deploy to GitHub Pages
+
+Replace the files in the `ByteFest-2026` repository with this folder, then commit and push:
+
+```powershell
+git add .
+git commit -m "Complete BYTEFEST registration payment and admin flow"
+git push origin main
+```
+
+Do not remove `assets/bytefest-payment-qr.jpeg`; it is the QR displayed on the payment page.
+
+## Required backend deployment order
+
+Deploy the new backend to Render first. After Render reports `MongoDB connected successfully`, deploy this frontend. The new frontend depends on the lookup and payment-proof endpoints included in the rebuilt backend.

@@ -1,24 +1,121 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BYTEFEST 2026 | Invictus Tech Club</title><link rel="stylesheet" href="style.css"></head>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="BYTEFEST 2026 by Invictus Tech Club — UI/UX Arena, Code Sprint, Bug Hunt and Checkmate on 29 August 2026.">
+    <title>BYTEFEST 2026 | Invictus Tech Club</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="config.js" defer></script>
+    <script src="site.js" defer></script>
+</head>
 <body>
-<header><a class="brand" href="index.html"><b>BF</b><span>BYTEFEST<small>2026 · INVICTUS TECH CLUB</small></span></a>
-<nav>
-    <a href="index.html">Home</a>
-    <a href="events.html">Events</a>
-    <a href="details.html">Details</a>
-    <a href="admin-login.html">Login / My Registration</a>
-    <a class="cta" href="register.html">Register · ₹150</a>
-</nav></header>
-<main>
-<section class="hero">
-<div><p class="eyebrow">CSE (DS) · TECH EVENT 2026</p><h1>CODE.<br><i>CREATE.</i><br>COMPETE.</h1>
-<p class="lead">BYTEFEST 2026 — a technical competition by Invictus Tech Club for coders, designers, bug hunters and strategic thinkers.</p>
-<div class="actions"><a class="btn primary" href="register.html">Register Now ↗</a><a class="btn" href="events.html">View Events</a></div>
-<div class="stats"><span><b>29 AUG 2026</b>Event Date</span><span><b>₹150</b>Registration Fee</span><span><b>OFFLINE</b>Mode</span></div></div>
-<div class="visual"><div class="orbit o1"></div><div class="orbit o2"></div><div class="logo3d"><div class="glow"></div><img src="assets/invictus-logo.jpg" alt="Invictus Tech Club logo"></div><span class="chip c1">AI × DS</span><span class="chip c2">BUILD</span><span class="chip c3">WIN</span></div>
-</section>
-<section class="aboutbox"><img src="assets/invictus-logo.jpg" alt="Invictus Tech Club"><div><p class="eyebrow">HOSTED BY INVICTUS TECH CLUB</p><h2>Technical skill meets <i>competition.</i></h2><p class="lead">Explore the events, check the details and register your team. Exciting prizes await participants.</p><p><b>East Point College of Engineering & Technology</b><br>CSE (DS)<br>An Autonomous Institution, Affiliated to VTU, Approved by AICTE · NAAC Grade A · NBA Accredited</p></div></section>
-</main><footer><b>BYTEFEST 2026</b><span>Code · Create · Compete · Invictus Tech Club</span></footer>
-</body></html>
+    <header class="site-header">
+        <a class="brand" href="index.html" aria-label="BYTEFEST home">
+            <span class="brand-mark">BF</span>
+            <span class="brand-copy">BYTEFEST<small>2026 · INVICTUS TECH CLUB</small></span>
+        </a>
+        <button class="menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="siteNav">Menu</button>
+        <nav class="site-nav" id="siteNav" data-site-nav aria-label="Primary navigation">
+            <a href="index.html">Home</a>
+            <a href="events.html">Events</a>
+            <a href="details.html">Details</a>
+            <a href="my-registration.html">My Registration</a>
+            <a href="admin-login.html">Admin</a>
+            <a class="nav-register" href="register.html"><span class="register-icon">✦</span><span>Register <small>₹150 · BOOK A SPOT</small></span></a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div>
+                <p class="eyebrow">CSE (DS) · OFFLINE TECH EVENT</p>
+                <h1>CODE.<br><i>CREATE.</i><br>COMPETE.</h1>
+                <p class="lead">BYTEFEST 2026 brings coders, designers, bug hunters and strategic thinkers together for one high-energy day of competition.</p>
+                <div class="actions">
+                    <a class="btn register-launch" href="register.html"><span>Open Registration<small>CHOOSE EVENT · PAY ₹150 · COMPETE</small></span> ↗</a>
+                    <a class="btn" href="events.html">Explore Events</a>
+                </div>
+                <div class="quick-stats">
+                    <span><b>29 AUG 2026</b>Event date</span>
+                    <span><b>₹150</b>Per registration</span>
+                    <span><b>OFFLINE</b>East Point Campus</span>
+                    <span><b>4 EVENTS</b>One festival</span>
+                </div>
+            </div>
+
+            <div class="hero-visual" aria-label="Invictus Tech Club visual">
+                <div class="orbit"></div>
+                <div class="logo-orb"><img src="assets/invictus-logo.jpg" alt="Invictus Tech Club logo"></div>
+                <span class="floating-tag tag-one">AI × DS</span>
+                <span class="floating-tag tag-two">BUILD</span>
+                <span class="floating-tag tag-three">WIN</span>
+            </div>
+        </section>
+
+        <section class="countdown-panel" data-countdown aria-label="Countdown to BYTEFEST 2026">
+            <div class="countdown-head">
+                <div>
+                    <p class="eyebrow">COMING 29 AUGUST 2026</p>
+                    <h2 data-countdown-status>Race to <i>BYTEFEST.</i></h2>
+                    <p class="muted">Event starts at 9:00 AM IST.</p>
+                </div>
+                <div class="countdown-units">
+                    <div class="countdown-unit"><b data-days>00</b><small>Days</small></div>
+                    <div class="countdown-unit"><b data-hours>00</b><small>Hours</small></div>
+                    <div class="countdown-unit"><b data-minutes>00</b><small>Minutes</small></div>
+                    <div class="countdown-unit"><b data-seconds>00</b><small>Seconds</small></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-head">
+                <div><p class="eyebrow">THE LINE-UP</p><h2>Four ways to <i>prove it.</i></h2></div>
+                <p class="lead">Choose a team challenge or compete individually in Checkmate. Open any event for its format, preparation guide and rules.</p>
+            </div>
+            <div class="event-grid">
+                <article class="event-card accent-orange">
+                    <span class="number">01</span><span class="event-symbol">✦</span>
+                    <h3>UI/UX ARENA</h3><p>Imagine · Design · Transform</p>
+                    <div class="event-meta">2–3 MEMBERS<br>3 HOURS · OFFLINE</div>
+                    <div class="card-actions"><a class="card-link" href="details.html#uiux">Get details →</a><a class="card-link" href="register.html?event=UI%2FUX%20Arena">Register</a></div>
+                </article>
+                <article class="event-card accent-cyan">
+                    <span class="number">02</span><span class="event-symbol">&lt;/&gt;</span>
+                    <h3>CODE SPRINT</h3><p>Think Fast · Code Smart · Win</p>
+                    <div class="event-meta">2–3 MEMBERS<br>3 HOURS · OFFLINE</div>
+                    <div class="card-actions"><a class="card-link" href="details.html#code-sprint">Get details →</a><a class="card-link" href="register.html?event=Code%20Sprint">Register</a></div>
+                </article>
+                <article class="event-card accent-green">
+                    <span class="number">03</span><span class="event-symbol">⌕</span>
+                    <h3>BUG HUNT</h3><p>Find · Fix · Conquer</p>
+                    <div class="event-meta">2–3 MEMBERS<br>3 HOURS · OFFLINE</div>
+                    <div class="card-actions"><a class="card-link" href="details.html#bug-hunt">Get details →</a><a class="card-link" href="register.html?event=Bug%20Hunt">Register</a></div>
+                </article>
+                <article class="event-card accent-purple">
+                    <span class="number">04</span><span class="event-symbol">♞</span>
+                    <h3>CHECKMATE</h3><p>Think Ahead · Play Smart</p>
+                    <div class="event-meta">INDIVIDUAL<br>3 HOURS · OFFLINE</div>
+                    <div class="card-actions"><a class="card-link" href="details.html#checkmate">Get details →</a><a class="card-link" href="register.html?event=Checkmate">Register</a></div>
+                </article>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="about-panel">
+                <img src="assets/invictus-logo.jpg" alt="Invictus Tech Club">
+                <div>
+                    <p class="eyebrow">HOSTED BY INVICTUS TECH CLUB</p>
+                    <h2>Technical skill meets <i>competition.</i></h2>
+                    <p class="lead">Bring your laptop, your best ideas and a team ready to perform. Payment is manually verified by the organizing team before registration is confirmed.</p>
+                    <p><b>East Point College of Engineering & Technology</b><br>Department of Computer Science & Engineering (Data Science)<br>An Autonomous Institution · Affiliated to VTU · Approved by AICTE · NAAC Grade A · NBA Accredited</p>
+                    <div class="actions"><a class="btn btn-primary" href="details.html">Read event rules</a><a class="btn" href="my-registration.html">Check my status</a></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer"><b>BYTEFEST 2026</b><span>Code · Create · Compete · Invictus Tech Club</span></footer>
+</body>
+</html>
