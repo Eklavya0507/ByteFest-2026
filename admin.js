@@ -3,6 +3,7 @@
 // =====================================================
 
 const API_URL = "https://byte-fest-backend.onrender.com";
+
 const ADMIN_STORAGE_KEY = "bytefest_admin";
 const ADMIN_EMAIL_KEY = "bytefest_admin_email";
 
@@ -15,12 +16,16 @@ let displayedRegistrations = [];
 // =====================================================
 
 function getAdminToken() {
-    return sessionStorage.getItem(ADMIN_STORAGE_KEY);
+    return sessionStorage.getItem(
+        ADMIN_STORAGE_KEY
+    );
 }
 
 
 function getAdminEmail() {
-    return sessionStorage.getItem(ADMIN_EMAIL_KEY);
+    return sessionStorage.getItem(
+        ADMIN_EMAIL_KEY
+    );
 }
 
 
@@ -30,6 +35,7 @@ function getAuthHeaders() {
 
     return {
         "Content-Type": "application/json",
+
         ...(token
             ? {
                 "Authorization": `Bearer ${token}`
@@ -39,24 +45,56 @@ function getAuthHeaders() {
 }
 
 
+function clearAdminSession() {
+
+    sessionStorage.removeItem(
+        ADMIN_STORAGE_KEY
+    );
+
+    sessionStorage.removeItem(
+        ADMIN_EMAIL_KEY
+    );
+
+    sessionStorage.removeItem(
+        "bytefestAdminEmail"
+    );
+}
+
+
 // =====================================================
-// LOGIN / DASHBOARD UI
+// PAGE HELPERS
 // =====================================================
 
 function showLogin() {
 
     const login =
-        document.getElementById("adminLogin");
+        document.getElementById(
+            "adminLogin"
+        );
 
     const dashboard =
-        document.getElementById("adminDashboard");
+        document.getElementById(
+            "adminDashboard"
+        );
+
+    const logout =
+        document.getElementById(
+            "logout"
+        );
+
 
     if (login) {
         login.style.display = "block";
     }
 
+
     if (dashboard) {
         dashboard.style.display = "none";
+    }
+
+
+    if (logout) {
+        logout.style.display = "none";
     }
 }
 
@@ -64,17 +102,33 @@ function showLogin() {
 function showDashboard() {
 
     const login =
-        document.getElementById("adminLogin");
+        document.getElementById(
+            "adminLogin"
+        );
 
     const dashboard =
-        document.getElementById("adminDashboard");
+        document.getElementById(
+            "adminDashboard"
+        );
+
+    const logout =
+        document.getElementById(
+            "logout"
+        );
+
 
     if (login) {
         login.style.display = "none";
     }
 
+
     if (dashboard) {
         dashboard.style.display = "block";
+    }
+
+
+    if (logout) {
+        logout.style.display = "";
     }
 }
 
@@ -87,24 +141,42 @@ async function adminLogin(event) {
 
     event.preventDefault();
 
+
     const emailInput =
-        document.getElementById("adminEmail");
+        document.getElementById(
+            "adminEmail"
+        );
+
 
     const loginMessage =
-        document.getElementById("adminMessage") ||
-        document.getElementById("loginMessage");
+        document.getElementById(
+            "adminMessage"
+        ) ||
+        document.getElementById(
+            "loginMessage"
+        );
+
 
     if (!emailInput) {
-        console.error("Admin email input not found.");
+
+        console.error(
+            "Admin email input not found."
+        );
+
         return;
     }
 
+
     const email =
-        emailInput.value.trim().toLowerCase();
+        emailInput.value
+            .trim()
+            .toLowerCase();
+
 
     if (!email) {
 
         if (loginMessage) {
+
             loginMessage.textContent =
                 "Please enter your admin email.";
         }
@@ -112,10 +184,19 @@ async function adminLogin(event) {
         return;
     }
 
+
     if (loginMessage) {
+
         loginMessage.textContent =
             "Checking admin access...";
     }
+
+
+    console.log(
+        "Attempting admin login:",
+        email
+    );
+
 
     try {
 
@@ -126,7 +207,8 @@ async function adminLogin(event) {
                     method: "POST",
 
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type":
+                            "application/json"
                     },
 
                     body: JSON.stringify({
@@ -136,23 +218,123 @@ async function adminLogin(event) {
             );
 
 
-        const data =
-            await response.json();
+        console.log(
+            "Admin login HTTP status:",
+            response.status
+        );
 
 
-        console.log("Admin login response:", data);
+        // ---------------------------------------------
+        // Read response safely
+        // ---------------------------------------------
+
+        const responseText =
+            await response.text();
 
 
-        if (
-            !response.ok ||
-            !data.allowed ||
-            !data.token
-        ) {
+        let data = {};
+
+
+        try {
+
+            data =
+                responseText
+                    ? JSON.parse(
+                        responseText
+                    )
+                    : {};
+
+        } catch (parseError) {
+
+            console.error(
+                "Backend returned invalid JSON:",
+                responseText
+            );
+
 
             if (loginMessage) {
+
+                loginMessage.textContent =
+                    "BYTEFEST backend returned an invalid response.";
+            }
+
+            return;
+        }
+
+
+        console.log(
+            "Admin login response:",
+            {
+                status:
+                    response.status,
+
+                allowed:
+                    data.allowed,
+
+                email:
+                    data.email,
+
+                tokenReceived:
+                    Boolean(
+                        data.token
+                    ),
+
+                message:
+                    data.message
+            }
+        );
+
+
+        // ---------------------------------------------
+        // HTTP ERROR
+        // ---------------------------------------------
+
+        if (!response.ok) {
+
+            if (loginMessage) {
+
+                loginMessage.textContent =
+                    data.message ||
+                    `Admin login failed. HTTP ${response.status}`;
+            }
+
+            return;
+        }
+
+
+        // ---------------------------------------------
+        // ADMIN NOT APPROVED
+        // ---------------------------------------------
+
+        if (!data.allowed) {
+
+            if (loginMessage) {
+
                 loginMessage.textContent =
                     data.message ||
                     "This email is not an approved admin.";
+            }
+
+            return;
+        }
+
+
+        // ---------------------------------------------
+        // TOKEN MISSING
+        // ---------------------------------------------
+
+        if (!data.token) {
+
+            console.error(
+                "Admin approved but token was not returned.",
+                data
+            );
+
+
+            if (loginMessage) {
+
+                loginMessage.textContent =
+                    "Admin approved, but no login token was received.";
             }
 
             return;
@@ -175,36 +357,47 @@ async function adminLogin(event) {
         );
 
 
-        // Keep compatibility with old code
+        // Compatibility with older frontend code
         sessionStorage.setItem(
             "bytefestAdminEmail",
             data.email || email
         );
 
 
+        console.log(
+            "Admin session saved successfully."
+        );
+
+
         if (loginMessage) {
+
             loginMessage.textContent =
                 "Login successful. Opening admin dashboard...";
         }
 
 
         // =================================================
-        // OPEN DASHBOARD
+        // REDIRECT TO DASHBOARD
         // =================================================
 
-        window.location.href = "admin.html";
+        window.location.replace(
+            "admin.html"
+        );
 
 
     } catch (error) {
 
         console.error(
-            "Admin login error:",
+            "ADMIN LOGIN NETWORK ERROR:",
             error
         );
 
+
         if (loginMessage) {
+
             loginMessage.textContent =
-                "Cannot connect to BYTEFEST server.";
+                "Unable to contact BYTEFEST backend: " +
+                error.message;
         }
     }
 }
@@ -216,23 +409,20 @@ async function adminLogin(event) {
 
 function logout() {
 
-    sessionStorage.removeItem(
-        ADMIN_STORAGE_KEY
-    );
-
-    sessionStorage.removeItem(
-        ADMIN_EMAIL_KEY
-    );
-
-    sessionStorage.removeItem(
-        "bytefestAdminEmail"
-    );
+    clearAdminSession();
 
     registrations = [];
     displayedRegistrations = [];
 
-    window.location.href =
-        "admin-login.html";
+
+    console.log(
+        "Admin logged out."
+    );
+
+
+    window.location.replace(
+        "admin-login.html"
+    );
 }
 
 
@@ -243,18 +433,27 @@ function logout() {
 function protectAdminPage() {
 
     const dashboard =
-        document.getElementById("adminDashboard");
+        document.getElementById(
+            "adminDashboard"
+        );
 
-    // If this is not the dashboard page,
-    // don't perform dashboard protection.
+
+    // Not the dashboard page
     if (!dashboard) {
         return;
     }
 
+
     const token =
         getAdminToken();
 
+
     if (!token) {
+
+        console.log(
+            "No admin session found."
+        );
+
 
         window.location.replace(
             "admin-login.html"
@@ -263,7 +462,28 @@ function protectAdminPage() {
         return;
     }
 
+
     showDashboard();
+}
+
+
+// =====================================================
+// HANDLE INVALID / EXPIRED SESSION
+// =====================================================
+
+function handleUnauthorized() {
+
+    console.warn(
+        "Admin authentication rejected."
+    );
+
+
+    clearAdminSession();
+
+
+    window.location.replace(
+        "admin-login.html"
+    );
 }
 
 
@@ -274,7 +494,10 @@ function protectAdminPage() {
 async function loadRegistrations() {
 
     const rows =
-        document.getElementById("rows");
+        document.getElementById(
+            "rows"
+        );
+
 
     if (!rows) {
         return;
@@ -287,9 +510,7 @@ async function loadRegistrations() {
 
     if (!token) {
 
-        window.location.replace(
-            "admin-login.html"
-        );
+        handleUnauthorized();
 
         return;
     }
@@ -304,6 +525,11 @@ async function loadRegistrations() {
     `;
 
 
+    console.log(
+        "Loading registrations..."
+    );
+
+
     try {
 
         const response =
@@ -311,60 +537,115 @@ async function loadRegistrations() {
                 `${API_URL}/api/admin/registrations`,
                 {
                     method: "GET",
-                    headers: getAuthHeaders()
+
+                    headers:
+                        getAuthHeaders()
                 }
             );
 
+
+        console.log(
+            "Registrations HTTP status:",
+            response.status
+        );
+
+
+        // ---------------------------------------------
+        // TOKEN INVALID
+        // ---------------------------------------------
 
         if (
             response.status === 401 ||
             response.status === 403
         ) {
 
-            sessionStorage.removeItem(
-                ADMIN_STORAGE_KEY
-            );
-
-            sessionStorage.removeItem(
-                ADMIN_EMAIL_KEY
-            );
-
-            sessionStorage.removeItem(
-                "bytefestAdminEmail"
-            );
-
-            window.location.replace(
-                "admin-login.html"
-            );
+            handleUnauthorized();
 
             return;
         }
 
 
-        if (!response.ok) {
+        // ---------------------------------------------
+        // READ RESPONSE
+        // ---------------------------------------------
 
-            const data =
-                await response
-                    .json()
-                    .catch(() => ({}));
+        const responseText =
+            await response.text();
+
+
+        let data;
+
+
+        try {
+
+            data =
+                responseText
+                    ? JSON.parse(
+                        responseText
+                    )
+                    : [];
+
+        } catch (error) {
+
+            console.error(
+                "Registration response was not JSON:",
+                responseText
+            );
 
 
             throw new Error(
-                data.message ||
-                "Unable to load registrations."
+                "Backend returned an invalid registration response."
             );
         }
 
 
-        registrations =
-            await response.json();
+        // ---------------------------------------------
+        // HTTP ERROR
+        // ---------------------------------------------
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.message ||
+                `Unable to load registrations. HTTP ${response.status}`
+            );
+        }
+
+
+        // ---------------------------------------------
+        // NORMALIZE RESPONSE
+        // ---------------------------------------------
+
+        if (
+            Array.isArray(data)
+        ) {
+
+            registrations =
+                data;
+
+        } else if (
+            Array.isArray(
+                data.registrations
+            )
+        ) {
+
+            registrations =
+                data.registrations;
+
+        } else {
+
+            registrations =
+                [];
+        }
 
 
         console.log(
             "Registrations loaded:",
-            registrations
+            registrations.length
         );
 
+
+        populateEventFilter();
 
         applyFilters();
 
@@ -381,11 +662,97 @@ async function loadRegistrations() {
             <tr>
                 <td colspan="9">
                     Cannot load registrations.
-                    <br>
-                    ${escapeHtml(error.message)}
+                    <br><br>
+                    ${escapeHtml(
+                        error.message
+                    )}
                 </td>
             </tr>
         `;
+    }
+}
+
+
+// =====================================================
+// POPULATE EVENT FILTER
+// =====================================================
+
+function populateEventFilter() {
+
+    const eventFilter =
+        document.getElementById(
+            "eventFilter"
+        );
+
+
+    if (!eventFilter) {
+        return;
+    }
+
+
+    const selectedValue =
+        eventFilter.value;
+
+
+    const events =
+        [
+            ...new Set(
+                registrations
+                    .map(
+                        registration =>
+                            String(
+                                registration.event ||
+                                ""
+                            ).trim()
+                    )
+                    .filter(Boolean)
+            )
+        ]
+            .sort(
+                (a, b) =>
+                    a.localeCompare(b)
+            );
+
+
+    eventFilter.innerHTML = `
+        <option value="">
+            All Events
+        </option>
+    `;
+
+
+    events.forEach(
+        eventName => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                eventName;
+
+
+            option.textContent =
+                eventName;
+
+
+            eventFilter.appendChild(
+                option
+            );
+        }
+    );
+
+
+    if (
+        events.includes(
+            selectedValue
+        )
+    ) {
+
+        eventFilter.value =
+            selectedValue;
     }
 }
 
@@ -397,13 +764,21 @@ async function loadRegistrations() {
 function applyFilters() {
 
     const searchElement =
-        document.getElementById("search");
+        document.getElementById(
+            "search"
+        );
+
 
     const eventElement =
-        document.getElementById("eventFilter");
+        document.getElementById(
+            "eventFilter"
+        );
+
 
     const paymentElement =
-        document.getElementById("paymentFilter");
+        document.getElementById(
+            "paymentFilter"
+        );
 
 
     const search =
@@ -423,6 +798,7 @@ function applyFilters() {
     const payment =
         paymentElement
             ? paymentElement.value
+                .toUpperCase()
             : "";
 
 
@@ -431,7 +807,8 @@ function applyFilters() {
             registration => {
 
                 const participant =
-                    registration.participant || {};
+                    registration.participant ||
+                    {};
 
 
                 const members =
@@ -450,42 +827,53 @@ function applyFilters() {
                                     member.name,
                                     member.email,
                                     member.phone
-                                ].join(" ")
+                                ]
+                                    .filter(Boolean)
+                                    .join(" ")
                         )
                         .join(" ");
 
 
-                const searchText = [
+                const searchText =
+                    [
+                        registration.registrationId,
+                        registration.event,
 
-                    registration.registrationId,
-                    registration.event,
+                        participant.name,
+                        participant.email,
+                        participant.phone,
+                        participant.department,
+                        participant.year,
 
-                    participant.name,
-                    participant.email,
-                    participant.phone,
-                    participant.department,
-                    participant.year,
+                        registration.payment?.utr,
 
-                    memberSearchText
-
-                ]
-                    .join(" ")
-                    .toLowerCase();
+                        memberSearchText
+                    ]
+                        .filter(Boolean)
+                        .join(" ")
+                        .toLowerCase();
 
 
                 const matchesSearch =
                     !search ||
-                    searchText.includes(search);
+                    searchText.includes(
+                        search
+                    );
 
 
                 const matchesEvent =
                     !event ||
-                    registration.event === event;
+                    registration.event ===
+                        event;
 
 
                 const status =
-                    registration.payment?.status ||
-                    "PENDING";
+                    String(
+                        registration.payment
+                            ?.status ||
+                        "PENDING"
+                    )
+                        .toUpperCase();
 
 
                 const matchesPayment =
@@ -521,42 +909,65 @@ function updateStats() {
     const pending =
         registrations.filter(
             registration =>
-                (
-                    registration.payment?.status ||
+                String(
+                    registration.payment
+                        ?.status ||
                     "PENDING"
-                ) === "PENDING"
+                )
+                    .toUpperCase() ===
+                    "PENDING"
         ).length;
 
 
     const paid =
         registrations.filter(
             registration =>
-                registration.payment?.status === "PAID"
+                String(
+                    registration.payment
+                        ?.status ||
+                    ""
+                )
+                    .toUpperCase() ===
+                    "PAID"
         ).length;
 
 
     const totalElement =
-        document.getElementById("total");
+        document.getElementById(
+            "total"
+        );
+
 
     const pendingElement =
-        document.getElementById("pending");
+        document.getElementById(
+            "pending"
+        );
+
 
     const paidElement =
-        document.getElementById("paid");
+        document.getElementById(
+            "paid"
+        );
 
 
     if (totalElement) {
-        totalElement.textContent = total;
+
+        totalElement.textContent =
+            total;
     }
 
 
     if (pendingElement) {
-        pendingElement.textContent = pending;
+
+        pendingElement.textContent =
+            pending;
     }
 
 
     if (paidElement) {
-        paidElement.textContent = paid;
+
+        paidElement.textContent =
+            paid;
     }
 }
 
@@ -568,7 +979,9 @@ function updateStats() {
 function renderTable() {
 
     const rows =
-        document.getElementById("rows");
+        document.getElementById(
+            "rows"
+        );
 
 
     if (!rows) {
@@ -576,7 +989,9 @@ function renderTable() {
     }
 
 
-    if (!displayedRegistrations.length) {
+    if (
+        !displayedRegistrations.length
+    ) {
 
         rows.innerHTML = `
             <tr>
@@ -593,7 +1008,10 @@ function renderTable() {
     rows.innerHTML =
         displayedRegistrations
             .map(
-                (registration, index) => {
+                (
+                    registration,
+                    index
+                ) => {
 
                     const participant =
                         registration.participant ||
@@ -606,23 +1024,37 @@ function renderTable() {
 
 
                     const status =
-                        payment.status ||
-                        "PENDING";
+                        String(
+                            payment.status ||
+                            "PENDING"
+                        )
+                            .toUpperCase();
 
 
-                    let paymentHtml = "";
+                    const amount =
+                        payment.amount ||
+                        150;
 
 
-                    if (status === "PAID") {
+                    let paymentHtml;
+
+
+                    if (
+                        status === "PAID"
+                    ) {
 
                         paymentHtml = `
-                            <span class="status-paid">
+                            <span
+                                class="status-paid"
+                            >
                                 PAID
                             </span>
 
                             <br>
 
-                            ₹${payment.amount || 150}
+                            ₹${escapeHtml(
+                                amount
+                            )}
 
                             <br>
 
@@ -634,20 +1066,26 @@ function renderTable() {
                     } else {
 
                         paymentHtml = `
-                            <span class="status-pending">
+                            <span
+                                class="status-pending"
+                            >
                                 PENDING
                             </span>
 
                             <br>
 
-                            ₹${payment.amount || 150}
+                            ₹${escapeHtml(
+                                amount
+                            )}
 
                             <br><br>
 
                             <button
                                 class="view-btn"
+                                type="button"
                                 onclick="approvePayment('${escapeJs(
-                                    registration.registrationId
+                                    registration.registrationId ||
+                                    ""
                                 )}')"
                             >
                                 ✓ Approve
@@ -716,6 +1154,7 @@ function renderTable() {
 
                                 <button
                                     class="view-btn"
+                                    type="button"
                                     onclick="showDetails(${index})"
                                 >
                                     View
@@ -739,10 +1178,20 @@ async function approvePayment(
     registrationId
 ) {
 
+    if (!registrationId) {
+
+        alert(
+            "Registration ID is missing."
+        );
+
+        return;
+    }
+
+
     const registration =
         registrations.find(
-            registration =>
-                registration.registrationId ===
+            item =>
+                item.registrationId ===
                 registrationId
         );
 
@@ -762,6 +1211,49 @@ async function approvePayment(
         {};
 
 
+    const payment =
+        registration.payment ||
+        {};
+
+
+    // ---------------------------------------------
+    // REQUIRE PAYMENT PROOF
+    // ---------------------------------------------
+
+    const utr =
+        String(
+            payment.utr ||
+            ""
+        ).trim();
+
+
+    const screenshot =
+        String(
+            payment.screenshot ||
+            ""
+        ).trim();
+
+
+    if (!utr) {
+
+        alert(
+            "Cannot approve this payment because UTR is missing."
+        );
+
+        return;
+    }
+
+
+    if (!screenshot) {
+
+        alert(
+            "Cannot approve this payment because payment screenshot is missing."
+        );
+
+        return;
+    }
+
+
     const confirmed =
         confirm(
             `Approve payment for ${
@@ -773,8 +1265,12 @@ async function approvePayment(
                 registrationId
             }\n` +
 
+            `UTR: ${
+                utr
+            }\n` +
+
             `Amount: ₹${
-                registration.payment?.amount ||
+                payment.amount ||
                 150
             }`
         );
@@ -794,15 +1290,33 @@ async function approvePayment(
                 )}/approve`,
                 {
                     method: "PATCH",
-                    headers: getAuthHeaders()
+
+                    headers:
+                        getAuthHeaders()
                 }
             );
 
 
-        const data =
-            await response
-                .json()
-                .catch(() => ({}));
+        const responseText =
+            await response.text();
+
+
+        let data = {};
+
+
+        try {
+
+            data =
+                responseText
+                    ? JSON.parse(
+                        responseText
+                    )
+                    : {};
+
+        } catch {
+
+            data = {};
+        }
 
 
         if (
@@ -810,17 +1324,7 @@ async function approvePayment(
             response.status === 403
         ) {
 
-            sessionStorage.removeItem(
-                ADMIN_STORAGE_KEY
-            );
-
-            sessionStorage.removeItem(
-                ADMIN_EMAIL_KEY
-            );
-
-            window.location.replace(
-                "admin-login.html"
-            );
+            handleUnauthorized();
 
             return;
         }
@@ -830,7 +1334,7 @@ async function approvePayment(
 
             throw new Error(
                 data.message ||
-                "Payment approval failed."
+                `Payment approval failed. HTTP ${response.status}`
             );
         }
 
@@ -839,6 +1343,8 @@ async function approvePayment(
             "Payment approved successfully!"
         );
 
+
+        closeModal();
 
         await loadRegistrations();
 
@@ -866,10 +1372,17 @@ async function approvePayment(
 function showDetails(index) {
 
     const registration =
-        displayedRegistrations[index];
+        displayedRegistrations[
+            index
+        ];
 
 
     if (!registration) {
+
+        console.error(
+            "Registration details not found."
+        );
+
         return;
     }
 
@@ -892,7 +1405,11 @@ function showDetails(index) {
             : [];
 
 
-    let membersHtml = "";
+    // =================================================
+    // MEMBERS
+    // =================================================
+
+    let membersHtml;
 
 
     if (!members.length) {
@@ -908,7 +1425,10 @@ function showDetails(index) {
         membersHtml =
             members
                 .map(
-                    (member, i) => `
+                    (
+                        member,
+                        i
+                    ) => `
                         <div class="member">
 
                             <h4>
@@ -916,23 +1436,35 @@ function showDetails(index) {
                             </h4>
 
                             <p>
-                                <b>Name:</b>
+                                <b>
+                                    Name:
+                                </b>
+
                                 ${escapeHtml(
-                                    member.name || ""
+                                    member.name ||
+                                    ""
                                 )}
                             </p>
 
                             <p>
-                                <b>Email:</b>
+                                <b>
+                                    Email:
+                                </b>
+
                                 ${escapeHtml(
-                                    member.email || ""
+                                    member.email ||
+                                    ""
                                 )}
                             </p>
 
                             <p>
-                                <b>Phone:</b>
+                                <b>
+                                    Phone:
+                                </b>
+
                                 ${escapeHtml(
-                                    member.phone || ""
+                                    member.phone ||
+                                    ""
                                 )}
                             </p>
 
@@ -943,12 +1475,24 @@ function showDetails(index) {
     }
 
 
-    let screenshotHtml = "";
+    // =================================================
+    // PAYMENT SCREENSHOT
+    // =================================================
+
+    const screenshotUrl =
+        safeUrl(
+            payment.screenshot,
+            true
+        );
 
 
-    if (payment.screenshot) {
+    let screenshotHtml;
+
+
+    if (screenshotUrl) {
 
         screenshotHtml = `
+
             <div
                 class="detail-card"
                 style="grid-column:1/-1"
@@ -958,11 +1502,13 @@ function showDetails(index) {
                     Payment Screenshot
                 </span>
 
-                <div style="margin-top:10px">
+                <div
+                    style="margin-top:10px"
+                >
 
                     <img
                         src="${escapeAttribute(
-                            payment.screenshot
+                            screenshotUrl
                         )}"
                         alt="Payment Screenshot"
                         style="
@@ -975,11 +1521,13 @@ function showDetails(index) {
 
                 </div>
 
-                <p style="margin-top:10px">
+                <p
+                    style="margin-top:10px"
+                >
 
                     <a
                         href="${escapeAttribute(
-                            payment.screenshot
+                            screenshotUrl
                         )}"
                         target="_blank"
                         rel="noopener noreferrer"
@@ -995,6 +1543,7 @@ function showDetails(index) {
     } else {
 
         screenshotHtml = `
+
             <div
                 class="detail-card"
                 style="grid-column:1/-1"
@@ -1013,7 +1562,12 @@ function showDetails(index) {
     }
 
 
+    // =================================================
+    // UTR
+    // =================================================
+
     const utrHtml = `
+
         <div class="detail-card">
 
             <span>
@@ -1031,7 +1585,12 @@ function showDetails(index) {
     `;
 
 
+    // =================================================
+    // PAYMENT ID
+    // =================================================
+
     const paymentIdHtml = `
+
         <div class="detail-card">
 
             <span>
@@ -1049,15 +1608,38 @@ function showDetails(index) {
     `;
 
 
+    // =================================================
+    // GROUP LINK
+    // Supports both old and new backend structure
+    // =================================================
+
+    const groupLink =
+        registration.groupLink ||
+        payment.groupLink ||
+        "";
+
+
+    const safeGroupLink =
+        safeUrl(
+            groupLink,
+            false
+        );
+
+
     let groupLinkHtml = "";
 
 
     if (
-        payment.status === "PAID" &&
-        registration.groupLink
+        String(
+            payment.status ||
+            ""
+        ).toUpperCase() ===
+            "PAID" &&
+        safeGroupLink
     ) {
 
         groupLinkHtml = `
+
             <div class="detail-card">
 
                 <span>
@@ -1068,7 +1650,7 @@ function showDetails(index) {
 
                     <a
                         href="${escapeAttribute(
-                            registration.groupLink
+                            safeGroupLink
                         )}"
                         target="_blank"
                         rel="noopener noreferrer"
@@ -1083,12 +1665,24 @@ function showDetails(index) {
     }
 
 
-    let paymentActionHtml = "";
+    // =================================================
+    // PAYMENT ACTION
+    // =================================================
+
+    let paymentActionHtml =
+        "";
 
 
-    if (payment.status !== "PAID") {
+    if (
+        String(
+            payment.status ||
+            "PENDING"
+        ).toUpperCase() !==
+        "PAID"
+    ) {
 
         paymentActionHtml = `
+
             <div
                 style="
                     margin-top:20px;
@@ -1106,8 +1700,10 @@ function showDetails(index) {
 
                 <button
                     class="view-btn"
+                    type="button"
                     onclick="approvePayment('${escapeJs(
-                        registration.registrationId
+                        registration.registrationId ||
+                        ""
                     )}')"
                 >
                     ✓ Approve Payment
@@ -1118,6 +1714,10 @@ function showDetails(index) {
     }
 
 
+    // =================================================
+    // DETAILS CONTENT
+    // =================================================
+
     const detailsContent =
         document.getElementById(
             "detailsContent"
@@ -1125,15 +1725,30 @@ function showDetails(index) {
 
 
     if (!detailsContent) {
+
+        console.error(
+            "detailsContent element not found."
+        );
+
         return;
     }
+
+
+    const createdAt =
+        registration.createdAt
+            ? formatDate(
+                registration.createdAt
+            )
+            : "Not available";
 
 
     detailsContent.innerHTML = `
 
         <div class="detail-grid">
 
+
             <div class="detail-card">
+
                 <span>
                     Registration ID
                 </span>
@@ -1144,10 +1759,12 @@ function showDetails(index) {
                         ""
                     )}
                 </b>
+
             </div>
 
 
             <div class="detail-card">
+
                 <span>
                     Event
                 </span>
@@ -1158,10 +1775,12 @@ function showDetails(index) {
                         ""
                     )}
                 </b>
+
             </div>
 
 
             <div class="detail-card">
+
                 <span>
                     Name
                 </span>
@@ -1172,10 +1791,12 @@ function showDetails(index) {
                         ""
                     )}
                 </b>
+
             </div>
 
 
             <div class="detail-card">
+
                 <span>
                     Email
                 </span>
@@ -1186,10 +1807,12 @@ function showDetails(index) {
                         ""
                     )}
                 </b>
+
             </div>
 
 
             <div class="detail-card">
+
                 <span>
                     Phone
                 </span>
@@ -1200,10 +1823,12 @@ function showDetails(index) {
                         ""
                     )}
                 </b>
+
             </div>
 
 
             <div class="detail-card">
+
                 <span>
                     Department
                 </span>
@@ -1214,10 +1839,12 @@ function showDetails(index) {
                         ""
                     )}
                 </b>
+
             </div>
 
 
             <div class="detail-card">
+
                 <span>
                     Year
                 </span>
@@ -1228,35 +1855,47 @@ function showDetails(index) {
                         ""
                     )}
                 </b>
+
             </div>
 
 
             <div class="detail-card">
+
                 <span>
                     Payment Status
                 </span>
 
                 <b>
                     ${escapeHtml(
-                        payment.status ||
-                        "PENDING"
+                        String(
+                            payment.status ||
+                            "PENDING"
+                        )
+                            .toUpperCase()
                     )}
                 </b>
+
             </div>
 
 
             <div class="detail-card">
+
                 <span>
                     Payment Amount
                 </span>
 
                 <b>
-                    ₹${payment.amount || 150}
+                    ₹${escapeHtml(
+                        payment.amount ||
+                        150
+                    )}
                 </b>
+
             </div>
 
 
             ${utrHtml}
+
 
             ${paymentIdHtml}
 
@@ -1268,13 +1907,9 @@ function showDetails(index) {
                 </span>
 
                 <b>
-                    ${
-                        registration.createdAt
-                            ? new Date(
-                                registration.createdAt
-                              ).toLocaleString()
-                            : ""
-                    }
+                    ${escapeHtml(
+                        createdAt
+                    )}
                 </b>
 
             </div>
@@ -1282,7 +1917,9 @@ function showDetails(index) {
 
             ${groupLinkHtml}
 
+
             ${screenshotHtml}
+
 
         </div>
 
@@ -1299,7 +1936,6 @@ function showDetails(index) {
 
 
         ${paymentActionHtml}
-
     `;
 
 
@@ -1310,7 +1946,9 @@ function showDetails(index) {
 
 
     if (modal) {
-        modal.style.display = "block";
+
+        modal.style.display =
+            "block";
     }
 }
 
@@ -1328,13 +1966,15 @@ function closeModal() {
 
 
     if (modal) {
-        modal.style.display = "none";
+
+        modal.style.display =
+            "none";
     }
 }
 
 
 // =====================================================
-// CSV EXPORT
+// EXPORT CSV
 // =====================================================
 
 function exportCSV() {
@@ -1352,36 +1992,54 @@ function exportCSV() {
     const headers = [
 
         "Registration ID",
+
         "Event",
 
         "Participant Name",
+
         "Participant Email",
+
         "Participant Phone",
+
         "Department",
+
         "Year",
 
         "Payment Status",
+
         "Amount",
+
         "UTR",
+
         "Payment ID",
+
         "Payment Screenshot",
 
         "Member 1 Name",
+
         "Member 1 Email",
+
         "Member 1 Phone",
 
         "Member 2 Name",
+
         "Member 2 Email",
+
         "Member 2 Phone",
 
         "Group Link",
-        "Created At"
 
+        "Created At"
     ];
 
 
     const lines = [
-        headers.join(",")
+
+        headers
+            .map(
+                csvEscape
+            )
+            .join(",")
     ];
 
 
@@ -1407,61 +2065,92 @@ function exportCSV() {
 
 
             const member1 =
-                members[0] || {};
+                members[0] ||
+                {};
 
 
             const member2 =
-                members[1] || {};
+                members[1] ||
+                {};
+
+
+            const groupLink =
+                registration.groupLink ||
+                payment.groupLink ||
+                "";
 
 
             const row = [
 
-                registration.registrationId || "",
+                registration.registrationId ||
+                "",
 
-                registration.event || "",
+                registration.event ||
+                "",
 
-                participant.name || "",
+                participant.name ||
+                "",
 
-                participant.email || "",
+                participant.email ||
+                "",
 
-                participant.phone || "",
+                participant.phone ||
+                "",
 
-                participant.department || "",
+                participant.department ||
+                "",
 
-                participant.year || "",
+                participant.year ||
+                "",
 
-                payment.status || "PENDING",
+                payment.status ||
+                "PENDING",
 
-                payment.amount || 150,
+                payment.amount ||
+                150,
 
-                payment.utr || "",
+                payment.utr ||
+                "",
 
-                payment.paymentId || "",
+                payment.paymentId ||
+                "",
 
-                payment.screenshot || "",
+                payment.screenshot ||
+                "",
 
-                member1.name || "",
-                member1.email || "",
-                member1.phone || "",
+                member1.name ||
+                "",
 
-                member2.name || "",
-                member2.email || "",
-                member2.phone || "",
+                member1.email ||
+                "",
 
-                registration.groupLink || "",
+                member1.phone ||
+                "",
+
+                member2.name ||
+                "",
+
+                member2.email ||
+                "",
+
+                member2.phone ||
+                "",
+
+                groupLink,
 
                 registration.createdAt
-                    ? new Date(
+                    ? formatDate(
                         registration.createdAt
-                    ).toLocaleString()
+                    )
                     : ""
-
             ];
 
 
             lines.push(
                 row
-                    .map(csvEscape)
+                    .map(
+                        csvEscape
+                    )
                     .join(",")
             );
         }
@@ -1472,7 +2161,9 @@ function exportCSV() {
         new Blob(
             [
                 "\uFEFF" +
-                lines.join("\n")
+                lines.join(
+                    "\r\n"
+                )
             ],
             {
                 type:
@@ -1482,26 +2173,73 @@ function exportCSV() {
 
 
     const url =
-        URL.createObjectURL(blob);
+        URL.createObjectURL(
+            blob
+        );
 
 
     const link =
-        document.createElement("a");
+        document.createElement(
+            "a"
+        );
 
 
-    link.href = url;
+    link.href =
+        url;
+
 
     link.download =
         "BYTEFEST-registrations.csv";
 
 
-    document.body.appendChild(link);
+    document.body.appendChild(
+        link
+    );
+
 
     link.click();
 
-    document.body.removeChild(link);
 
-    URL.revokeObjectURL(url);
+    document.body.removeChild(
+        link
+    );
+
+
+    URL.revokeObjectURL(
+        url
+    );
+}
+
+
+// =====================================================
+// DATE FORMAT
+// =====================================================
+
+function formatDate(value) {
+
+    try {
+
+        const date =
+            new Date(value);
+
+
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+
+            return "";
+        }
+
+
+        return date.toLocaleString();
+
+
+    } catch {
+
+        return "";
+    }
 }
 
 
@@ -1512,7 +2250,9 @@ function exportCSV() {
 function csvEscape(value) {
 
     const text =
-        String(value ?? "");
+        String(
+            value ?? ""
+        );
 
 
     if (
@@ -1534,12 +2274,60 @@ function csvEscape(value) {
 
 
 // =====================================================
+// SAFE URL
+// =====================================================
+
+function safeUrl(
+    value,
+    allowDataImage = false
+) {
+
+    const url =
+        String(
+            value ||
+            ""
+        ).trim();
+
+
+    if (!url) {
+        return "";
+    }
+
+
+    if (
+        /^https?:\/\//i.test(
+            url
+        )
+    ) {
+
+        return url;
+    }
+
+
+    if (
+        allowDataImage &&
+        /^data:image\//i.test(
+            url
+        )
+    ) {
+
+        return url;
+    }
+
+
+    return "";
+}
+
+
+// =====================================================
 // SECURITY HELPERS
 // =====================================================
 
 function escapeHtml(value) {
 
-    return String(value ?? "")
+    return String(
+        value ?? ""
+    )
         .replace(
             /&/g,
             "&amp;"
@@ -1565,7 +2353,9 @@ function escapeHtml(value) {
 
 function escapeJs(value) {
 
-    return String(value ?? "")
+    return String(
+        value ?? ""
+    )
         .replace(
             /\\/g,
             "\\\\"
@@ -1591,7 +2381,9 @@ function escapeJs(value) {
 
 function escapeAttribute(value) {
 
-    return String(value ?? "")
+    return String(
+        value ?? ""
+    )
         .replace(
             /&/g,
             "&amp;"
@@ -1599,6 +2391,10 @@ function escapeAttribute(value) {
         .replace(
             /"/g,
             "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
         )
         .replace(
             /</g,
@@ -1624,9 +2420,9 @@ document.addEventListener(
         );
 
 
-        // -------------------------------------------------
+        // =================================================
         // LOGIN FORM
-        // -------------------------------------------------
+        // =================================================
 
         const loginForm =
             document.getElementById(
@@ -1643,9 +2439,9 @@ document.addEventListener(
         }
 
 
-        // -------------------------------------------------
+        // =================================================
         // LOGOUT
-        // -------------------------------------------------
+        // =================================================
 
         const logoutBtn =
             document.getElementById(
@@ -1667,9 +2463,9 @@ document.addEventListener(
         }
 
 
-        // -------------------------------------------------
-        // CLOSE MODAL
-        // -------------------------------------------------
+        // =================================================
+        // CLOSE MODAL BUTTON
+        // =================================================
 
         const closeBtn =
             document.getElementById(
@@ -1686,6 +2482,10 @@ document.addEventListener(
         }
 
 
+        // =================================================
+        // CLICK OUTSIDE MODAL
+        // =================================================
+
         const modal =
             document.getElementById(
                 "detailsModal"
@@ -1699,9 +2499,10 @@ document.addEventListener(
                 event => {
 
                     if (
-                        event.target.id ===
-                        "detailsModal"
+                        event.target ===
+                        modal
                     ) {
+
                         closeModal();
                     }
                 }
@@ -1709,9 +2510,28 @@ document.addEventListener(
         }
 
 
-        // -------------------------------------------------
+        // =================================================
+        // ESCAPE KEY CLOSE MODAL
+        // =================================================
+
+        document.addEventListener(
+            "keydown",
+            event => {
+
+                if (
+                    event.key ===
+                    "Escape"
+                ) {
+
+                    closeModal();
+                }
+            }
+        );
+
+
+        // =================================================
         // SEARCH
-        // -------------------------------------------------
+        // =================================================
 
         const search =
             document.getElementById(
@@ -1728,9 +2548,9 @@ document.addEventListener(
         }
 
 
-        // -------------------------------------------------
+        // =================================================
         // EVENT FILTER
-        // -------------------------------------------------
+        // =================================================
 
         const eventFilter =
             document.getElementById(
@@ -1747,9 +2567,9 @@ document.addEventListener(
         }
 
 
-        // -------------------------------------------------
+        // =================================================
         // PAYMENT FILTER
-        // -------------------------------------------------
+        // =================================================
 
         const paymentFilter =
             document.getElementById(
@@ -1766,9 +2586,9 @@ document.addEventListener(
         }
 
 
-        // -------------------------------------------------
+        // =================================================
         // REFRESH
-        // -------------------------------------------------
+        // =================================================
 
         const refreshBtn =
             document.getElementById(
@@ -1785,9 +2605,9 @@ document.addEventListener(
         }
 
 
-        // -------------------------------------------------
+        // =================================================
         // EXPORT
-        // -------------------------------------------------
+        // =================================================
 
         const exportBtn =
             document.getElementById(
@@ -1804,9 +2624,9 @@ document.addEventListener(
         }
 
 
-        // -------------------------------------------------
+        // =================================================
         // DETERMINE PAGE
-        // -------------------------------------------------
+        // =================================================
 
         const dashboard =
             document.getElementById(
@@ -1818,10 +2638,18 @@ document.addEventListener(
             getAdminToken();
 
 
-        // Dashboard page
+        // =================================================
+        // DASHBOARD PAGE
+        // =================================================
+
         if (dashboard) {
 
             if (!token) {
+
+                console.log(
+                    "Dashboard opened without admin token."
+                );
+
 
                 window.location.replace(
                     "admin-login.html"
@@ -1829,6 +2657,11 @@ document.addEventListener(
 
                 return;
             }
+
+
+            console.log(
+                "Admin session found."
+            );
 
 
             showDashboard();
@@ -1839,14 +2672,22 @@ document.addEventListener(
         }
 
 
-        // Login page
+        // =================================================
+        // LOGIN PAGE
+        // =================================================
+
         if (loginForm) {
 
             showLogin();
 
-            // If already logged in,
-            // go directly to dashboard.
+
+            // Already logged in
             if (token) {
+
+                console.log(
+                    "Existing admin session found. Opening dashboard."
+                );
+
 
                 window.location.replace(
                     "admin.html"
