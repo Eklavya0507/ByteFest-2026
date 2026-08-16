@@ -89,23 +89,25 @@
                     <div class="result-item"><small>Proof submitted</small><b>${payment.proofSubmitted ? "Yes · " + escapeHtml(formatDate(payment.submittedAt)) : "Not yet"}</b></div>
                 </div>
                 ${paid ? `
-                    <div class="notice notice-success is-visible">
-                        <h3>Your registration is confirmed.</h3>
-                        <p>Approval email: <span class="status-badge status-${statusClass(payment.emailNotification)}">${escapeHtml(payment.emailNotification || "NOT_ATTEMPTED")}</span>
-                        &nbsp; SMS: <span class="status-badge status-${statusClass(payment.smsNotification)}">${escapeHtml(payment.smsNotification || "NOT_ATTEMPTED")}</span></p>
-                        <div class="actions">
-                            ${groupLink ? `<a class="btn btn-primary" href="${escapeHtml(groupLink)}" target="_blank" rel="noopener noreferrer">Join ${escapeHtml(data.event)} group →</a>` : ""}
-                            ${communityLink ? `<a class="btn btn-success" href="${escapeHtml(communityLink)}" target="_blank" rel="noopener noreferrer">Join BYTEFEST Community →</a>` : ""}
-                        </div>
-                        ${!groupLink || !communityLink ? "<p>One or more invite links are not configured. Please contact the organizers.</p>" : ""}
-                    </div>
-                ` : `
-                    <div class="notice is-visible">
-                        <h3>Admin verification is pending.</h3>
-                        <p>${payment.proofSubmitted ? "Your UTR and screenshot were received. Please wait for the admin to check them." : "Payment proof has not been submitted yet."}</p>
-                        <a class="btn btn-primary" href="payment.html?registrationId=${encodeURIComponent(data.registrationId)}">${payment.proofSubmitted ? "Update payment proof" : "Submit payment proof"} →</a>
-                    </div>
-                `}
+    <div class="notice notice-success is-visible">
+        <h3>Your registration is confirmed.</h3>
+        <p>Please check your email and SMS for your event group and BYTEFEST Community links.</p>
+    </div>
+` : `
+    <div class="notice is-visible">
+        <h3>Admin verification is pending.</h3>
+        <p>${payment.proofSubmitted
+            ? "Please wait for admin approval and check your email."
+            : "Payment proof has not been submitted yet."}</p>
+
+        ${!payment.proofSubmitted ? `
+            <a class="btn btn-primary"
+               href="payment.html?registrationId=${encodeURIComponent(data.registrationId)}">
+                Submit payment proof →
+            </a>
+        ` : ""}
+    </div>
+`}
             </article>
         `;
 
