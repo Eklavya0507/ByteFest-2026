@@ -261,6 +261,303 @@ document
 
             message.textContent =
                 "Checking admin access...";
+            console.log("Email has been sent to backend ");
+
+
+            button.disabled = true;
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_URL}/api/admin/check`,
+                        {
+
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                email: email
+                            })
+
+                        }
+                    );
+
+
+                const data =
+                    await response
+                        .json()
+                        .catch(() => ({}));
+
+
+              <!doctype html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width,initial-scale=1"
+    >
+
+    <title>
+        Admin Login / My Registration | BYTEFEST 2026
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <a
+        class="brand"
+        href="index.html"
+    >
+
+        <b>BF</b>
+
+        <span>
+
+            BYTEFEST
+
+            <small>
+                2026 · INVICTUS TECH CLUB
+            </small>
+
+        </span>
+
+    </a>
+
+
+    <nav>
+
+        <a href="index.html">
+            Home
+        </a>
+
+        <a href="events.html">
+            Events
+        </a>
+
+        <a href="details.html">
+            Details
+        </a>
+
+        <a href="admin-login.html">
+            Login / My Registration
+        </a>
+
+        <a
+            class="cta"
+            href="register.html"
+        >
+            Register · ₹150
+        </a>
+
+    </nav>
+
+</header>
+
+
+
+<main>
+
+
+<section>
+
+    <p class="eyebrow">
+        ACCESS
+    </p>
+
+
+    <h2>
+        Admin Login /
+        <i>My Registration.</i>
+    </h2>
+
+
+    <div class="formgrid">
+
+
+        <!-- ADMIN -->
+
+        <div class="fee">
+
+            <span>
+                ADMIN
+            </span>
+
+            <p>
+                Admin access is only for
+                approved BYTEFEST administrators.
+            </p>
+
+            <a
+                class="btn primary"
+                href="#admin"
+            >
+                Admin Login
+            </a>
+
+        </div>
+
+
+
+        <!-- PARTICIPANT -->
+
+        <div class="fee">
+
+            <span>
+                PARTICIPANT
+            </span>
+
+            <p>
+                Already registered?
+                Check your registration and payment status.
+            </p>
+
+            <a
+                class="btn"
+                href="my-registration.html"
+            >
+                My Registration
+            </a>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- ADMIN LOGIN FORM -->
+
+    <div
+        id="admin"
+        style="margin-top:35px"
+    >
+
+
+        <form id="adminLoginForm">
+
+
+            <label>
+
+                Admin Email
+
+                <input
+                    id="adminEmail"
+                    type="email"
+                    required
+                    autocomplete="email"
+                    placeholder="Enter approved admin email"
+                >
+
+            </label>
+
+
+            <button
+                class="btn primary full"
+                type="submit"
+                id="adminLoginButton"
+            >
+                Continue to Admin
+            </button>
+
+
+        </form>
+
+
+        <p
+            id="adminMessage"
+            style="margin-top:15px"
+        ></p>
+
+
+    </div>
+
+
+</section>
+
+
+</main>
+
+
+
+<script>
+
+const API_URL =
+    "https://byte-fest-backend.onrender.com";
+
+
+const ADMIN_STORAGE_KEY =
+    "bytefest_admin";
+
+
+const ADMIN_EMAIL_KEY =
+    "bytefest_admin_email";
+
+
+
+document
+    .getElementById("adminLoginForm")
+    .addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+
+            const emailInput =
+                document.getElementById(
+                    "adminEmail"
+                );
+
+
+            const message =
+                document.getElementById(
+                    "adminMessage"
+                );
+
+
+            const button =
+                document.getElementById(
+                    "adminLoginButton"
+                );
+
+
+            const email =
+                emailInput.value
+                    .trim()
+                    .toLowerCase();
+
+
+            if (!email) {
+
+                message.textContent =
+                    "Please enter your admin email.";
+
+                return;
+            }
+
+
+            message.textContent =
+                "Checking admin access...";
 
 
             button.disabled = true;
@@ -298,6 +595,99 @@ document
                     "ADMIN LOGIN RESPONSE:",
                     data
                 );
+
+
+                if (!response.ok) {
+
+                    message.textContent =
+                        data.message ||
+                        `Server error (${response.status})`;
+
+                    return;
+                }
+
+
+                if (!data.allowed) {
+
+                    message.textContent =
+                        "This email is not an approved admin.";
+
+                    return;
+                }
+
+
+                if (!data.token) {
+
+                    message.textContent =
+                        "Admin approved but login token was not received.";
+
+                    console.error(
+                        "Token missing:",
+                        data
+                    );
+
+                    return;
+                }
+
+
+                // ==========================================
+                // IMPORTANT:
+                // Save the SAME token admin.js expects
+                // ==========================================
+
+                sessionStorage.setItem(
+                    ADMIN_STORAGE_KEY,
+                    data.token
+                );
+
+
+                sessionStorage.setItem(
+                    ADMIN_EMAIL_KEY,
+                    data.email || email
+                );
+
+
+                // Compatibility with your older code
+                sessionStorage.setItem(
+                    "bytefestAdminEmail",
+                    data.email || email
+                );
+
+
+                message.textContent =
+                    "Login successful. Opening dashboard...";
+
+
+                window.location.href =
+                    "admin.html";
+
+
+            } catch (error) {
+
+                console.error(
+                    "ADMIN LOGIN ERROR:",
+                    error
+                );
+
+
+                message.textContent =
+                    "Cannot connect to BYTEFEST backend.";
+
+            } finally {
+
+                button.disabled = false;
+
+            }
+
+        }
+    );
+
+</script>
+
+
+</body>
+
+</html>
 
 
                 if (!response.ok) {
