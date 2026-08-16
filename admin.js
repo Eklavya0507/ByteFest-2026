@@ -106,12 +106,18 @@
         window.clearTimeout(toastTimer);
         toast.textContent = message;
         toast.classList.add("is-visible");
-        toastTimer = window.setTimeout(() => toast.classList.remove("is-visible"), 6500);
+        toastTimer = window.setTimeout(() => toast.classList.remove("is-visible"), 12000);
     }
 
     function statusBadge(status) {
         const safeStatus = String(status || "NOT_ATTEMPTED").toUpperCase();
         return `<span class="status-badge status-${safeStatus.toLowerCase()}">${escapeHtml(safeStatus)}</span>`;
+    }
+
+    function deliverySummary(label, delivery) {
+        const status = delivery?.status || "NOT_ATTEMPTED";
+        const detail = delivery?.error ? ` — ${delivery.error}` : "";
+        return `${label}: ${status}${detail}`;
     }
 
     function initializeLogin() {
@@ -231,6 +237,7 @@
             const proof = paymentProofSubmitted(item);
             const emailStatus = payment.emailNotification?.status || "NOT_ATTEMPTED";
             const smsStatus = payment.smsNotification?.status || "NOT_ATTEMPTED";
+            const notificationIncomplete = paid && (emailStatus !== "SENT" || smsStatus !== "SENT");
             const teamSize = 1 + (Array.isArray(item.members) ? item.members.length : 0);
 
             return `
@@ -241,7 +248,7 @@
                     <td>${statusBadge(paid ? "PAID" : "PENDING")}<span class="cell-subtitle">₹${escapeHtml(payment.amount || 150)}${payment.approvedAt ? `<br>${escapeHtml(formatDate(payment.approvedAt))}` : ""}</span></td>
                     <td>${proof ? statusBadge("SUBMITTED") : statusBadge("NOT_ATTEMPTED")}<span class="cell-subtitle">${proof ? `UTR: ${escapeHtml(payment.utr)}` : "Waiting for participant"}</span></td>
                     <td><div class="notification-stack"><span>Email ${statusBadge(emailStatus)}</span><span>SMS ${statusBadge(smsStatus)}</span></div></td>
-                    <td><div class="admin-actions"><button class="btn btn-small" type="button" data-view="${escapeHtml(item.registrationId)}">View</button>${!paid && proof ? `<button class="btn btn-small btn-success" type="button" data-approve="${escapeHtml(item.registrationId)}">Approve</button>` : ""}</div></td>
+                    <td><div class="admin-actions"><button class="btn btn-small" type="button" data-view="${escapeHtml(item.registrationId)}">View</button>${!paid && proof ? `<button class="btn btn-small btn-success" type="button" data-approve="${escapeHtml(item.registrationId)}">Approve</button>` : ""}${notificationIncomplete ? `<button class="btn btn-small btn-success" type="button" data-notify="${escapeHtml(item.registrationId)}">Retry notify</button>` : ""}</div></td>
                 </tr>
             `;
         }).join("");
@@ -283,6 +290,9 @@
         const payment = registration.payment || {};
         const members = Array.isArray(registration.members) ? registration.members : [];
         const paid = payment.status === "PAID";
+        const emailStatus = payment.emailNotification?.status || "NOT_ATTEMPTED";
+        const smsStatus = payment.smsNotification?.status || "NOT_ATTEMPTED";
+        const notificationIncomplete = paid && (emailStatus !== "SENT" || smsStatus !== "SENT");
         const modal = document.getElementById("detailsModal");
         const body = document.getElementById("modalBody");
         modal.dataset.registrationId = registration.registrationId;
@@ -299,6 +309,8 @@
                 ${members.map((member, index) => `<div class="result-item"><small>Member ${index + 2}</small><b>${escapeHtml(member.name)}</b><br><span class="muted">${escapeHtml(member.email)} · +91 ${escapeHtml(member.phone)}</span></div>`).join("")}
                 <div class="result-item"><small>Registered</small><b>${escapeHtml(formatDate(registration.createdAt))}</b></div>
                 <div class="result-item"><small>Approved</small><b>${escapeHtml(formatDate(payment.approvedAt))}</b></div>
+                <div class="result-item"><small>${escapeHtml(registration.event)} group link</small><b>${escapeHtml(registration.groupLink || "Not configured")}</b></div>
+                <div class="result-item"><small>BYTEFEST Community link</small><b>${escapeHtml(registration.communityLink || "Not configured")}</b></div>
                 <div class="result-item"><small>Email notification</small>${statusBadge(payment.emailNotification?.status || "NOT_ATTEMPTED")}<br><span class="muted">${escapeHtml(payment.emailNotification?.error || payment.emailNotification?.messageId || "")}</span></div>
                 <div class="result-item"><small>SMS notification</small>${statusBadge(payment.smsNotification?.status || "NOT_ATTEMPTED")}<br><span class="muted">${escapeHtml(payment.smsNotification?.error || payment.smsNotification?.messageId || "")}</span></div>
             </div>
@@ -308,6 +320,7 @@
                 <div id="proofContent"></div>
             </div>
             ${!paid ? `<div class="actions"><button class="btn btn-primary" type="button" data-approve="${escapeHtml(registration.registrationId)}">Approve payment & notify participant</button></div>` : ""}
+            ${notificationIncomplete ? `<div class="actions"><button class="btn btn-success" type="button" data-notify="${escapeHtml(registration.registrationId)}">Retry failed email / SMS</button></div>` : ""}
         `;
 
         modal.classList.add("is-open");
@@ -375,9 +388,9 @@
 
         try {
             const data = await apiRequest(`/api/admin/registrations/${encodeURIComponent(registrationId)}/approve`, { method: "PATCH" }, true);
-            const emailStatus = data.notification?.email?.status || data.registration?.payment?.emailNotification?.status || "NOT_ATTEMPTED";
-            const smsStatus = data.notification?.sms?.status || data.registration?.payment?.smsNotification?.status || "NOT_ATTEMPTED";
-            showToast(`Payment approved. Email: ${emailStatus}. SMS: ${smsStatus}.`);
+            const email = data.notification?.email || data.registration?.payment?.emailNotification;
+            const sms = data.notification?.sms || data.registration?.payment?.smsNotification;
+            showToast(`Payment approved. ${deliverySummary("Email", email)}. ${deliverySummary("SMS", sms)}.`);
             closeModal();
             await loadRegistrations();
         } catch (error) {
@@ -386,6 +399,40 @@
             document.querySelectorAll(`[data-approve="${CSS.escape(registrationId)}"]`).forEach(button => {
                 button.disabled = false;
                 button.textContent = "Approve";
+            });
+        }
+    }
+
+    async function retryNotifications(registrationId) {
+        const registration = findRegistration(registrationId);
+
+        if (!registration || registration.payment?.status !== "PAID") {
+            showToast("Approve the payment before retrying notifications.");
+            return;
+        }
+
+        if (!window.confirm(`Retry unsent email/SMS for ${registration.participant?.name || registrationId}? The official group link will be included.`)) {
+            return;
+        }
+
+        document.querySelectorAll(`[data-notify="${CSS.escape(registrationId)}"]`).forEach(button => {
+            button.disabled = true;
+            button.textContent = "Sending...";
+        });
+
+        try {
+            const data = await apiRequest(`/api/admin/registrations/${encodeURIComponent(registrationId)}/notify`, { method: "PATCH" }, true);
+            const email = data.notification?.email || data.registration?.payment?.emailNotification;
+            const sms = data.notification?.sms || data.registration?.payment?.smsNotification;
+            showToast(`Notification retry finished. ${deliverySummary("Email", email)}. ${deliverySummary("SMS", sms)}.`);
+            closeModal();
+            await loadRegistrations();
+        } catch (error) {
+            console.error(error);
+            showToast(error.message || "Notification retry failed.");
+            document.querySelectorAll(`[data-notify="${CSS.escape(registrationId)}"]`).forEach(button => {
+                button.disabled = false;
+                button.textContent = "Retry notify";
             });
         }
     }
@@ -465,6 +512,7 @@
         document.addEventListener("click", event => {
             const viewButton = event.target.closest("[data-view]");
             const approveButton = event.target.closest("[data-approve]");
+            const notifyButton = event.target.closest("[data-notify]");
 
             if (viewButton) {
                 openModal(viewButton.dataset.view);
@@ -472,6 +520,10 @@
 
             if (approveButton) {
                 approveRegistration(approveButton.dataset.approve);
+            }
+
+            if (notifyButton) {
+                retryNotifications(notifyButton.dataset.notify);
             }
         });
 

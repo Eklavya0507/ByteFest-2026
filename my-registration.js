@@ -64,6 +64,7 @@
         const members = Array.isArray(data.members) ? data.members : [];
         const paid = payment.status === "PAID";
         const groupLink = safeGroupLink(data.groupLink);
+        const communityLink = safeGroupLink(data.communityLink);
         const memberHtml = members.length
             ? members.map((member, index) => `
                 <div class="result-item"><small>Member ${index + 2}</small><b>${escapeHtml(member.name)}</b><br><span class="muted">${escapeHtml(member.email)} · +91 ${escapeHtml(member.phone)}</span></div>
@@ -92,7 +93,11 @@
                         <h3>Your registration is confirmed.</h3>
                         <p>Approval email: <span class="status-badge status-${statusClass(payment.emailNotification)}">${escapeHtml(payment.emailNotification || "NOT_ATTEMPTED")}</span>
                         &nbsp; SMS: <span class="status-badge status-${statusClass(payment.smsNotification)}">${escapeHtml(payment.smsNotification || "NOT_ATTEMPTED")}</span></p>
-                        ${groupLink ? `<a class="btn btn-primary" href="${escapeHtml(groupLink)}" target="_blank" rel="noopener noreferrer">Join the official group →</a>` : "<p>The organizers will share the group information separately.</p>"}
+                        <div class="actions">
+                            ${groupLink ? `<a class="btn btn-primary" href="${escapeHtml(groupLink)}" target="_blank" rel="noopener noreferrer">Join ${escapeHtml(data.event)} group →</a>` : ""}
+                            ${communityLink ? `<a class="btn btn-success" href="${escapeHtml(communityLink)}" target="_blank" rel="noopener noreferrer">Join BYTEFEST Community →</a>` : ""}
+                        </div>
+                        ${!groupLink || !communityLink ? "<p>One or more invite links are not configured. Please contact the organizers.</p>" : ""}
                     </div>
                 ` : `
                     <div class="notice is-visible">

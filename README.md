@@ -6,12 +6,14 @@ Static GitHub Pages frontend for the complete participant and administrator flow
 
 - `index.html` — unique registration CTA, event summary and live countdown to 29 August 2026
 - `events.html` — all four event choices
-- `details.html` — expanded format, preparation and rules
+- `details.html` — expanded format, preparation and rules; Code Sprint and Bug Hunt use venue systems
 - `register.html` — participant/team registration
 - `payment.html` — supplied QR, UTR and compressed screenshot upload
-- `my-registration.html` — participant status lookup and approved group link
+- `my-registration.html` — participant status lookup plus approved event-group and Community links
 - `admin-login.html` — separate administrator login
-- `admin.html` — protected registration/payment dashboard
+- `admin.html` — protected registration/payment dashboard with event/community links, Brevo delivery errors and retry controls
+
+The layout includes larger, higher-contrast typography and mobile-sized controls for participant phones. Asset version query strings are included so GitHub Pages does not keep serving the older small-text CSS after deployment.
 
 ## Configuration
 
