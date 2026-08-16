@@ -24,6 +24,7 @@
 
 <body>
 
+
 <header>
 
     <a
@@ -34,10 +35,13 @@
         <b>BF</b>
 
         <span>
+
             BYTEFEST
+
             <small>
                 2026 · INVICTUS TECH CLUB
             </small>
+
         </span>
 
     </a>
@@ -73,7 +77,9 @@
 </header>
 
 
+
 <main>
+
 
 <section>
 
@@ -90,6 +96,9 @@
 
     <div class="formgrid">
 
+
+        <!-- ADMIN -->
+
         <div class="fee">
 
             <span>
@@ -97,7 +106,8 @@
             </span>
 
             <p>
-                Use your approved admin email.
+                Admin access is only for
+                approved BYTEFEST administrators.
             </p>
 
             <a
@@ -110,6 +120,9 @@
         </div>
 
 
+
+        <!-- PARTICIPANT -->
+
         <div class="fee">
 
             <span>
@@ -117,8 +130,8 @@
             </span>
 
             <p>
-                Check your registration status
-                using your registration ID and email.
+                Already registered?
+                Check your registration and payment status.
             </p>
 
             <a
@@ -130,15 +143,21 @@
 
         </div>
 
+
     </div>
 
 
+
+    <!-- ADMIN LOGIN FORM -->
+
     <div
         id="admin"
-        style="margin-top:30px"
+        style="margin-top:35px"
     >
 
+
         <form id="adminLoginForm">
+
 
             <label>
 
@@ -149,7 +168,7 @@
                     type="email"
                     required
                     autocomplete="email"
-                    placeholder="admin@example.com"
+                    placeholder="Enter approved admin email"
                 >
 
             </label>
@@ -158,23 +177,216 @@
             <button
                 class="btn primary full"
                 type="submit"
+                id="adminLoginButton"
             >
                 Continue to Admin
             </button>
 
+
         </form>
 
 
-        <p id="adminMessage"></p>
+        <p
+            id="adminMessage"
+            style="margin-top:15px"
+        ></p>
+
 
     </div>
 
+
 </section>
+
 
 </main>
 
 
-<script src="admin.js"></script>
+
+<script>
+
+const API_URL =
+    "https://byte-fest-backend.onrender.com";
+
+
+const ADMIN_STORAGE_KEY =
+    "bytefest_admin";
+
+
+const ADMIN_EMAIL_KEY =
+    "bytefest_admin_email";
+
+
+
+document
+    .getElementById("adminLoginForm")
+    .addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+
+            const emailInput =
+                document.getElementById(
+                    "adminEmail"
+                );
+
+
+            const message =
+                document.getElementById(
+                    "adminMessage"
+                );
+
+
+            const button =
+                document.getElementById(
+                    "adminLoginButton"
+                );
+
+
+            const email =
+                emailInput.value
+                    .trim()
+                    .toLowerCase();
+
+
+            if (!email) {
+
+                message.textContent =
+                    "Please enter your admin email.";
+
+                return;
+            }
+
+
+            message.textContent =
+                "Checking admin access...";
+
+
+            button.disabled = true;
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_URL}/api/admin/check`,
+                        {
+
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                email: email
+                            })
+
+                        }
+                    );
+
+
+                const data =
+                    await response
+                        .json()
+                        .catch(() => ({}));
+
+
+                console.log(
+                    "ADMIN LOGIN RESPONSE:",
+                    data
+                );
+
+
+                if (!response.ok) {
+
+                    message.textContent =
+                        data.message ||
+                        `Server error (${response.status})`;
+
+                    return;
+                }
+
+
+                if (!data.allowed) {
+
+                    message.textContent =
+                        "This email is not an approved admin.";
+
+                    return;
+                }
+
+
+                if (!data.token) {
+
+                    message.textContent =
+                        "Admin approved but login token was not received.";
+
+                    console.error(
+                        "Token missing:",
+                        data
+                    );
+
+                    return;
+                }
+
+
+                // ==========================================
+                // IMPORTANT:
+                // Save the SAME token admin.js expects
+                // ==========================================
+
+                sessionStorage.setItem(
+                    ADMIN_STORAGE_KEY,
+                    data.token
+                );
+
+
+                sessionStorage.setItem(
+                    ADMIN_EMAIL_KEY,
+                    data.email || email
+                );
+
+
+                // Compatibility with your older code
+                sessionStorage.setItem(
+                    "bytefestAdminEmail",
+                    data.email || email
+                );
+
+
+                message.textContent =
+                    "Login successful. Opening dashboard...";
+
+
+                window.location.href =
+                    "admin.html";
+
+
+            } catch (error) {
+
+                console.error(
+                    "ADMIN LOGIN ERROR:",
+                    error
+                );
+
+
+                message.textContent =
+                    "Cannot connect to BYTEFEST backend.";
+
+            } finally {
+
+                button.disabled = false;
+
+            }
+
+        }
+    );
+
+</script>
+
 
 </body>
 
