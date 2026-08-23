@@ -1,70 +1,9 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Pay the BYTEFEST 2026 registration fee and submit UTR and payment screenshot for verification.">
-    <title>Payment | BYTEFEST 2026</title>
-    <link rel="stylesheet" href="style.css?v=2.3.0">
-    <script src="config.js?v=2.3.0" defer></script>
-    <script src="site.js?v=2.3.0" defer></script>
-    <script src="payment.js?v=2.3.0" defer></script>
-</head>
-<body>
-    <header class="site-header">
-        <a class="brand" href="index.html" aria-label="BYTEFEST home"><span class="brand-mark">BF</span><span class="brand-copy">BYTEFEST<small>2026 · INVICTUS TECH CLUB</small></span></a>
-        <button class="menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="siteNav">Menu</button>
-        <nav class="site-nav" id="siteNav" data-site-nav aria-label="Primary navigation">
-            <a href="index.html">Home</a><a href="events.html">Events</a><a href="details.html">Details</a><a href="my-registration.html">My Registration</a><a href="admin-login.html">Admin</a>
-            <a class="nav-register" href="register.html"><span class="register-icon">✦</span><span>Register <small>₹150 · BOOK A SPOT</small></span></a>
-        </nav>
-    </header>
-
-    <main>
-        <section class="section">
-            <p class="eyebrow">REGISTRATION · STEP 02</p>
-            <h2>Scan. Pay. <i>Submit.</i></h2>
-            <p class="lead">Pay ₹150 using the QR below, then submit the UTR and a clear successful-payment screenshot.</p>
-
-            <div class="payment-card">
-                <div class="payment-layout">
-                    <div>
-                        <div class="qr-panel">
-                            <img src="assets/bytefest-payment-qr.jpeg" alt="BYTEFEST registration payment QR code">
-                            <h3>Scan to pay ₹150</h3>
-                            <p>Use any supported UPI app.</p>
-                        </div>
-                        <p class="payment-warning"><b>Important:</b> The admin will check your payment. Until it is verified, your registration is not confirmed and you will not be added to the official group.</p>
-                    </div>
-
-                    <div>
-                        <span class="registration-pill" id="registrationId">Registration ID loading...</span>
-                        <form id="paymentForm" novalidate>
-                            <label class="field" for="paymentEmail">Registration email
-                                <input id="paymentEmail" type="email" autocomplete="email" required placeholder="Same email used in registration">
-                            </label>
-                            <label class="field" for="utr" style="margin-top:18px">UPI transaction ID / UTR
-                                <input id="utr" maxlength="50" required placeholder="Enter the UTR shown in your UPI app">
-                            </label>
-                            <label class="field" for="screenshot" style="margin-top:18px">Payment screenshot
-                                <input id="screenshot" type="file" accept="image/jpeg,image/png,image/webp" required>
-                                <span class="field-help">Choose a clear JPG, PNG or WebP image. It will be compressed before upload.</span>
-                            </label>
-                            <img class="proof-image hidden" id="screenshotPreview" alt="Selected payment screenshot preview">
-                            <div class="form-status" id="paymentStatus" role="status" aria-live="polite"></div>
-                            <button class="btn btn-primary btn-full" id="paymentButton" type="submit">Submit payment proof →</button>
-                        </form>
-
-                        <div class="notice notice-success" id="paymentSuccess" role="status">
-                            <h3>Payment proof submitted.</h3>
-                            <p>Your status remains <b>PENDING</b> until an admin checks the UTR and screenshot. After approval, you will receive an email and optional SMS.</p>
-                            <div class="actions"><a class="btn btn-primary" href="my-registration.html">Check my registration</a><a class="btn" href="index.html">Return home</a></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-    <footer class="site-footer"><b>BYTEFEST 2026</b><span>Payment verification is manual for participant safety.</span></footer>
-</body>
-</html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><title>BYTEFEST 2026</title><script>
+(function(){
+  try {
+    sessionStorage.setItem("bytefest_entry_view", "payment");
+    const r=new URLSearchParams(location.search).get("registrationId"); if(r) sessionStorage.setItem("bytefest_entry_registration_id", r);
+  } catch(e) {}
+  location.replace("./");
+})();
+</script></head><body></body></html>

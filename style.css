@@ -1558,3 +1558,14 @@ select:focus {
         touch-action: manipulation;
     }
 }
+
+
+/* BYTEFEST single-URL navigation */
+[data-app-view][hidden] { display: none !important; }
+.brand-logo { overflow: hidden; padding: 0; background: #08101d; }
+.brand-logo img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: inherit; }
+body.admin-mode > .public-site-header,
+body.admin-mode > .public-site-footer { display: none !important; }
+.admin-view { min-height: 100vh; }
+.admin-inner-header { position: sticky; top: 0; z-index: 50; }
+.site-nav a[aria-current="page"] { color: var(--text); opacity: 1; }

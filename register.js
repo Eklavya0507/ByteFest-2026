@@ -118,13 +118,20 @@
     eventInput.addEventListener("change", updateEventMode);
     addMemberButton.addEventListener("click", addMember);
 
-    const requestedEvent = new URLSearchParams(window.location.search).get("event");
-
-    if (allowedEvents.includes(requestedEvent)) {
-        eventInput.value = requestedEvent;
+    function applyRequestedEvent(requestedEvent) {
+        if (allowedEvents.includes(requestedEvent)) {
+            eventInput.value = requestedEvent;
+            sessionStorage.removeItem("bytefest_pending_event");
+        }
+        updateEventMode();
     }
 
-    updateEventMode();
+    applyRequestedEvent(sessionStorage.getItem("bytefest_pending_event"));
+
+    window.addEventListener("bytefest:viewchange", event => {
+        if (event.detail?.view !== "register") return;
+        applyRequestedEvent(event.detail.eventName || sessionStorage.getItem("bytefest_pending_event") || "");
+    });
 
     form.addEventListener("submit", async event => {
         event.preventDefault();
@@ -183,7 +190,13 @@
             showStatus(`Registration ${data.registrationId} created. Opening payment...`, "success");
 
             window.setTimeout(() => {
-                window.location.href = `payment.html?registrationId=${encodeURIComponent(data.registrationId)}`;
+                form.reset();
+                memberList.replaceChildren();
+                submitButton.disabled = false;
+                submitButton.textContent = "Create registration & continue →";
+                updateEventMode();
+                if (window.ByteFestSPA) window.ByteFestSPA.open("payment", { registrationId: data.registrationId });
+                else window.location.href = "./";
             }, 650);
         } catch (error) {
             console.error(error);

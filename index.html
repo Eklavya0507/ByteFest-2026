@@ -1,121 +1,432 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="BYTEFEST 2026 by Invictus Tech Club — UI/UX Arena, Code Sprint, Bug Hunt and Checkmate on 29 August 2026.">
-    <title>BYTEFEST 2026 | Invictus Tech Club</title>
-    <link rel="stylesheet" href="style.css?v=2.3.0">
-    <script src="config.js?v=2.3.0" defer></script>
-    <script src="site.js?v=2.3.0" defer></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="BYTEFEST 2026 by Invictus Tech Club — UI/UX Arena, Code Sprint, Bug Hunt and Checkmate on 29 August 2026.">
+  <meta name="robots" content="index,follow">
+  <title>BYTEFEST 2026 | Invictus Tech Club</title>
+  <link rel="stylesheet" href="style.css?v=2.5.0">
+  <script src="config.js?v=2.5.0" defer></script>
+  <script src="site.js?v=2.5.0" defer></script>
+  <script src="spa.js?v=2.5.0" defer></script>
+  <script src="register.js?v=2.5.0" defer></script>
+  <script src="payment.js?v=2.5.0" defer></script>
+  <script src="my-registration.js?v=2.5.0" defer></script>
+  <script src="admin.js?v=2.5.0" defer></script>
 </head>
 <body>
-    <header class="site-header">
-        <a class="brand" href="index.html" aria-label="BYTEFEST home">
-            <span class="brand-mark">BF</span>
-            <span class="brand-copy">BYTEFEST<small>2026 · INVICTUS TECH CLUB</small></span>
-        </a>
-        <button class="menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="siteNav">Menu</button>
-        <nav class="site-nav" id="siteNav" data-site-nav aria-label="Primary navigation">
-            <a href="index.html">Home</a>
-            <a href="events.html">Events</a>
-            <a href="details.html">Details</a>
-            <a href="my-registration.html">My Registration</a>
-            <a href="admin-login.html">Admin</a>
-            <a class="nav-register" href="register.html"><span class="register-icon">✦</span><span>Register <small>₹150 · BOOK A SPOT</small></span></a>
-        </nav>
-    </header>
 
-    <main>
-        <section class="hero">
-            <div>
-                <p class="eyebrow">CSE (DS) · OFFLINE TECH EVENT</p>
-                <h1>CODE.<br><i>CREATE.</i><br>COMPETE.</h1>
-                <p class="lead">BYTEFEST 2026 brings coders, designers, bug hunters and strategic thinkers together for one high-energy day of competition.</p>
-                <div class="actions">
-                    <a class="btn register-launch" href="register.html"><span>Open Registration<small>CHOOSE EVENT · PAY ₹150 · COMPETE</small></span> ↗</a>
-                    <a class="btn" href="events.html">Explore Events</a>
-                </div>
-                <div class="quick-stats">
-                    <span><b>29 AUG 2026</b>Event date</span>
-                    <span><b>₹150</b>Per registration</span>
-                    <span><b>OFFLINE</b>EPCET B Block Seminar Hall</span>
-                    <span><b>9:10–9:30 AM</b>Reporting time</span>
-                </div>
-            </div>
+<header class="site-header public-site-header">
+  <a class="brand" href="./" data-page="home" aria-label="BYTEFEST home">
+    <span class="brand-mark brand-logo"><img src="assets/invictus-logo.jpg" alt="Invictus Tech Club logo"></span>
+    <span class="brand-copy">BYTEFEST<small>2026 · INVICTUS TECH CLUB</small></span>
+  </a>
+  <button class="menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="siteNav">Menu</button>
+  <nav class="site-nav" id="siteNav" data-site-nav aria-label="Primary navigation">
+    <a href="./" data-page="home" data-nav-link="home">Home</a>
+    <a href="./" data-page="events" data-nav-link="events">Events</a>
+    <a href="./" data-page="details" data-nav-link="details">Details</a>
+    <a href="./" data-page="my-registration" data-nav-link="my-registration">My Registration</a>
+    <a href="./" data-page="admin-login" data-nav-link="admin-login">Admin</a>
+    <a class="nav-register" href="./" data-page="register" data-nav-link="register"><span class="register-icon">✦</span><span>Register <small>₹150 · BOOK A SPOT</small></span></a>
+  </nav>
+</header>
+<main id="bytefestApp">
+<div class="spa-view" data-app-view="home">
 
-            <div class="hero-visual" aria-label="Invictus Tech Club visual">
-                <div class="orbit"></div>
-                <div class="logo-orb"><img src="assets/invictus-logo.jpg" alt="Invictus Tech Club logo"></div>
-                <span class="floating-tag tag-one">AI × DS</span>
-                <span class="floating-tag tag-two">BUILD</span>
-                <span class="floating-tag tag-three">WIN</span>
-            </div>
-        </section>
+<section class="hero">
+<div>
+<p class="eyebrow">CSE (DS) · OFFLINE TECH EVENT</p>
+<h1>CODE.<br/><i>CREATE.</i><br/>COMPETE.</h1>
+<p class="lead">BYTEFEST 2026 brings coders, designers, bug hunters and strategic thinkers together for one high-energy day of competition.</p>
+<div class="actions">
+<a class="btn register-launch" data-page="register" href="./"><span>Open Registration<small>CHOOSE EVENT · PAY ₹150 · COMPETE</small></span> ↗</a>
+<a class="btn" data-page="events" href="./">Explore Events</a>
+</div>
+<div class="quick-stats">
+<span><b>29 AUG 2026</b>Event date</span>
+<span><b>₹150</b>Per registration</span>
+<span><b>OFFLINE</b>EPCET B Block Seminar Hall</span>
+<span><b>9:10–9:30 AM</b>Reporting time</span>
+</div>
+</div>
+<div aria-label="Invictus Tech Club visual" class="hero-visual">
+<div class="orbit"></div>
+<div class="logo-orb"><img alt="Invictus Tech Club logo" src="assets/invictus-logo.jpg"/></div>
+<span class="floating-tag tag-one">AI × DS</span>
+<span class="floating-tag tag-two">BUILD</span>
+<span class="floating-tag tag-three">WIN</span>
+</div>
+</section>
+<section aria-label="Countdown to BYTEFEST 2026" class="countdown-panel" data-countdown="">
+<div class="countdown-head">
+<div>
+<p class="eyebrow">COMING 29 AUGUST 2026</p>
+<h2 data-countdown-status="">Race to <i>BYTEFEST.</i></h2>
+<p class="muted">Reporting time: 9:10 AM–9:30 AM.</p>
+</div>
+<div class="countdown-units">
+<div class="countdown-unit"><b data-days="">00</b><small>Days</small></div>
+<div class="countdown-unit"><b data-hours="">00</b><small>Hours</small></div>
+<div class="countdown-unit"><b data-minutes="">00</b><small>Minutes</small></div>
+<div class="countdown-unit"><b data-seconds="">00</b><small>Seconds</small></div>
+</div>
+</div>
+</section>
+<section class="section">
+<div class="section-head">
+<div><p class="eyebrow">THE LINE-UP</p><h2>Four ways to <i>prove it.</i></h2></div>
+<p class="lead">Choose a team challenge or compete individually in Checkmate. Open any event for its format, preparation guide and rules.</p>
+</div>
+<div class="event-grid">
+<article class="event-card accent-orange">
+<span class="number">01</span><span class="event-symbol">✦</span>
+<h3>UI/UX ARENA</h3><p>Imagine · Design · Transform</p>
+<div class="event-meta">3 MEMBERS<br/>OFFLINE · BRING LAPTOP</div>
+<div class="card-actions"><a class="card-link" data-page="details" data-scroll-target="uiux" href="./">Get details →</a><a class="card-link" data-event="UI/UX Arena" data-page="register" href="./">Register</a></div>
+</article>
+<article class="event-card accent-cyan">
+<span class="number">02</span><span class="event-symbol">&lt;/&gt;</span>
+<h3>CODE SPRINT</h3><p>Think Fast · Code Smart · Win</p>
+<div class="event-meta">3 MEMBERS<br/>OFFLINE · SYSTEMS PROVIDED</div>
+<div class="card-actions"><a class="card-link" data-page="details" data-scroll-target="code-sprint" href="./">Get details →</a><a class="card-link" data-event="Code Sprint" data-page="register" href="./">Register</a></div>
+</article>
+<article class="event-card accent-green">
+<span class="number">03</span><span class="event-symbol">⌕</span>
+<h3>BUG HUNT</h3><p>Find · Fix · Conquer</p>
+<div class="event-meta">2–3 MEMBERS<br/>OFFLINE · SYSTEMS PROVIDED</div>
+<div class="card-actions"><a class="card-link" data-page="details" data-scroll-target="bug-hunt" href="./">Get details →</a><a class="card-link" data-event="Bug Hunt" data-page="register" href="./">Register</a></div>
+</article>
+<article class="event-card accent-purple">
+<span class="number">04</span><span class="event-symbol">♞</span>
+<h3>CHECKMATE</h3><p>Think Ahead · Play Smart</p>
+<div class="event-meta">INDIVIDUAL<br/>OFFLINE</div>
+<div class="card-actions"><a class="card-link" data-page="details" data-scroll-target="checkmate" href="./">Get details →</a><a class="card-link" data-event="Checkmate" data-page="register" href="./">Register</a></div>
+</article>
+</div>
+</section>
+<section class="section">
+<div class="about-panel">
+<img alt="Invictus Tech Club" src="assets/invictus-logo.jpg"/>
+<div>
+<p class="eyebrow">HOSTED BY INVICTUS TECH CLUB</p>
+<h2>Technical skill meets <i>competition.</i></h2>
+<p class="lead">Bring your college ID, your best ideas and a team ready to perform. Only UI/UX Arena participants need their own laptop; venue systems are provided for Code Sprint and Bug Hunt. Payment is manually verified before registration is confirmed.</p>
+<p><b>East Point College of Engineering &amp; Technology</b><br/>Department of Computer Science &amp; Engineering (Data Science)<br/>An Autonomous Institution · Affiliated to VTU · Approved by AICTE · NAAC Grade A · NBA Accredited</p>
+<div class="actions"><a class="btn btn-primary" data-page="details" href="./">Read event rules</a><a class="btn" data-page="my-registration" href="./">Check my status</a></div>
+</div>
+</div>
+</section>
 
-        <section class="countdown-panel" data-countdown aria-label="Countdown to BYTEFEST 2026">
-            <div class="countdown-head">
-                <div>
-                    <p class="eyebrow">COMING 29 AUGUST 2026</p>
-                    <h2 data-countdown-status>Race to <i>BYTEFEST.</i></h2>
-                    <p class="muted">Reporting time: 9:10 AM–9:30 AM.</p>
-                </div>
-                <div class="countdown-units">
-                    <div class="countdown-unit"><b data-days>00</b><small>Days</small></div>
-                    <div class="countdown-unit"><b data-hours>00</b><small>Hours</small></div>
-                    <div class="countdown-unit"><b data-minutes>00</b><small>Minutes</small></div>
-                    <div class="countdown-unit"><b data-seconds>00</b><small>Seconds</small></div>
-                </div>
-            </div>
-        </section>
+</div><div class="spa-view" data-app-view="events" hidden>
 
-        <section class="section">
-            <div class="section-head">
-                <div><p class="eyebrow">THE LINE-UP</p><h2>Four ways to <i>prove it.</i></h2></div>
-                <p class="lead">Choose a team challenge or compete individually in Checkmate. Open any event for its format, preparation guide and rules.</p>
-            </div>
-            <div class="event-grid">
-                <article class="event-card accent-orange">
-                    <span class="number">01</span><span class="event-symbol">✦</span>
-                    <h3>UI/UX ARENA</h3><p>Imagine · Design · Transform</p>
-                    <div class="event-meta">3 MEMBERS<br>OFFLINE · BRING LAPTOP</div>
-                    <div class="card-actions"><a class="card-link" href="details.html#uiux">Get details →</a><a class="card-link" href="register.html?event=UI%2FUX%20Arena">Register</a></div>
-                </article>
-                <article class="event-card accent-cyan">
-                    <span class="number">02</span><span class="event-symbol">&lt;/&gt;</span>
-                    <h3>CODE SPRINT</h3><p>Think Fast · Code Smart · Win</p>
-                    <div class="event-meta">3 MEMBERS<br>OFFLINE · SYSTEMS PROVIDED</div>
-                    <div class="card-actions"><a class="card-link" href="details.html#code-sprint">Get details →</a><a class="card-link" href="register.html?event=Code%20Sprint">Register</a></div>
-                </article>
-                <article class="event-card accent-green">
-                    <span class="number">03</span><span class="event-symbol">⌕</span>
-                    <h3>BUG HUNT</h3><p>Find · Fix · Conquer</p>
-                    <div class="event-meta">2–3 MEMBERS<br>OFFLINE · SYSTEMS PROVIDED</div>
-                    <div class="card-actions"><a class="card-link" href="details.html#bug-hunt">Get details →</a><a class="card-link" href="register.html?event=Bug%20Hunt">Register</a></div>
-                </article>
-                <article class="event-card accent-purple">
-                    <span class="number">04</span><span class="event-symbol">♞</span>
-                    <h3>CHECKMATE</h3><p>Think Ahead · Play Smart</p>
-                    <div class="event-meta">INDIVIDUAL<br>OFFLINE</div>
-                    <div class="card-actions"><a class="card-link" href="details.html#checkmate">Get details →</a><a class="card-link" href="register.html?event=Checkmate">Register</a></div>
-                </article>
-            </div>
-        </section>
+<section class="section">
+<p class="eyebrow">BYTEFEST 2026 · EVENT LINE-UP</p>
+<h2>Choose your <i>challenge.</i></h2>
+<p class="lead">UI/UX Arena and Code Sprint require exactly 3 participants. Bug Hunt accepts 2–3 participants, and Checkmate is individual. Reporting is from 9:10 AM to 9:30 AM on 29 August 2026.</p>
+<div class="event-grid" style="margin-top:38px">
+<article class="event-card accent-orange">
+<span class="number">01</span><span class="event-symbol">✦</span>
+<h3>UI/UX ARENA</h3><p>Turn a problem statement into a thoughtful interface and present the decisions behind your design.</p>
+<div class="event-meta">3 MEMBERS<br/>DESIGN + PROTOTYPE + PRESENT</div>
+<div class="card-actions"><a class="card-link" data-page="details" data-scroll-target="uiux" href="./">Get details →</a><a class="card-link" data-event="UI/UX Arena" data-page="register" href="./">Register</a></div>
+</article>
+<article class="event-card accent-cyan">
+<span class="number">02</span><span class="event-symbol">&lt;/&gt;</span>
+<h3>CODE SPRINT</h3><p>Solve programming challenges under time pressure with clean logic, correct output and smart teamwork.</p>
+<div class="event-meta">3 MEMBERS<br/>VENUE SYSTEMS PROVIDED</div>
+<div class="card-actions"><a class="card-link" data-page="details" data-scroll-target="code-sprint" href="./">Get details →</a><a class="card-link" data-event="Code Sprint" data-page="register" href="./">Register</a></div>
+</article>
+<article class="event-card accent-green">
+<span class="number">03</span><span class="event-symbol">⌕</span>
+<h3>BUG HUNT</h3><p>Inspect broken code, identify defects and submit fixes that survive the provided tests.</p>
+<div class="event-meta">2–3 MEMBERS<br/>VENUE SYSTEMS PROVIDED</div>
+<div class="card-actions"><a class="card-link" data-page="details" data-scroll-target="bug-hunt" href="./">Get details →</a><a class="card-link" data-event="Bug Hunt" data-page="register" href="./">Register</a></div>
+</article>
+<article class="event-card accent-purple">
+<span class="number">04</span><span class="event-symbol">♞</span>
+<h3>CHECKMATE</h3><p>Read the position, manage the clock and outthink your opponent across competitive rounds.</p>
+<div class="event-meta">INDIVIDUAL<br/>STRATEGY + DISCIPLINE</div>
+<div class="card-actions"><a class="card-link" data-page="details" data-scroll-target="checkmate" href="./">Get details →</a><a class="card-link" data-event="Checkmate" data-page="register" href="./">Register</a></div>
+</article>
+</div>
+<div class="info-grid">
+<div class="info-tile"><b>Date</b><h3>29 Aug 2026</h3></div>
+<div class="info-tile"><b>Reporting time</b><h3>9:10 AM–9:30 AM</h3></div>
+<div class="info-tile"><b>Venue</b><h3>EPCET B Block Seminar Hall</h3></div>
+<div class="info-tile"><b>Fee</b><h3>₹150 / registration</h3></div>
+<div class="info-tile"><b>Mode</b><h3>Offline</h3></div>
+<div class="info-tile"><b>Confirmation</b><h3>After payment review</h3></div>
+</div>
+<div class="actions"><a class="btn btn-primary" data-page="register" href="./">Register for BYTEFEST →</a><a class="btn" data-page="details" href="./">Read every rule</a></div>
+</section>
 
-        <section class="section">
-            <div class="about-panel">
-                <img src="assets/invictus-logo.jpg" alt="Invictus Tech Club">
-                <div>
-                    <p class="eyebrow">HOSTED BY INVICTUS TECH CLUB</p>
-                    <h2>Technical skill meets <i>competition.</i></h2>
-                    <p class="lead">Bring your college ID, your best ideas and a team ready to perform. Only UI/UX Arena participants need their own laptop; venue systems are provided for Code Sprint and Bug Hunt. Payment is manually verified before registration is confirmed.</p>
-                    <p><b>East Point College of Engineering & Technology</b><br>Department of Computer Science & Engineering (Data Science)<br>An Autonomous Institution · Affiliated to VTU · Approved by AICTE · NAAC Grade A · NBA Accredited</p>
-                    <div class="actions"><a class="btn btn-primary" href="details.html">Read event rules</a><a class="btn" href="my-registration.html">Check my status</a></div>
-                </div>
-            </div>
-        </section>
-    </main>
+</div><div class="spa-view" data-app-view="details" hidden>
 
-    <footer class="site-footer"><b>BYTEFEST 2026</b><span>Code · Create · Compete · Invictus Tech Club</span></footer>
+<section class="section">
+<p class="eyebrow">EVENT INFORMATION</p>
+<h2>Everything you <i>need to know.</i></h2>
+<p class="lead">Use this page to choose your event and prepare your team. Final problem statements, pairing format and venue instructions announced by the organizers on event day take priority.</p>
+<div class="info-grid">
+<div class="info-tile"><b>Date</b><h3>Saturday, 29 Aug 2026</h3></div>
+<div class="info-tile"><b>Reporting time</b><h3>9:10 AM–9:30 AM</h3></div>
+<div class="info-tile"><b>Venue</b><h3>EPCET B Block Seminar Hall</h3></div>
+<div class="info-tile"><b>Registration</b><h3>₹150</h3></div>
+<div class="info-tile"><b>Mode</b><h3>Offline</h3></div>
+</div>
+<div class="detail-stack">
+<article class="detail-card accent-orange" id="uiux">
+<div class="detail-card-header"><h3>01 · UI/UX Arena</h3><span class="detail-badge">3 members</span></div>
+<p class="lead">Create a useful, clear and visually strong digital experience from a problem statement revealed at the venue.</p>
+<div class="detail-columns">
+<div><h3>Challenge format</h3><ul class="rule-list"><li>Understand the user problem and define a focused solution.</li><li>Prepare key screens, a navigable prototype or a clearly connected flow.</li><li>Present the design choices, target user and expected impact.</li><li>Use a design tool available on your own laptop.</li></ul></div>
+<div><h3>Judging focus</h3><ul class="rule-list"><li>Problem understanding and originality.</li><li>Usability, information flow and accessibility.</li><li>Visual consistency and completeness.</li><li>Clarity of the final presentation.</li></ul></div>
+</div>
+<div class="payment-warning"><b>Bring:</b> charged laptop, charger and your preferred design software. Pre-built final submissions are not allowed; the competition work must be produced during the event.</div>
+<div class="actions"><a class="btn btn-primary" data-event="UI/UX Arena" data-page="register" href="./">Register for UI/UX Arena</a></div>
+</article>
+<article class="detail-card accent-cyan" id="code-sprint">
+<div class="detail-card-header"><h3>02 · Code Sprint</h3><span class="detail-badge">3 members</span></div>
+<p class="lead">Convert logic into working solutions while balancing correctness, speed and readable implementation.</p>
+<div class="detail-columns">
+<div><h3>Challenge format</h3><ul class="rule-list"><li>Teams receive programming problems at the start.</li><li>Solutions are evaluated against the official inputs and expected outputs.</li><li>Teams may divide analysis, coding and testing among members.</li><li>Supported languages and submission instructions are announced at the venue.</li></ul></div>
+<div><h3>Scoring focus</h3><ul class="rule-list"><li>Number of correctly solved problems.</li><li>Correctness across all test cases.</li><li>Completion time and applicable penalties.</li><li>Rule compliance and originality of submitted work.</li></ul></div>
+</div>
+<div class="payment-warning"><b>No laptop required:</b> venue systems and the required coding setup will be provided by the organizers. Bring your college ID and report on time.</div>
+<div class="actions"><a class="btn btn-primary" data-event="Code Sprint" data-page="register" href="./">Register for Code Sprint</a></div>
+</article>
+<article class="detail-card accent-green" id="bug-hunt">
+<div class="detail-card-header"><h3>03 · Bug Hunt</h3><span class="detail-badge">2–3 members</span></div>
+<p class="lead">Track down logical, syntax and runtime defects in supplied programs, then prove that your fixes work.</p>
+<div class="detail-columns">
+<div><h3>Challenge format</h3><ul class="rule-list"><li>Teams receive code containing a set of defects.</li><li>Identify the cause, apply a valid fix and test the result.</li><li>Do not remove required functionality merely to pass a visible example.</li><li>Submit in the format announced by the organizing team.</li></ul></div>
+<div><h3>Scoring focus</h3><ul class="rule-list"><li>Number and difficulty of correctly fixed defects.</li><li>Behavior on official test cases.</li><li>Quality and safety of the correction.</li><li>Time taken when teams finish with equal scores.</li></ul></div>
+</div>
+<div class="payment-warning"><b>No laptop required:</b> venue systems and the required debugging setup will be provided by the organizers. Bring your college ID and report on time.</div>
+<div class="actions"><a class="btn btn-primary" data-event="Bug Hunt" data-page="register" href="./">Register for Bug Hunt</a></div>
+</article>
+<article class="detail-card accent-purple" id="checkmate">
+<div class="detail-card-header"><h3>04 · Checkmate</h3><span class="detail-badge">Individual</span></div>
+<p class="lead">A focused chess competition for players who can calculate accurately, manage time and stay composed.</p>
+<div class="detail-columns">
+<div><h3>Match format</h3><ul class="rule-list"><li>Pairing structure depends on the final number of participants.</li><li>Time control and round instructions are announced before play begins.</li><li>Standard touch-move and fair-play expectations apply.</li><li>Players must report the result to the assigned coordinator.</li></ul></div>
+<div><h3>Player rules</h3><ul class="rule-list"><li>Phones and outside assistance are not allowed during play.</li><li>Respect the clock, board and opponent.</li><li>Do not disturb games in progress.</li><li>The arbiter’s decision is final for disputes.</li></ul></div>
+</div>
+<div class="payment-warning"><b>Bring:</b> college ID and arrive before the reporting time. Chess boards and clocks will be managed according to venue availability.</div>
+<div class="actions"><a class="btn btn-primary" data-event="Checkmate" data-page="register" href="./">Register for Checkmate</a></div>
+</article>
+<article class="detail-card" id="general-rules">
+<div class="detail-card-header"><h3>General rules</h3><span class="detail-badge">All participants</span></div>
+<div class="detail-columns">
+<div><h3>Registration &amp; payment</h3><ul class="rule-list"><li>Registration fee is ₹150 per registration.</li><li>UI/UX Arena and Code Sprint require one lead participant plus two additional members.</li><li>Bug Hunt accepts one lead participant plus one or two additional members.</li><li>Checkmate accepts one participant per registration.</li><li>Registration is confirmed only after the admin verifies the UTR and screenshot.</li><li>Keep the generated registration ID for status checks.</li></ul></div>
+<div><h3>At the venue</h3><ul class="rule-list"><li>Report between 9:10 AM and 9:30 AM at EPCET B Block Seminar Hall.</li><li>Carry a valid college ID.</li><li>Follow coordinator instructions and use only permitted resources.</li><li>Plagiarism, impersonation or disruptive behavior can lead to disqualification.</li><li>Organizers may make reasonable format changes based on participation and venue needs.</li><li>Judges’ and organizers’ decisions are final.</li></ul></div>
+</div>
+</article>
+<article class="detail-card">
+<div class="detail-card-header"><h3>Venue &amp; coordinators</h3><span class="detail-badge">Need help?</span></div>
+<p><b>EPCET B Block Seminar Hall</b><br/>East Point College of Engineering &amp; Technology<br/>Department of Computer Science &amp; Engineering (Data Science)<br/>An Autonomous Institution · Affiliated to VTU · Approved by AICTE · NAAC Grade A · NBA Accredited</p>
+<div class="detail-columns">
+<div><h3>Gautam</h3><p><a href="tel:+919939886361">+91 99398 86361</a></p></div>
+<div><h3>Gagan</h3><p><a href="tel:+919739474741">+91 97394 74741</a></p></div>
+<div><h3>Dr. Vanshika Rastogi</h3><p>Faculty Coordinator · Associate Professor</p></div>
+</div>
+<div class="actions"><a class="btn btn-primary" data-page="register" href="./">Register for BYTEFEST →</a><a class="btn" data-page="my-registration" href="./">Check registration status</a></div>
+</article>
+</div>
+</section>
+
+</div><div class="spa-view" data-app-view="register" hidden>
+
+<section class="section">
+<p class="eyebrow">REGISTRATION · STEP 01</p>
+<h2>Register your <i>spot.</i></h2>
+<p class="lead">Use the lead participant’s email carefully—it is required later to submit payment proof and check registration status.</p>
+<form class="form-shell" id="registrationForm" novalidate="">
+<div class="form-grid">
+<label class="field" for="event">Event
+                        <select id="event" required="">
+<option value="">Select an event</option>
+<option value="UI/UX Arena">UI/UX Arena</option>
+<option value="Code Sprint">Code Sprint</option>
+<option value="Bug Hunt">Bug Hunt</option>
+<option value="Checkmate">Checkmate</option>
+</select>
+</label>
+<label class="field" for="participantName">Lead participant name
+                        <input autocomplete="name" id="participantName" maxlength="80" placeholder="Full name" required=""/>
+</label>
+<label class="field" for="participantEmail">Email
+                        <input autocomplete="email" id="participantEmail" maxlength="120" placeholder="you@example.com" required="" type="email"/>
+<span class="field-help">Use this same email for payment and status lookup.</span>
+</label>
+<label class="field" for="phone">Phone number
+                        <span class="phone-field"><span class="phone-prefix">+91</span><input autocomplete="tel" id="phone" inputmode="numeric" maxlength="10" pattern="[6-9][0-9]{9}" placeholder="10-digit number" required="" type="tel"/></span>
+</label>
+<label class="field" for="department">Department
+                        <input id="department" maxlength="80" placeholder="Department" required="" value="CSE (DS)"/>
+</label>
+<label class="field" for="year">Year
+                        <select id="year" required="">
+<option value="">Select year</option>
+<option value="1st Year">1st Year</option>
+<option value="2nd Year">2nd Year</option>
+<option value="3rd Year">3rd Year</option>
+<option value="4th Year">4th Year</option>
+</select>
+</label>
+</div>
+<section class="members-section" id="membersSection">
+<div class="members-head">
+<div><h3>Team members</h3><p class="muted" id="membersHelp">UI/UX Arena and Code Sprint require 3 people; Bug Hunt requires 2–3.</p></div>
+<button class="btn btn-small" id="addMemberButton" type="button">+ Add member</button>
+</div>
+<div id="memberList"></div>
+</section>
+<div class="fee-row"><span>Registration fee</span><b>₹150</b></div>
+<p class="payment-warning">Submitting this form creates a registration ID. Your place is confirmed only after you scan the QR, submit the UTR and screenshot, and the admin approves the payment.</p>
+<div aria-live="polite" class="form-status" id="registrationStatus" role="status"></div>
+<button class="btn btn-primary btn-full" id="registerButton" type="submit">Create registration &amp; continue →</button>
+</form>
+</section>
+
+</div><div class="spa-view" data-app-view="payment" hidden>
+
+<section class="section">
+<p class="eyebrow">REGISTRATION · STEP 02</p>
+<h2>Scan. Pay. <i>Submit.</i></h2>
+<p class="lead">Pay ₹150 using the QR below, then submit the UTR and a clear successful-payment screenshot.</p>
+<div class="payment-card">
+<div class="payment-layout">
+<div>
+<div class="qr-panel">
+<img alt="BYTEFEST registration payment QR code" src="assets/bytefest-payment-qr.jpeg"/>
+<h3>Scan to pay ₹150</h3>
+<p>Use any supported UPI app.</p>
+</div>
+<p class="payment-warning"><b>Important:</b> The admin will check your payment. Until it is verified, your registration is not confirmed and you will not be added to the official group.</p>
+</div>
+<div>
+<span class="registration-pill" id="registrationId">Registration ID loading...</span>
+<form id="paymentForm" novalidate="">
+<label class="field" for="paymentEmail">Registration email
+                                <input autocomplete="email" id="paymentEmail" placeholder="Same email used in registration" required="" type="email"/>
+</label>
+<label class="field" for="utr" style="margin-top:18px">UPI transaction ID / UTR
+                                <input id="utr" maxlength="50" placeholder="Enter the UTR shown in your UPI app" required=""/>
+</label>
+<label class="field" for="screenshot" style="margin-top:18px">Payment screenshot
+                                <input accept="image/jpeg,image/png,image/webp" id="screenshot" required="" type="file"/>
+<span class="field-help">Choose a clear JPG, PNG or WebP image. It will be compressed before upload.</span>
+</label>
+<img alt="Selected payment screenshot preview" class="proof-image hidden" id="screenshotPreview"/>
+<div aria-live="polite" class="form-status" id="paymentStatus" role="status"></div>
+<button class="btn btn-primary btn-full" id="paymentButton" type="submit">Submit payment proof →</button>
+</form>
+<div class="notice notice-success" id="paymentSuccess" role="status">
+<h3>Payment proof submitted.</h3>
+<p>Your status remains <b>PENDING</b> until an admin checks the UTR and screenshot. After approval, you will receive an email and optional SMS.</p>
+<div class="actions"><a class="btn btn-primary" data-page="my-registration" href="./">Check my registration</a><a class="btn" data-page="home" href="./">Return home</a></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+</div><div class="spa-view" data-app-view="my-registration" hidden>
+
+<section class="section">
+<p class="eyebrow">PARTICIPANT PORTAL</p>
+<h2>My <i>registration.</i></h2>
+<p class="lead">Enter the registration ID and lead participant email. This is separate from the administrator login.</p>
+<form class="lookup-card" id="lookupForm" novalidate="">
+<div class="form-grid">
+<label class="field" for="lookupId">Registration ID
+                        <input autocomplete="off" id="lookupId" placeholder="BF26-XXXXXXXX" required=""/>
+</label>
+<label class="field" for="lookupEmail">Registration email
+                        <input autocomplete="email" id="lookupEmail" placeholder="you@example.com" required="" type="email"/>
+</label>
+</div>
+<div aria-live="polite" class="form-status" id="lookupStatus" role="status"></div>
+<button class="btn btn-primary btn-full" id="lookupButton" type="submit">Check registration →</button>
+</form>
+<div aria-live="polite" class="lookup-result" id="lookupResult"></div>
+</section>
+
+</div><div class="spa-view" data-app-view="admin-login" hidden>
+
+<section class="section">
+<p class="eyebrow">RESTRICTED ACCESS</p>
+<h2>Administrator <i>login.</i></h2>
+<p class="lead">This page is only for approved BYTEFEST administrators. Participants should use My Registration.</p>
+<div class="access-layout">
+<div class="access-choice">
+<span class="detail-badge">Participant</span>
+<h3 style="margin-top:18px">Check your registration</h3>
+<p>Use your registration ID and lead participant email to see payment status and the approved group link.</p>
+<a class="btn" data-page="my-registration" href="./">Open My Registration →</a>
+</div>
+<form class="access-card" id="adminLoginForm" novalidate="">
+<span class="detail-badge">Admin only</span>
+<h3 style="margin-top:18px">Dashboard access</h3>
+<label class="field" for="adminEmail">Approved admin email
+                        <input autocomplete="username" id="adminEmail" placeholder="admin@example.com" required="" type="email"/>
+</label>
+<label class="field" for="adminPassword" style="margin-top:18px">Admin password
+                        <input autocomplete="current-password" id="adminPassword" placeholder="Password configured in Render" required="" type="password"/>
+</label>
+<div aria-live="polite" class="form-status" id="adminLoginStatus" role="status"></div>
+<button class="btn btn-primary btn-full" id="adminLoginButton" type="submit">Open admin dashboard →</button>
+</form>
+</div>
+</section>
+
+</div>
+<div class="spa-view admin-view" data-app-view="admin-dashboard" hidden>
+  <header class="site-header admin-inner-header">
+    <a class="brand" href="./" data-page="home">
+      <span class="brand-mark brand-logo"><img src="assets/invictus-logo.jpg" alt="Invictus Tech Club logo"></span>
+      <span class="brand-copy">BYTEFEST<small>2026 · ADMIN PANEL</small></span>
+    </a>
+    <div class="admin-actions"><a class="btn btn-small" href="./" data-page="home">Public website</a><button class="btn btn-small btn-danger" id="logoutButton" type="button">Log out</button></div>
+  </header>
+  <main class="admin-shell" id="adminDashboard">
+<div class="admin-topbar">
+<div><p class="eyebrow">PAYMENT REVIEW</p><h1>Registration <i>Dashboard.</i></h1><p class="muted" id="adminIdentity"></p></div>
+<div class="admin-actions"><button class="btn" id="refreshButton" type="button">↻ Refresh</button><button class="btn" id="exportButton" type="button">↓ Export CSV</button></div>
+</div>
+<div class="stat-grid">
+<div class="stat-card"><small>Total registrations</small><strong id="totalCount">0</strong></div>
+<div class="stat-card"><small>Pending</small><strong id="pendingCount">0</strong></div>
+<div class="stat-card"><small>Proof submitted</small><strong id="proofCount">0</strong></div>
+<div class="stat-card"><small>Paid / confirmed</small><strong id="paidCount">0</strong></div>
+</div>
+<div class="admin-filters">
+<input aria-label="Search registrations" id="searchInput" placeholder="Search name, email, phone, ID or UTR..." type="search"/>
+<select aria-label="Filter by event" id="eventFilter">
+<option value="">All events</option><option>UI/UX Arena</option><option>Code Sprint</option><option>Bug Hunt</option><option>Checkmate</option>
+</select>
+<select aria-label="Filter by payment status" id="paymentFilter">
+<option value="">All payments</option><option value="PENDING">Pending</option><option value="PAID">Paid</option><option value="PROOF">Proof submitted</option>
+</select>
+</div>
+<div aria-live="polite" class="form-status" id="dashboardStatus" role="status"></div>
+<div class="table-shell">
+<table class="admin-table">
+<thead><tr><th>Registration</th><th>Event / team</th><th>Participant</th><th>Payment</th><th>Proof</th><th>Notification</th><th>Action</th></tr></thead>
+<tbody id="registrationRows"><tr><td class="empty-state" colspan="7">Loading registrations...</td></tr></tbody>
+</table>
+</div>
+<p class="admin-footer-note">Approving a payment confirms the registration first, then sends the Brevo email and optional SMS. A notification failure does not undo approval.</p>
+</main><div aria-labelledby="modalTitle" aria-modal="true" class="modal" id="detailsModal" role="dialog">
+<div class="modal-panel">
+<div class="modal-head"><h3 id="modalTitle">Registration details</h3><button aria-label="Close details" class="icon-button" id="closeModalButton" type="button">×</button></div>
+<div class="modal-body" id="modalBody"></div>
+</div>
+</div><div aria-live="polite" class="toast" id="adminToast" role="status"></div>
+</div>
+</main>
+<footer class="site-footer public-site-footer"><b>BYTEFEST 2026</b><span>Code · Create · Compete · Invictus Tech Club</span></footer>
 </body>
 </html>

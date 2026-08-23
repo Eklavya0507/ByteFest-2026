@@ -85,7 +85,7 @@
                             ? "Please wait for admin approval and check your email."
                             : "Payment proof has not been submitted yet."}</p>
                         ${!payment.proofSubmitted ? `
-                            <a class="btn btn-primary" href="payment.html?registrationId=${encodeURIComponent(data.registrationId)}">Submit payment proof →</a>
+                            <a class="btn btn-primary" href="./" data-page="payment" data-registration-id="${escapeHtml(data.registrationId)}">Submit payment proof →</a>
                         ` : ""}
                     </div>
                 `}
@@ -93,6 +93,7 @@
         `;
 
         sessionStorage.setItem(`bytefest_payment_email_${data.registrationId}`, email);
+        sessionStorage.setItem("bytefest_active_registration_id", data.registrationId);
     }
 
     async function readJson(response) {
@@ -104,6 +105,12 @@
             return {};
         }
     }
+
+    window.addEventListener("bytefest:viewchange", event => {
+        if (event.detail?.view !== "my-registration") return;
+        if (!idInput.value) idInput.value = sessionStorage.getItem("bytefest_last_registration_id") || "";
+        if (!emailInput.value) emailInput.value = sessionStorage.getItem("bytefest_last_registration_email") || "";
+    });
 
     form.addEventListener("submit", async event => {
         event.preventDefault();

@@ -1,81 +1,9 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Register for BYTEFEST 2026 at East Point College of Engineering & Technology.">
-    <title>Register | BYTEFEST 2026</title>
-    <link rel="stylesheet" href="style.css?v=2.3.0">
-    <script src="config.js?v=2.3.0" defer></script>
-    <script src="site.js?v=2.3.0" defer></script>
-    <script src="register.js?v=2.3.0" defer></script>
-</head>
-<body>
-    <header class="site-header">
-        <a class="brand" href="index.html" aria-label="BYTEFEST home"><span class="brand-mark">BF</span><span class="brand-copy">BYTEFEST<small>2026 · INVICTUS TECH CLUB</small></span></a>
-        <button class="menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="siteNav">Menu</button>
-        <nav class="site-nav" id="siteNav" data-site-nav aria-label="Primary navigation">
-            <a href="index.html">Home</a><a href="events.html">Events</a><a href="details.html">Details</a><a href="my-registration.html">My Registration</a><a href="admin-login.html">Admin</a>
-            <a class="nav-register" href="register.html"><span class="register-icon">✦</span><span>Register <small>₹150 · BOOK A SPOT</small></span></a>
-        </nav>
-    </header>
-
-    <main>
-        <section class="section">
-            <p class="eyebrow">REGISTRATION · STEP 01</p>
-            <h2>Register your <i>spot.</i></h2>
-            <p class="lead">Use the lead participant’s email carefully—it is required later to submit payment proof and check registration status.</p>
-
-            <form class="form-shell" id="registrationForm" novalidate>
-                <div class="form-grid">
-                    <label class="field" for="event">Event
-                        <select id="event" required>
-                            <option value="">Select an event</option>
-                            <option value="UI/UX Arena">UI/UX Arena</option>
-                            <option value="Code Sprint">Code Sprint</option>
-                            <option value="Bug Hunt">Bug Hunt</option>
-                            <option value="Checkmate">Checkmate</option>
-                        </select>
-                    </label>
-                    <label class="field" for="participantName">Lead participant name
-                        <input id="participantName" autocomplete="name" maxlength="80" required placeholder="Full name">
-                    </label>
-                    <label class="field" for="participantEmail">Email
-                        <input id="participantEmail" type="email" autocomplete="email" maxlength="120" required placeholder="you@example.com">
-                        <span class="field-help">Use this same email for payment and status lookup.</span>
-                    </label>
-                    <label class="field" for="phone">Phone number
-                        <span class="phone-field"><span class="phone-prefix">+91</span><input id="phone" type="tel" inputmode="numeric" autocomplete="tel" maxlength="10" pattern="[6-9][0-9]{9}" required placeholder="10-digit number"></span>
-                    </label>
-                    <label class="field" for="department">Department
-                        <input id="department" maxlength="80" required value="CSE (DS)" placeholder="Department">
-                    </label>
-                    <label class="field" for="year">Year
-                        <select id="year" required>
-                            <option value="">Select year</option>
-                            <option value="1st Year">1st Year</option>
-                            <option value="2nd Year">2nd Year</option>
-                            <option value="3rd Year">3rd Year</option>
-                            <option value="4th Year">4th Year</option>
-                        </select>
-                    </label>
-                </div>
-
-                <section class="members-section" id="membersSection">
-                    <div class="members-head">
-                        <div><h3>Team members</h3><p class="muted" id="membersHelp">UI/UX Arena and Code Sprint require 3 people; Bug Hunt requires 2–3.</p></div>
-                        <button class="btn btn-small" type="button" id="addMemberButton">+ Add member</button>
-                    </div>
-                    <div id="memberList"></div>
-                </section>
-
-                <div class="fee-row"><span>Registration fee</span><b>₹150</b></div>
-                <p class="payment-warning">Submitting this form creates a registration ID. Your place is confirmed only after you scan the QR, submit the UTR and screenshot, and the admin approves the payment.</p>
-                <div class="form-status" id="registrationStatus" role="status" aria-live="polite"></div>
-                <button class="btn btn-primary btn-full" type="submit" id="registerButton">Create registration & continue →</button>
-            </form>
-        </section>
-    </main>
-    <footer class="site-footer"><b>BYTEFEST 2026</b><span>Code · Create · Compete · Invictus Tech Club</span></footer>
-</body>
-</html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><title>BYTEFEST 2026</title><script>
+(function(){
+  try {
+    sessionStorage.setItem("bytefest_entry_view", "register");
+    const e=new URLSearchParams(location.search).get("event"); if(e) sessionStorage.setItem("bytefest_entry_event", e);
+  } catch(e) {}
+  location.replace("./");
+})();
+</script></head><body></body></html>

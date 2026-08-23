@@ -1,59 +1,9 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="noindex, nofollow">
-    <title>Registration Dashboard | BYTEFEST 2026</title>
-    <link rel="stylesheet" href="style.css?v=2.3.0">
-    <script src="config.js?v=2.3.0" defer></script>
-    <script src="admin.js?v=2.3.1" defer></script>
-</head>
-<body>
-    <header class="site-header">
-        <a class="brand" href="index.html"><span class="brand-mark">BF</span><span class="brand-copy">BYTEFEST<small>2026 · ADMIN PANEL</small></span></a>
-        <div class="admin-actions"><a class="btn btn-small" href="index.html">Public website</a><button class="btn btn-small btn-danger" id="logoutButton" type="button">Log out</button></div>
-    </header>
-
-    <main class="admin-shell" id="adminDashboard">
-        <div class="admin-topbar">
-            <div><p class="eyebrow">PAYMENT REVIEW</p><h1>Registration <i>Dashboard.</i></h1><p class="muted" id="adminIdentity"></p></div>
-            <div class="admin-actions"><button class="btn" id="refreshButton" type="button">↻ Refresh</button><button class="btn" id="exportButton" type="button">↓ Export CSV</button></div>
-        </div>
-
-        <div class="stat-grid">
-            <div class="stat-card"><small>Total registrations</small><strong id="totalCount">0</strong></div>
-            <div class="stat-card"><small>Pending</small><strong id="pendingCount">0</strong></div>
-            <div class="stat-card"><small>Proof submitted</small><strong id="proofCount">0</strong></div>
-            <div class="stat-card"><small>Paid / confirmed</small><strong id="paidCount">0</strong></div>
-        </div>
-
-        <div class="admin-filters">
-            <input id="searchInput" type="search" placeholder="Search name, email, phone, ID or UTR..." aria-label="Search registrations">
-            <select id="eventFilter" aria-label="Filter by event">
-                <option value="">All events</option><option>UI/UX Arena</option><option>Code Sprint</option><option>Bug Hunt</option><option>Checkmate</option>
-            </select>
-            <select id="paymentFilter" aria-label="Filter by payment status">
-                <option value="">All payments</option><option value="PENDING">Pending</option><option value="PAID">Paid</option><option value="PROOF">Proof submitted</option>
-            </select>
-        </div>
-
-        <div class="form-status" id="dashboardStatus" role="status" aria-live="polite"></div>
-        <div class="table-shell">
-            <table class="admin-table">
-                <thead><tr><th>Registration</th><th>Event / team</th><th>Participant</th><th>Payment</th><th>Proof</th><th>Notification</th><th>Action</th></tr></thead>
-                <tbody id="registrationRows"><tr><td class="empty-state" colspan="7">Loading registrations...</td></tr></tbody>
-            </table>
-        </div>
-        <p class="admin-footer-note">Approving a payment confirms the registration first, then sends the Brevo email and optional SMS. A notification failure does not undo approval.</p>
-    </main>
-
-    <div class="modal" id="detailsModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-        <div class="modal-panel">
-            <div class="modal-head"><h3 id="modalTitle">Registration details</h3><button class="icon-button" id="closeModalButton" type="button" aria-label="Close details">×</button></div>
-            <div class="modal-body" id="modalBody"></div>
-        </div>
-    </div>
-    <div class="toast" id="adminToast" role="status" aria-live="polite"></div>
-</body>
-</html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><title>BYTEFEST 2026</title><script>
+(function(){
+  try {
+    sessionStorage.setItem("bytefest_entry_view", "admin-dashboard");
+    
+  } catch(e) {}
+  location.replace("./");
+})();
+</script></head><body></body></html>

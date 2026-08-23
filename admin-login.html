@@ -1,53 +1,9 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="noindex, nofollow">
-    <title>Admin Login | BYTEFEST 2026</title>
-    <link rel="stylesheet" href="style.css?v=2.3.0">
-    <script src="config.js?v=2.3.0" defer></script>
-    <script src="site.js?v=2.3.0" defer></script>
-    <script src="admin.js?v=2.3.1" defer></script>
-</head>
-<body>
-    <header class="site-header">
-        <a class="brand" href="index.html" aria-label="BYTEFEST home"><span class="brand-mark">BF</span><span class="brand-copy">BYTEFEST<small>2026 · INVICTUS TECH CLUB</small></span></a>
-        <button class="menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="siteNav">Menu</button>
-        <nav class="site-nav" id="siteNav" data-site-nav aria-label="Primary navigation">
-            <a href="index.html">Home</a><a href="events.html">Events</a><a href="details.html">Details</a><a href="my-registration.html">My Registration</a><a href="admin-login.html">Admin</a>
-            <a class="nav-register" href="register.html"><span class="register-icon">✦</span><span>Register <small>₹150 · BOOK A SPOT</small></span></a>
-        </nav>
-    </header>
-
-    <main>
-        <section class="section">
-            <p class="eyebrow">RESTRICTED ACCESS</p>
-            <h2>Administrator <i>login.</i></h2>
-            <p class="lead">This page is only for approved BYTEFEST administrators. Participants should use My Registration.</p>
-
-            <div class="access-layout">
-                <div class="access-choice">
-                    <span class="detail-badge">Participant</span>
-                    <h3 style="margin-top:18px">Check your registration</h3>
-                    <p>Use your registration ID and lead participant email to see payment status and the approved group link.</p>
-                    <a class="btn" href="my-registration.html">Open My Registration →</a>
-                </div>
-                <form class="access-card" id="adminLoginForm" novalidate>
-                    <span class="detail-badge">Admin only</span>
-                    <h3 style="margin-top:18px">Dashboard access</h3>
-                    <label class="field" for="adminEmail">Approved admin email
-                        <input id="adminEmail" type="email" autocomplete="username" required placeholder="admin@example.com">
-                    </label>
-                    <label class="field" for="adminPassword" style="margin-top:18px">Admin password
-                        <input id="adminPassword" type="password" autocomplete="current-password" required placeholder="Password configured in Render">
-                    </label>
-                    <div class="form-status" id="adminLoginStatus" role="status" aria-live="polite"></div>
-                    <button class="btn btn-primary btn-full" id="adminLoginButton" type="submit">Open admin dashboard →</button>
-                </form>
-            </div>
-        </section>
-    </main>
-    <footer class="site-footer"><b>BYTEFEST 2026 · ADMIN</b><span>Protected registration and payment review.</span></footer>
-</body>
-</html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><title>BYTEFEST 2026</title><script>
+(function(){
+  try {
+    sessionStorage.setItem("bytefest_entry_view", "admin-login");
+    
+  } catch(e) {}
+  location.replace("./");
+})();
+</script></head><body></body></html>

@@ -1,12 +1,7 @@
 (function () {
     const form = document.getElementById("paymentForm");
+    if (!form) return;
 
-    if (!form) {
-        return;
-    }
-
-    const params = new URLSearchParams(window.location.search);
-    const registrationId = String(params.get("registrationId") || "").trim().toUpperCase();
     const registrationLabel = document.getElementById("registrationId");
     const emailInput = document.getElementById("paymentEmail");
     const screenshotInput = document.getElementById("screenshot");
@@ -14,19 +9,54 @@
     const statusBox = document.getElementById("paymentStatus");
     const submitButton = document.getElementById("paymentButton");
     const successBox = document.getElementById("paymentSuccess");
+    let registrationId = "";
     let previewUrl = "";
-
-    registrationLabel.textContent = registrationId || "Registration ID missing";
-    emailInput.value = sessionStorage.getItem(`bytefest_payment_email_${registrationId}`) || "";
+    let submittedId = "";
 
     function showStatus(message, type = "") {
         statusBox.textContent = message;
         statusBox.className = `form-status is-visible${type ? ` is-${type}` : ""}`;
     }
 
-    if (!registrationId) {
-        showStatus("Registration ID is missing. Return to registration and create a new entry.", "error");
-        submitButton.disabled = true;
+    function clearStatus() {
+        statusBox.textContent = "";
+        statusBox.className = "form-status";
+    }
+
+    function setRegistration(rawId) {
+        const nextId = String(rawId || sessionStorage.getItem("bytefest_active_registration_id") || sessionStorage.getItem("bytefest_last_registration_id") || "")
+            .trim().toUpperCase();
+        const changed = nextId !== registrationId;
+        registrationId = nextId;
+
+        registrationLabel.textContent = registrationId || "Registration ID missing";
+
+        if (changed) {
+            if (previewUrl) {
+                URL.revokeObjectURL(previewUrl);
+                previewUrl = "";
+            }
+            form.reset();
+            form.classList.remove("hidden");
+            successBox.classList.remove("is-visible");
+            preview.classList.add("hidden");
+            preview.removeAttribute("src");
+            submitButton.textContent = "Submit payment proof →";
+            submittedId = "";
+        }
+
+        emailInput.value = registrationId
+            ? sessionStorage.getItem(`bytefest_payment_email_${registrationId}`) || sessionStorage.getItem("bytefest_last_registration_email") || ""
+            : "";
+
+        if (!registrationId) {
+            showStatus("Registration ID is missing. Return to registration and create a new entry.", "error");
+            submitButton.disabled = true;
+        } else {
+            submitButton.disabled = false;
+            if (!submittedId) clearStatus();
+            sessionStorage.setItem("bytefest_active_registration_id", registrationId);
+        }
     }
 
     function readFile(file) {
@@ -48,13 +78,8 @@
     }
 
     async function compressScreenshot(file) {
-        if (!/^image\/(jpeg|png|webp)$/.test(file.type)) {
-            throw new Error("Choose a JPG, PNG or WebP screenshot");
-        }
-
-        if (file.size > 10 * 1024 * 1024) {
-            throw new Error("Screenshot is too large. Choose an image below 10 MB.");
-        }
+        if (!/^image\/(jpeg|png|webp)$/.test(file.type)) throw new Error("Choose a JPG, PNG or WebP screenshot");
+        if (file.size > 10 * 1024 * 1024) throw new Error("Screenshot is too large. Choose an image below 10 MB.");
 
         const source = await readFile(file);
         const image = await loadImage(source);
@@ -71,57 +96,48 @@
             context.fillRect(0, 0, canvas.width, canvas.height);
             context.drawImage(image, 0, 0, canvas.width, canvas.height);
             result = canvas.toDataURL("image/jpeg", quality);
-
-            if (result.length <= 1_850_000) {
-                return result;
-            }
-
+            if (result.length <= 1_850_000) return result;
             scale *= 0.82;
             quality = Math.max(0.58, quality - 0.07);
         }
-
         throw new Error("Screenshot could not be compressed enough. Crop it and try again.");
     }
 
     async function readJson(response) {
         const text = await response.text();
-
-        try {
-            return text ? JSON.parse(text) : {};
-        } catch {
-            return {};
-        }
+        try { return text ? JSON.parse(text) : {}; } catch { return {}; }
     }
 
     screenshotInput.addEventListener("change", () => {
         const [file] = screenshotInput.files;
-
         if (previewUrl) {
             URL.revokeObjectURL(previewUrl);
             previewUrl = "";
         }
-
         if (!file) {
             preview.classList.add("hidden");
             preview.removeAttribute("src");
             return;
         }
-
         previewUrl = URL.createObjectURL(file);
         preview.src = previewUrl;
         preview.classList.remove("hidden");
     });
 
+    window.addEventListener("bytefest:viewchange", event => {
+        if (event.detail?.view === "payment") setRegistration(event.detail.registrationId);
+    });
+
+    setRegistration(sessionStorage.getItem("bytefest_active_registration_id"));
+
     form.addEventListener("submit", async event => {
         event.preventDefault();
-
         if (!registrationId || !form.reportValidity()) {
             showStatus("Complete every payment field before submitting.", "error");
             return;
         }
 
         const [file] = screenshotInput.files;
-
         if (!file) {
             showStatus("Choose a payment screenshot.", "error");
             return;
@@ -143,13 +159,12 @@
                 body: JSON.stringify({ email, utr, screenshot })
             });
             const data = await readJson(response);
-
-            if (!response.ok) {
-                throw new Error(data.message || `Payment submission failed (HTTP ${response.status})`);
-            }
+            if (!response.ok) throw new Error(data.message || `Payment submission failed (HTTP ${response.status})`);
 
             sessionStorage.setItem("bytefest_last_registration_id", registrationId);
             sessionStorage.setItem("bytefest_last_registration_email", email);
+            sessionStorage.setItem(`bytefest_payment_email_${registrationId}`, email);
+            submittedId = registrationId;
             form.classList.add("hidden");
             successBox.classList.add("is-visible");
         } catch (error) {

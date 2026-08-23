@@ -17,6 +17,14 @@
         sessionStorage.removeItem("bytefest_admin_email");
     }
 
+    function openAdminView(view) {
+        if (window.ByteFestSPA) {
+            window.ByteFestSPA.open(view);
+        } else {
+            window.location.replace("./");
+        }
+    }
+
     function escapeHtml(value) {
         return String(value ?? "")
             .replaceAll("&", "&amp;")
@@ -67,7 +75,7 @@
 
         if (authenticated && (response.status === 401 || response.status === 403)) {
             clearSession();
-            window.location.replace("admin-login.html");
+            openAdminView("admin-login");
             throw new Error("Admin session expired");
         }
 
@@ -120,6 +128,9 @@
         return `${label}: ${status}${detail}`;
     }
 
+    let loginInitialized = false;
+    let dashboardInitialized = false;
+
     function initializeLogin() {
         const form = document.getElementById("adminLoginForm");
 
@@ -127,10 +138,10 @@
             return false;
         }
 
-        if (token()) {
-            window.location.replace("admin.html");
-            return true;
-        }
+        // Login and dashboard now coexist in one SPA document.
+
+        if (loginInitialized) return true;
+        loginInitialized = true;
 
         const statusBox = document.getElementById("adminLoginStatus");
         const button = document.getElementById("adminLoginButton");
@@ -163,7 +174,7 @@
                 sessionStorage.setItem(TOKEN_KEY, data.token);
                 sessionStorage.setItem(EMAIL_KEY, data.email || email);
                 showFormStatus(statusBox, "Login successful. Opening dashboard...", "success");
-                window.setTimeout(() => window.location.replace("admin.html"), 450);
+                window.setTimeout(() => openAdminView("admin-dashboard"), 450);
             } catch (error) {
                 console.error(error);
                 showFormStatus(statusBox, error.message || "Admin login failed.", "error");
@@ -523,15 +534,16 @@
             return;
         }
 
-        if (!token()) {
-            window.location.replace("admin-login.html");
+        if (!token()) return;
+        document.getElementById("adminIdentity").textContent = `Signed in as ${sessionStorage.getItem(EMAIL_KEY) || "approved administrator"}`;
+        if (dashboardInitialized) {
+            loadRegistrations();
             return;
         }
-
-        document.getElementById("adminIdentity").textContent = `Signed in as ${sessionStorage.getItem(EMAIL_KEY) || "approved administrator"}`;
+        dashboardInitialized = true;
         document.getElementById("logoutButton").addEventListener("click", () => {
             clearSession();
-            window.location.replace("admin-login.html");
+            openAdminView("admin-login");
         });
         document.getElementById("refreshButton").addEventListener("click", loadRegistrations);
         document.getElementById("exportButton").addEventListener("click", exportCsv);
@@ -570,7 +582,39 @@
         loadRegistrations();
     }
 
-    if (!initializeLogin()) {
-        initializeDashboard();
+    initializeLogin();
+
+    function resetLoginUi() {
+        const button = document.getElementById("adminLoginButton");
+        const password = document.getElementById("adminPassword");
+        if (button) {
+            button.disabled = false;
+            button.textContent = "Open admin dashboard →";
+        }
+        if (password) password.value = "";
+        clearFormStatus(document.getElementById("adminLoginStatus"));
     }
+
+    function syncAdminView(view) {
+        if (view === "admin-login") {
+            if (token()) {
+                openAdminView("admin-dashboard");
+                return;
+            }
+            resetLoginUi();
+        }
+        if (view === "admin-dashboard") {
+            if (!token()) {
+                openAdminView("admin-login");
+                return;
+            }
+            initializeDashboard();
+        }
+    }
+
+    window.addEventListener("bytefest:viewchange", event => {
+        syncAdminView(event.detail?.view || "");
+    });
+
+    syncAdminView(window.ByteFestSPA?.getView?.() || "");
 }());

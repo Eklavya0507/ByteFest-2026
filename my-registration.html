@@ -1,46 +1,9 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Check BYTEFEST 2026 registration and payment approval status.">
-    <title>My Registration | BYTEFEST 2026</title>
-    <link rel="stylesheet" href="style.css?v=2.3.0">
-    <script src="config.js?v=2.3.0" defer></script>
-    <script src="site.js?v=2.3.0" defer></script>
-    <script src="my-registration.js?v=2.3.0" defer></script>
-</head>
-<body>
-    <header class="site-header">
-        <a class="brand" href="index.html" aria-label="BYTEFEST home"><span class="brand-mark">BF</span><span class="brand-copy">BYTEFEST<small>2026 · INVICTUS TECH CLUB</small></span></a>
-        <button class="menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="siteNav">Menu</button>
-        <nav class="site-nav" id="siteNav" data-site-nav aria-label="Primary navigation">
-            <a href="index.html">Home</a><a href="events.html">Events</a><a href="details.html">Details</a><a href="my-registration.html">My Registration</a><a href="admin-login.html">Admin</a>
-            <a class="nav-register" href="register.html"><span class="register-icon">✦</span><span>Register <small>₹150 · BOOK A SPOT</small></span></a>
-        </nav>
-    </header>
-
-    <main>
-        <section class="section">
-            <p class="eyebrow">PARTICIPANT PORTAL</p>
-            <h2>My <i>registration.</i></h2>
-            <p class="lead">Enter the registration ID and lead participant email. This is separate from the administrator login.</p>
-
-            <form class="lookup-card" id="lookupForm" novalidate>
-                <div class="form-grid">
-                    <label class="field" for="lookupId">Registration ID
-                        <input id="lookupId" autocomplete="off" required placeholder="BF26-XXXXXXXX">
-                    </label>
-                    <label class="field" for="lookupEmail">Registration email
-                        <input id="lookupEmail" type="email" autocomplete="email" required placeholder="you@example.com">
-                    </label>
-                </div>
-                <div class="form-status" id="lookupStatus" role="status" aria-live="polite"></div>
-                <button class="btn btn-primary btn-full" id="lookupButton" type="submit">Check registration →</button>
-            </form>
-            <div class="lookup-result" id="lookupResult" aria-live="polite"></div>
-        </section>
-    </main>
-    <footer class="site-footer"><b>BYTEFEST 2026</b><span>After admin approval, check your email and SMS for the official group links.</span></footer>
-</body>
-</html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><title>BYTEFEST 2026</title><script>
+(function(){
+  try {
+    sessionStorage.setItem("bytefest_entry_view", "my-registration");
+    
+  } catch(e) {}
+  location.replace("./");
+})();
+</script></head><body></body></html>
