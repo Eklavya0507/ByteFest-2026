@@ -30,14 +30,13 @@
     }
 
     function updateMemberLabels() {
-        const exactThree = exactThreeEvents.has(eventInput.value);
-
         memberCards().forEach((card, index) => {
             card.querySelector("[data-member-title]").textContent = `Member ${index + 2}`;
-            card.querySelector("[data-remove-member]").disabled = exactThree;
+            card.querySelector("[data-remove-member]").disabled = false;
         });
 
-        addMemberButton.disabled = exactThree || memberCards().length >= 2;
+        // Lead participant is Member 1. Two extra member cards = 3 participants total.
+        addMemberButton.disabled = memberCards().length >= 2;
     }
 
     function addMember() {
@@ -77,15 +76,11 @@
             memberList.replaceChildren();
             membersHelp.textContent = "Checkmate is an individual event.";
         } else if (eventInput.value) {
-            const minimumMembers = exactThree ? 2 : 1;
-
-            while (memberCards().length < minimumMembers) {
-                addMember();
-            }
-
+            // Do not auto-create team-member cards. The lead participant is Member 1,
+            // and the user can add Member 2 and Member 3 manually.
             membersHelp.textContent = exactThree
-                ? `${eventInput.value} requires exactly 3 participants in total.`
-                : "Bug Hunt requires 2–3 participants in total.";
+                ? `${eventInput.value} requires exactly 3 participants in total. Add Member 2 and Member 3.`
+                : "Bug Hunt requires 2–3 participants in total. Add members as needed.";
         } else {
             membersHelp.textContent = "UI/UX Arena and Code Sprint require 3 people; Bug Hunt requires 2–3.";
         }
