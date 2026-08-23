@@ -211,6 +211,7 @@
             const haystack = [
                 item.registrationId,
                 item.event,
+                item.teamName,
                 participant.name,
                 participant.email,
                 participant.phone,
@@ -254,12 +255,12 @@
             return `
                 <tr>
                     <td><span class="cell-title">${escapeHtml(item.registrationId)}</span><span class="cell-subtitle">${escapeHtml(formatDate(item.createdAt))}</span></td>
-                    <td><span class="cell-title">${escapeHtml(item.event)}</span><span class="cell-subtitle">${teamSize} participant${teamSize === 1 ? "" : "s"}</span></td>
+                    <td><span class="cell-title">${escapeHtml(item.event)}</span><span class="cell-subtitle">${item.event === "Checkmate" ? "Individual" : item.teamName ? `${escapeHtml(item.teamName)} · ${teamSize} participant${teamSize === 1 ? "" : "s"}` : `TEAM NAME NOT SET · ${teamSize} participant${teamSize === 1 ? "" : "s"}`}</span></td>
                     <td><span class="cell-title">${escapeHtml(participant.name)}</span><span class="cell-subtitle">${escapeHtml(participant.email)}<br>+91 ${escapeHtml(participant.phone)}</span></td>
                     <td>${statusBadge(paid ? "PAID" : "PENDING")}<span class="cell-subtitle">₹${escapeHtml(payment.amount || 150)}${payment.approvedAt ? `<br>${escapeHtml(formatDate(payment.approvedAt))}` : ""}</span></td>
                     <td>${proof ? statusBadge("SUBMITTED") : statusBadge("NOT_ATTEMPTED")}<span class="cell-subtitle">${proof ? `UTR: ${escapeHtml(payment.utr)}` : "Waiting for participant"}</span></td>
                     <td><div class="notification-stack"><span>Email ${statusBadge(emailStatus)}</span><span>SMS ${statusBadge(smsStatus)}</span></div></td>
-                    <td><div class="admin-actions"><button class="btn btn-small" type="button" data-view="${escapeHtml(item.registrationId)}">View</button>${!paid && proof ? `<button class="btn btn-small btn-success" type="button" data-approve="${escapeHtml(item.registrationId)}">Approve</button>` : ""}${notificationIncomplete ? `<button class="btn btn-small btn-success" type="button" data-notify="${escapeHtml(item.registrationId)}">Retry notify</button>` : ""}</div></td>
+                    <td><div class="admin-actions"><button class="btn btn-small" type="button" data-view="${escapeHtml(item.registrationId)}">View</button>${item.event !== "Checkmate" ? `<button class="btn btn-small" type="button" data-team-name="${escapeHtml(item.registrationId)}">${item.teamName ? "Edit team" : "Set team"}</button>` : ""}${!paid && proof ? `<button class="btn btn-small btn-success" type="button" data-approve="${escapeHtml(item.registrationId)}">Approve</button>` : ""}${notificationIncomplete ? `<button class="btn btn-small btn-success" type="button" data-notify="${escapeHtml(item.registrationId)}">Retry notify</button>` : ""}</div></td>
                 </tr>
             `;
         }).join("");
@@ -312,6 +313,7 @@
         body.innerHTML = `
             <div class="result-grid">
                 <div class="result-item"><small>Event</small><b>${escapeHtml(registration.event)}</b></div>
+                ${registration.event !== "Checkmate" ? `<div class="result-item"><small>Team name</small><b>${registration.teamName ? escapeHtml(registration.teamName) : "NOT SET"}</b><br><button class="btn btn-small" style="margin-top:10px" type="button" data-team-name="${escapeHtml(registration.registrationId)}">${registration.teamName ? "Edit team name" : "Set team name"}</button></div>` : ""}
                 <div class="result-item"><small>Status</small>${statusBadge(paid ? "PAID" : "PENDING")}</div>
                 <div class="result-item"><small>Lead participant</small><b>${escapeHtml(participant.name)}</b></div>
                 <div class="result-item"><small>Email</small><b>${escapeHtml(participant.email)}</b></div>
@@ -377,6 +379,57 @@
     function closeModal() {
         document.getElementById("detailsModal")?.classList.remove("is-open");
         document.body.classList.remove("modal-open");
+    }
+
+    async function updateTeamName(registrationId) {
+        const registration = findRegistration(registrationId);
+
+        if (!registration || registration.event === "Checkmate") {
+            return;
+        }
+
+        const currentName = String(registration.teamName || "");
+        const entered = window.prompt(
+            currentName ? `Edit team name for ${registrationId}:` : `Set team name for ${registrationId}:`,
+            currentName
+        );
+
+        if (entered === null) {
+            return;
+        }
+
+        const teamName = entered.trim();
+        if (teamName.length < 2 || teamName.length > 60) {
+            showToast("Team name must be between 2 and 60 characters.");
+            return;
+        }
+
+        document.querySelectorAll(`[data-team-name="${CSS.escape(registrationId)}"]`).forEach(button => {
+            button.disabled = true;
+            button.textContent = "Saving...";
+        });
+
+        try {
+            const data = await apiRequest(
+                `/api/admin/registrations/${encodeURIComponent(registrationId)}/team-name`,
+                {
+                    method: "PATCH",
+                    body: JSON.stringify({ teamName })
+                },
+                true
+            );
+
+            showToast(`Team name saved: ${data.registration?.teamName || teamName}`);
+            closeModal();
+            await loadRegistrations();
+        } catch (error) {
+            console.error(error);
+            showToast(error.message || "Could not update team name.");
+            document.querySelectorAll(`[data-team-name="${CSS.escape(registrationId)}"]`).forEach(button => {
+                button.disabled = false;
+                button.textContent = currentName ? "Edit team" : "Set team";
+            });
+        }
     }
 
     async function approveRegistration(registrationId) {
@@ -463,6 +516,7 @@
         const headers = [
             "Registration ID",
             "Event",
+            "Team Name",
             "Lead Name",
             "Lead Email",
             "Lead Phone",
@@ -493,6 +547,7 @@
             return [
                 item.registrationId,
                 item.event,
+                item.teamName || "",
                 item.participant?.name,
                 item.participant?.email,
                 exportPhone(item.participant?.phone),
@@ -563,11 +618,16 @@
         });
         document.addEventListener("click", event => {
             const viewButton = event.target.closest("[data-view]");
+            const teamNameButton = event.target.closest("[data-team-name]");
             const approveButton = event.target.closest("[data-approve]");
             const notifyButton = event.target.closest("[data-notify]");
 
             if (viewButton) {
                 openModal(viewButton.dataset.view);
+            }
+
+            if (teamNameButton) {
+                updateTeamName(teamNameButton.dataset.teamName);
             }
 
             if (approveButton) {

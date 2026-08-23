@@ -1,0 +1,17 @@
+BYTEFEST 2026 - OLD REGISTRATION TEAM NAME SUPPORT
+
+New behavior:
+- Existing registrations are NOT deleted and keep the same BF26 registration ID.
+- Team events with no teamName show TEAM NAME NOT SET in Admin.
+- Admin can use Set team / Edit team.
+- The same MongoDB registration record is updated.
+- Checkmate remains individual and has no team name.
+- New registrations still require Team Name for UI/UX Arena, Code Sprint and Bug Hunt.
+
+Changed frontend file:
+- admin.js
+
+Changed backend file:
+- routes/admin.js
+
+No change to payment, approval, email/SMS, group links, registration IDs, or existing data.
