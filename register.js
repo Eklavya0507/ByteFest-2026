@@ -7,8 +7,6 @@
 
     const eventInput = document.getElementById("event");
     const membersSection = document.getElementById("membersSection");
-    const teamNameField = document.getElementById("teamNameField");
-    const teamNameInput = document.getElementById("teamName");
     const memberList = document.getElementById("memberList");
     const addMemberButton = document.getElementById("addMemberButton");
     const submitButton = document.getElementById("registerButton");
@@ -73,12 +71,8 @@
         const individual = eventInput.value === "Checkmate";
         const exactThree = exactThreeEvents.has(eventInput.value);
         membersSection.classList.toggle("hidden", individual);
-        teamNameField.classList.toggle("hidden", individual);
-        teamNameInput.required = !individual;
-        teamNameInput.disabled = individual;
 
         if (individual) {
-            teamNameInput.value = "";
             memberList.replaceChildren();
             membersHelp.textContent = "Checkmate is an individual event.";
         } else if (eventInput.value) {
@@ -162,13 +156,6 @@
             return;
         }
 
-        const teamName = selectedEvent === "Checkmate" ? "" : teamNameInput.value.trim();
-
-        if (selectedEvent !== "Checkmate" && (teamName.length < 2 || teamName.length > 60)) {
-            showStatus("Enter a team name between 2 and 60 characters.", "error");
-            return;
-        }
-
         const participant = {
             name: document.getElementById("participantName").value.trim(),
             email: document.getElementById("participantEmail").value.trim().toLowerCase(),
@@ -185,7 +172,7 @@
             const response = await fetch(`${window.BYTEFEST_CONFIG.API_URL}/api/registrations`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ event: selectedEvent, teamName, participant, members })
+                body: JSON.stringify({ event: selectedEvent, participant, members })
             });
             const data = await readJson(response);
 

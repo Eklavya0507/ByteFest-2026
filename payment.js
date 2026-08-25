@@ -9,6 +9,9 @@
     const statusBox = document.getElementById("paymentStatus");
     const submitButton = document.getElementById("paymentButton");
     const successBox = document.getElementById("paymentSuccess");
+    const paymentQr = document.querySelector('[data-app-view="payment"] .qr-panel img') || document.querySelector(".qr-panel img");
+    const DEFAULT_QR = "assets/bytefest-payment-qr.jpeg";
+    const CHECKMATE_QR = "assets/checkmate-payment-qr.png";
     let registrationId = "";
     let previewUrl = "";
     let submittedId = "";
@@ -21,6 +24,45 @@
     function clearStatus() {
         statusBox.textContent = "";
         statusBox.className = "form-status";
+    }
+
+    async function updatePaymentQr() {
+        if (!paymentQr) return;
+
+        const email = emailInput.value.trim().toLowerCase();
+
+        // Never show the wrong QR while the registration event is being verified.
+        paymentQr.style.visibility = "hidden";
+
+        if (!registrationId || !email) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`${window.BYTEFEST_CONFIG.API_URL}/api/registrations/lookup`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ registrationId, email })
+            });
+
+            const data = await readJson(response);
+
+            if (!response.ok) {
+                throw new Error(data.message || "Could not verify registration event");
+            }
+
+            const isCheckmate = String(data.event || "").trim().toLowerCase() === "checkmate";
+
+            paymentQr.src = isCheckmate ? CHECKMATE_QR : DEFAULT_QR;
+            paymentQr.alt = isCheckmate
+                ? "Checkmate payment QR code"
+                : "BYTEFEST registration payment QR code";
+            paymentQr.style.visibility = "visible";
+        } catch (error) {
+            console.error("Payment QR selection error:", error);
+            paymentQr.style.visibility = "hidden";
+            showStatus("Could not verify the payment QR for this registration. Please refresh and try again.", "error");
+        }
     }
 
     function setRegistration(rawId) {
@@ -48,6 +90,8 @@
         emailInput.value = registrationId
             ? sessionStorage.getItem(`bytefest_payment_email_${registrationId}`) || sessionStorage.getItem("bytefest_last_registration_email") || ""
             : "";
+
+        void updatePaymentQr();
 
         if (!registrationId) {
             showStatus("Registration ID is missing. Return to registration and create a new entry.", "error");
@@ -107,6 +151,10 @@
         const text = await response.text();
         try { return text ? JSON.parse(text) : {}; } catch { return {}; }
     }
+
+    emailInput.addEventListener("change", () => {
+        void updatePaymentQr();
+    });
 
     screenshotInput.addEventListener("change", () => {
         const [file] = screenshotInput.files;

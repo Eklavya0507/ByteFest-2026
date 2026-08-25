@@ -1,0 +1,5 @@
+Checkmate-only QR update:
+- Checkmate -> assets/checkmate-payment-qr.png
+- UI/UX Arena, Code Sprint, Bug Hunt -> existing assets/bytefest-payment-qr.jpeg
+- Backend/MongoDB unchanged.
+- Functional code change is only payment.js plus the new QR image.
