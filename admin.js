@@ -34,6 +34,10 @@
             .replaceAll("'", "&#039;");
     }
 
+    function feeForEvent(eventName) {
+        return Number(window.BYTEFEST_CONFIG?.EVENT_FEES?.[eventName] ?? window.BYTEFEST_CONFIG?.REGISTRATION_FEE ?? 150);
+    }
+
     function formatDate(value) {
         if (!value) {
             return "—";
@@ -256,7 +260,7 @@
                     <td><span class="cell-title">${escapeHtml(item.registrationId)}</span><span class="cell-subtitle">${escapeHtml(formatDate(item.createdAt))}</span></td>
                     <td><span class="cell-title">${escapeHtml(item.event)}</span><span class="cell-subtitle">${teamSize} participant${teamSize === 1 ? "" : "s"}</span></td>
                     <td><span class="cell-title">${escapeHtml(participant.name)}</span><span class="cell-subtitle">${escapeHtml(participant.email)}<br>+91 ${escapeHtml(participant.phone)}</span></td>
-                    <td>${statusBadge(paid ? "PAID" : "PENDING")}<span class="cell-subtitle">₹${escapeHtml(payment.amount || 150)}${payment.approvedAt ? `<br>${escapeHtml(formatDate(payment.approvedAt))}` : ""}</span></td>
+                    <td>${statusBadge(paid ? "PAID" : "PENDING")}<span class="cell-subtitle">₹${escapeHtml(payment.amount || feeForEvent(item.event))}${payment.approvedAt ? `<br>${escapeHtml(formatDate(payment.approvedAt))}` : ""}</span></td>
                     <td>${proof ? statusBadge("SUBMITTED") : statusBadge("NOT_ATTEMPTED")}<span class="cell-subtitle">${proof ? `UTR: ${escapeHtml(payment.utr)}` : "Waiting for participant"}</span></td>
                     <td><div class="notification-stack"><span>Email ${statusBadge(emailStatus)}</span><span>SMS ${statusBadge(smsStatus)}</span></div></td>
                     <td><div class="admin-actions"><button class="btn btn-small" type="button" data-view="${escapeHtml(item.registrationId)}">View</button>${!paid && proof ? `<button class="btn btn-small btn-success" type="button" data-approve="${escapeHtml(item.registrationId)}">Approve</button>` : ""}${notificationIncomplete ? `<button class="btn btn-small btn-success" type="button" data-notify="${escapeHtml(item.registrationId)}">Retry notify</button>` : ""}</div></td>
@@ -326,7 +330,7 @@
                 <div class="result-item"><small>SMS notification</small>${statusBadge(payment.smsNotification?.status || "NOT_ATTEMPTED")}<br><span class="muted">${escapeHtml(payment.smsNotification?.error || payment.smsNotification?.messageId || "")}</span></div>
             </div>
             <div class="detail-card" style="margin-top:20px">
-                <div class="detail-card-header"><h3>Payment proof</h3><span class="detail-badge">₹${escapeHtml(payment.amount || 150)}</span></div>
+                <div class="detail-card-header"><h3>Payment proof</h3><span class="detail-badge">₹${escapeHtml(payment.amount || feeForEvent(registration.event))}</span></div>
                 <p id="proofLoading" class="muted">Loading protected UTR and screenshot...</p>
                 <div id="proofContent"></div>
             </div>
@@ -386,7 +390,7 @@
             return;
         }
 
-        const confirmed = window.confirm(`Approve ₹150 payment for ${registration.participant?.name || registrationId}? This will confirm registration and send the approval notification.`);
+        const confirmed = window.confirm(`Approve ₹${registration.payment?.amount || feeForEvent(registration.event)} payment for ${registration.participant?.name || registrationId}? This will confirm registration and send the approval notification.`);
 
         if (!confirmed) {
             return;
@@ -506,7 +510,7 @@
                 exportPhone(member3.phone),
                 1 + members.length,
                 payment.status || "PENDING",
-                payment.amount || 150,
+                payment.amount || feeForEvent(item.event),
                 payment.utr || "",
                 paymentProofSubmitted(item) ? "Yes" : "No",
                 payment.emailNotification?.status || "NOT_ATTEMPTED",

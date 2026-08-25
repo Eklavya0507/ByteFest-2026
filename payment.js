@@ -9,6 +9,8 @@
     const statusBox = document.getElementById("paymentStatus");
     const submitButton = document.getElementById("paymentButton");
     const successBox = document.getElementById("paymentSuccess");
+    const paymentFeeLead = document.getElementById("paymentFeeLead");
+    const paymentQrAmount = document.getElementById("paymentQrAmount");
     const paymentQr = document.querySelector('[data-app-view="payment"] .qr-panel img') || document.querySelector(".qr-panel img");
     const DEFAULT_QR = "assets/bytefest-payment-qr.jpeg";
     const CHECKMATE_QR = "assets/checkmate-payment-qr.png";
@@ -26,6 +28,10 @@
         statusBox.className = "form-status";
     }
 
+    function feeForEvent(eventName) {
+        return Number(window.BYTEFEST_CONFIG?.EVENT_FEES?.[eventName] ?? window.BYTEFEST_CONFIG?.REGISTRATION_FEE ?? 150);
+    }
+
     async function updatePaymentQr() {
         if (!paymentQr) return;
 
@@ -35,6 +41,8 @@
         paymentQr.style.visibility = "hidden";
 
         if (!registrationId || !email) {
+            if (paymentFeeLead) paymentFeeLead.textContent = "Verify your registration to load the correct payment amount and QR, then submit the UTR and a clear successful-payment screenshot.";
+            if (paymentQrAmount) paymentQrAmount.textContent = "Loading payment amount...";
             return;
         }
 
@@ -51,12 +59,16 @@
                 throw new Error(data.message || "Could not verify registration event");
             }
 
-            const isCheckmate = String(data.event || "").trim().toLowerCase() === "checkmate";
+            const eventName = String(data.event || "").trim();
+            const isCheckmate = eventName.toLowerCase() === "checkmate";
+            const fee = feeForEvent(eventName);
 
             paymentQr.src = isCheckmate ? CHECKMATE_QR : DEFAULT_QR;
             paymentQr.alt = isCheckmate
                 ? "Checkmate payment QR code"
                 : "BYTEFEST registration payment QR code";
+            if (paymentFeeLead) paymentFeeLead.textContent = `Pay ₹${fee} for ${eventName} using the QR below, then submit the UTR and a clear successful-payment screenshot.`;
+            if (paymentQrAmount) paymentQrAmount.textContent = `Scan to pay ₹${fee}`;
             paymentQr.style.visibility = "visible";
         } catch (error) {
             console.error("Payment QR selection error:", error);

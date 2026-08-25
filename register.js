@@ -12,6 +12,7 @@
     const submitButton = document.getElementById("registerButton");
     const statusBox = document.getElementById("registrationStatus");
     const membersHelp = document.getElementById("membersHelp");
+    const feeAmount = document.getElementById("registrationFeeAmount");
     const allowedEvents = ["UI/UX Arena", "Code Sprint", "Bug Hunt", "Checkmate"];
     const exactThreeEvents = new Set(["UI/UX Arena", "Code Sprint"]);
 
@@ -67,9 +68,16 @@
         updateMemberLabels();
     }
 
+    function feeForEvent(eventName) {
+        return Number(window.BYTEFEST_CONFIG?.EVENT_FEES?.[eventName] ?? window.BYTEFEST_CONFIG?.REGISTRATION_FEE ?? 150);
+    }
+
     function updateEventMode() {
         const individual = eventInput.value === "Checkmate";
         const exactThree = exactThreeEvents.has(eventInput.value);
+        if (feeAmount) {
+            feeAmount.textContent = eventInput.value ? `₹${feeForEvent(eventInput.value)}` : "Select event";
+        }
         membersSection.classList.toggle("hidden", individual);
 
         if (individual) {

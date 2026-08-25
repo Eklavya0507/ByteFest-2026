@@ -45,6 +45,10 @@
         }).format(new Date(value));
     }
 
+    function feeForEvent(eventName) {
+        return Number(window.BYTEFEST_CONFIG?.EVENT_FEES?.[eventName] ?? window.BYTEFEST_CONFIG?.REGISTRATION_FEE ?? 150);
+    }
+
     function renderRegistration(data, email) {
         const participant = data.participant || {};
         const payment = data.payment || {};
@@ -70,7 +74,7 @@
                     <div class="result-item"><small>Department</small><b>${escapeHtml(participant.department)}</b></div>
                     <div class="result-item"><small>Year</small><b>${escapeHtml(participant.year)}</b></div>
                     ${memberHtml}
-                    <div class="result-item"><small>Payment amount</small><b>₹${escapeHtml(payment.amount || 150)}</b></div>
+                    <div class="result-item"><small>Payment amount</small><b>₹${escapeHtml(payment.amount || feeForEvent(data.event))}</b></div>
                     <div class="result-item"><small>Proof submitted</small><b>${payment.proofSubmitted ? "Yes · " + escapeHtml(formatDate(payment.submittedAt)) : "Not yet"}</b></div>
                 </div>
                 ${paid ? `

@@ -29,7 +29,7 @@
     <a href="./" data-page="details" data-nav-link="details">Details</a>
     <a href="./" data-page="my-registration" data-nav-link="my-registration">My Registration</a>
     <a href="./" data-page="admin-login" data-nav-link="admin-login">Admin</a>
-    <a class="nav-register" href="./" data-page="register" data-nav-link="register"><span class="register-icon">✦</span><span>Register <small>₹150 · BOOK A SPOT</small></span></a>
+    <a class="nav-register" href="./" data-page="register" data-nav-link="register"><span class="register-icon">✦</span><span>Register <small>₹50–₹150 · BOOK A SPOT</small></span></a>
   </nav>
 </header>
 <main id="bytefestApp">
@@ -41,12 +41,12 @@
 <h1>CODE.<br/><i>CREATE.</i><br/>COMPETE.</h1>
 <p class="lead">BYTEFEST 2026 brings coders, designers, bug hunters and strategic thinkers together for one high-energy day of competition.</p>
 <div class="actions">
-<a class="btn register-launch" data-page="register" href="./"><span>Open Registration<small>CHOOSE EVENT · PAY ₹150 · COMPETE</small></span> ↗</a>
+<a class="btn register-launch" data-page="register" href="./"><span>Open Registration<small>CHOOSE EVENT · PAY EVENT FEE · COMPETE</small></span> ↗</a>
 <a class="btn" data-page="events" href="./">Explore Events</a>
 </div>
 <div class="quick-stats">
 <span><b>29 AUG 2026</b>Event date</span>
-<span><b>₹150</b>Per registration</span>
+<span><b>₹50–₹150</b>Registration fee</span>
 <span><b>OFFLINE</b>EPCET B Block Seminar Hall</span>
 <span><b>9:10–9:30 AM</b>Reporting time</span>
 </div>
@@ -155,7 +155,7 @@
 <div class="info-tile"><b>Date</b><h3>29 Aug 2026</h3></div>
 <div class="info-tile"><b>Reporting time</b><h3>9:10 AM–9:30 AM</h3></div>
 <div class="info-tile"><b>Venue</b><h3>EPCET B Block Seminar Hall</h3></div>
-<div class="info-tile"><b>Fee</b><h3>₹150 / registration</h3></div>
+<div class="info-tile"><b>Fee</b><h3>₹150 team events · ₹50 Checkmate</h3></div>
 <div class="info-tile"><b>Mode</b><h3>Offline</h3></div>
 <div class="info-tile"><b>Confirmation</b><h3>After payment review</h3></div>
 </div>
@@ -172,7 +172,7 @@
 <div class="info-tile"><b>Date</b><h3>Saturday, 29 Aug 2026</h3></div>
 <div class="info-tile"><b>Reporting time</b><h3>9:10 AM–9:30 AM</h3></div>
 <div class="info-tile"><b>Venue</b><h3>EPCET B Block Seminar Hall</h3></div>
-<div class="info-tile"><b>Registration</b><h3>₹150</h3></div>
+<div class="info-tile"><b>Registration</b><h3>₹150 team events · ₹50 Checkmate</h3></div>
 <div class="info-tile"><b>Mode</b><h3>Offline</h3></div>
 </div>
 <div class="detail-stack">
@@ -219,7 +219,7 @@
 <article class="detail-card" id="general-rules">
 <div class="detail-card-header"><h3>General rules</h3><span class="detail-badge">All participants</span></div>
 <div class="detail-columns">
-<div><h3>Registration &amp; payment</h3><ul class="rule-list"><li>Registration fee is ₹150 per registration.</li><li>UI/UX Arena and Code Sprint require one lead participant plus two additional members.</li><li>Bug Hunt accepts one lead participant plus one or two additional members.</li><li>Checkmate accepts one participant per registration.</li><li>Registration is confirmed only after the admin verifies the UTR and screenshot.</li><li>Keep the generated registration ID for status checks.</li></ul></div>
+<div><h3>Registration &amp; payment</h3><ul class="rule-list"><li>Registration fee: ₹150 for UI/UX Arena, Code Sprint and Bug Hunt; ₹50 for Checkmate.</li><li>UI/UX Arena and Code Sprint require one lead participant plus two additional members.</li><li>Bug Hunt accepts one lead participant plus one or two additional members.</li><li>Checkmate accepts one participant per registration.</li><li>Registration is confirmed only after the admin verifies the UTR and screenshot.</li><li>Keep the generated registration ID for status checks.</li></ul></div>
 <div><h3>At the venue</h3><ul class="rule-list"><li>Report between 9:10 AM and 9:30 AM at EPCET B Block Seminar Hall.</li><li>Carry a valid college ID.</li><li>Follow coordinator instructions and use only permitted resources.</li><li>Plagiarism, impersonation or disruptive behavior can lead to disqualification.</li><li>Organizers may make reasonable format changes based on participation and venue needs.</li><li>Judges’ and organizers’ decisions are final.</li></ul></div>
 </div>
 </article>
@@ -283,7 +283,7 @@
 </div>
 <div id="memberList"></div>
 </section>
-<div class="fee-row"><span>Registration fee</span><b>₹150</b></div>
+<div class="fee-row"><span>Registration fee</span><b id="registrationFeeAmount">₹150</b></div>
 <p class="payment-warning">Submitting this form creates a registration ID. Your place is confirmed only after you scan the QR, submit the UTR and screenshot, and the admin approves the payment.</p>
 <div aria-live="polite" class="form-status" id="registrationStatus" role="status"></div>
 <button class="btn btn-primary btn-full" id="registerButton" type="submit">Create registration &amp; continue →</button>
@@ -295,13 +295,13 @@
 <section class="section">
 <p class="eyebrow">REGISTRATION · STEP 02</p>
 <h2>Scan. Pay. <i>Submit.</i></h2>
-<p class="lead">Pay ₹150 using the QR below, then submit the UTR and a clear successful-payment screenshot.</p>
+<p class="lead" id="paymentFeeLead">Verify your registration to load the correct payment amount and QR, then submit the UTR and a clear successful-payment screenshot.</p>
 <div class="payment-card">
 <div class="payment-layout">
 <div>
 <div class="qr-panel">
 <img alt="BYTEFEST registration payment QR code" src="assets/bytefest-payment-qr.jpeg"/>
-<h3>Scan to pay ₹150</h3>
+<h3 id="paymentQrAmount">Loading payment amount...</h3>
 <p>Use any supported UPI app.</p>
 </div>
 <p class="payment-warning"><b>Important:</b> The admin will check your payment. Until it is verified, your registration is not confirmed and you will not be added to the official group.</p>
