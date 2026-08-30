@@ -6,14 +6,14 @@
   <meta name="description" content="BYTEFEST 2026 by Invictus Tech Club — UI/UX Arena, Code Sprint, Bug Hunt and Checkmate on 29 August 2026.">
   <meta name="robots" content="index,follow">
   <title>BYTEFEST 2026 | Invictus Tech Club</title>
-  <link rel="stylesheet" href="style.css?v=2.5.0">
+  <link rel="stylesheet" href="style.css?v=2.7.0">
   <script src="config.js?v=2.5.0" defer></script>
   <script src="site.js?v=2.5.0" defer></script>
   <script src="spa.js?v=2.5.0" defer></script>
-  <script src="register.js?v=2.5.0" defer></script>
+  <script src="register.js?v=2.7.0" defer></script>
   <script src="payment.js?v=2.5.0" defer></script>
-  <script src="my-registration.js?v=2.5.0" defer></script>
-  <script src="admin.js?v=2.5.0" defer></script>
+  <script src="my-registration.js?v=2.7.0" defer></script>
+  <script src="admin.js?v=2.7.0" defer></script>
 </head>
 <body>
 
@@ -252,6 +252,10 @@
 <option value="Bug Hunt">Bug Hunt</option>
 <option value="Checkmate">Checkmate</option>
 </select>
+</label>
+<label class="field hidden" for="teamName" id="teamNameField">Team name
+                        <input autocomplete="organization" id="teamName" maxlength="60" minlength="2" placeholder="Example: Debug Ninjas"/>
+<span class="field-help">Required for UI/UX Arena, Code Sprint and Bug Hunt. This name is also used to create the competition login password.</span>
 </label>
 <label class="field" for="participantName">Lead participant name
                         <input autocomplete="name" id="participantName" maxlength="80" placeholder="Full name" required=""/>

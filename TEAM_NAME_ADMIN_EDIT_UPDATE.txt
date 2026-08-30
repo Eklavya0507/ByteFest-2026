@@ -1,0 +1,30 @@
+BYTEFEST REGISTRATION UPDATE
+
+What changed
+------------
+1. Team Name field added to registration page for:
+   - UI/UX Arena
+   - Code Sprint
+   - Bug Hunt
+   Checkmate remains individual and does not ask for a team name.
+
+2. Registration Admin Dashboard:
+   - Edit button added to every registration.
+   - Admin can correct Team Name, lead participant name/email/phone,
+     department/year, and team member details.
+   - Event and payment status are intentionally not editable here.
+
+3. Existing paid registrations with missing Team Name:
+   - Open Registration Admin -> View/Edit -> enter Team Name -> Save.
+   - Then open Competition Admin -> Refresh.
+   - Code Sprint / Bug Hunt will show the team name and generated password.
+
+4. Changing Team Name may change the competition login password.
+
+Frontend files changed:
+- index.html
+- register.js
+- admin.js
+- my-registration.js
+
+Backend must also be updated with the matching backend ZIP.

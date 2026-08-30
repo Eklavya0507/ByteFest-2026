@@ -68,6 +68,7 @@
                 </div>
                 <div class="result-grid">
                     <div class="result-item"><small>Event</small><b>${escapeHtml(data.event)}</b></div>
+                    ${data.event !== "Checkmate" ? `<div class="result-item"><small>Team name</small><b>${escapeHtml(data.teamName || "Not set")}</b></div>` : ""}
                     <div class="result-item"><small>Lead participant</small><b>${escapeHtml(participant.name)}</b></div>
                     <div class="result-item"><small>Email</small><b>${escapeHtml(participant.email)}</b></div>
                     <div class="result-item"><small>Phone</small><b>+91 ${escapeHtml(participant.phone)}</b></div>

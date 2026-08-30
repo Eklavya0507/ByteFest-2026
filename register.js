@@ -6,6 +6,8 @@
     }
 
     const eventInput = document.getElementById("event");
+    const teamNameField = document.getElementById("teamNameField");
+    const teamNameInput = document.getElementById("teamName");
     const membersSection = document.getElementById("membersSection");
     const memberList = document.getElementById("memberList");
     const addMemberButton = document.getElementById("addMemberButton");
@@ -73,21 +75,31 @@
     }
 
     function updateEventMode() {
-        const individual = eventInput.value === "Checkmate";
-        const exactThree = exactThreeEvents.has(eventInput.value);
+        const selectedEvent = eventInput.value;
+        const individual = selectedEvent === "Checkmate";
+        const teamEvent = Boolean(selectedEvent) && !individual;
+        const exactThree = exactThreeEvents.has(selectedEvent);
+
         if (feeAmount) {
-            feeAmount.textContent = eventInput.value ? `₹${feeForEvent(eventInput.value)}` : "Select event";
+            feeAmount.textContent = selectedEvent ? `₹${feeForEvent(selectedEvent)}` : "Select event";
         }
+
+        if (teamNameField && teamNameInput) {
+            teamNameField.classList.toggle("hidden", !teamEvent);
+            teamNameInput.required = teamEvent;
+            teamNameInput.disabled = !teamEvent;
+            if (!teamEvent) teamNameInput.value = "";
+        }
+
         membersSection.classList.toggle("hidden", individual);
 
         if (individual) {
             memberList.replaceChildren();
             membersHelp.textContent = "Checkmate is an individual event.";
-        } else if (eventInput.value) {
-            // Do not auto-create team-member cards. The lead participant is Member 1,
-            // and the user can add Member 2 and Member 3 manually.
+        } else if (selectedEvent) {
+            // Lead participant is Member 1. Add Member 2 and Member 3 as needed.
             membersHelp.textContent = exactThree
-                ? `${eventInput.value} requires exactly 3 participants in total. Add Member 2 and Member 3.`
+                ? `${selectedEvent} requires exactly 3 participants in total. Add Member 2 and Member 3.`
                 : "Bug Hunt requires 2–3 participants in total. Add members as needed.";
         } else {
             membersHelp.textContent = "UI/UX Arena and Code Sprint require 3 people; Bug Hunt requires 2–3.";
@@ -147,7 +159,14 @@
 
         const members = collectMembers();
         const selectedEvent = eventInput.value;
+        const teamName = teamNameInput && !teamNameInput.disabled ? teamNameInput.value.trim() : "";
         const phone = document.getElementById("phone").value.trim();
+
+        if (selectedEvent !== "Checkmate" && (teamName.length < 2 || teamName.length > 60)) {
+            showStatus("Enter a team name between 2 and 60 characters.", "error");
+            teamNameInput?.focus();
+            return;
+        }
 
         if (!validPhone(phone) || members.some(member => !validPhone(member.phone))) {
             showStatus("Enter valid 10-digit Indian phone numbers starting with 6–9.", "error");
@@ -180,7 +199,7 @@
             const response = await fetch(`${window.BYTEFEST_CONFIG.API_URL}/api/registrations`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ event: selectedEvent, participant, members })
+                body: JSON.stringify({ event: selectedEvent, teamName, participant, members })
             });
             const data = await readJson(response);
 

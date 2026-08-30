@@ -220,6 +220,7 @@
                 participant.phone,
                 participant.department,
                 participant.year,
+                item.teamName,
                 item.payment?.utr,
                 ...members.flatMap(member => [member.name, member.email, member.phone])
             ].join(" ").toLowerCase();
@@ -258,12 +259,12 @@
             return `
                 <tr>
                     <td><span class="cell-title">${escapeHtml(item.registrationId)}</span><span class="cell-subtitle">${escapeHtml(formatDate(item.createdAt))}</span></td>
-                    <td><span class="cell-title">${escapeHtml(item.event)}</span><span class="cell-subtitle">${teamSize} participant${teamSize === 1 ? "" : "s"}</span></td>
+                    <td><span class="cell-title">${escapeHtml(item.event)}</span><span class="cell-subtitle">${item.event !== "Checkmate" ? `${escapeHtml(item.teamName || "TEAM NAME NOT SET")}<br>` : ""}${teamSize} participant${teamSize === 1 ? "" : "s"}</span></td>
                     <td><span class="cell-title">${escapeHtml(participant.name)}</span><span class="cell-subtitle">${escapeHtml(participant.email)}<br>+91 ${escapeHtml(participant.phone)}</span></td>
                     <td>${statusBadge(paid ? "PAID" : "PENDING")}<span class="cell-subtitle">₹${escapeHtml(payment.amount || feeForEvent(item.event))}${payment.approvedAt ? `<br>${escapeHtml(formatDate(payment.approvedAt))}` : ""}</span></td>
                     <td>${proof ? statusBadge("SUBMITTED") : statusBadge("NOT_ATTEMPTED")}<span class="cell-subtitle">${proof ? `UTR: ${escapeHtml(payment.utr)}` : "Waiting for participant"}</span></td>
                     <td><div class="notification-stack"><span>Email ${statusBadge(emailStatus)}</span><span>SMS ${statusBadge(smsStatus)}</span></div></td>
-                    <td><div class="admin-actions"><button class="btn btn-small" type="button" data-view="${escapeHtml(item.registrationId)}">View</button>${!paid && proof ? `<button class="btn btn-small btn-success" type="button" data-approve="${escapeHtml(item.registrationId)}">Approve</button>` : ""}${notificationIncomplete ? `<button class="btn btn-small btn-success" type="button" data-notify="${escapeHtml(item.registrationId)}">Retry notify</button>` : ""}</div></td>
+                    <td><div class="admin-actions"><button class="btn btn-small" type="button" data-view="${escapeHtml(item.registrationId)}">View</button><button class="btn btn-small" type="button" data-edit="${escapeHtml(item.registrationId)}">Edit</button>${!paid && proof ? `<button class="btn btn-small btn-success" type="button" data-approve="${escapeHtml(item.registrationId)}">Approve</button>` : ""}${notificationIncomplete ? `<button class="btn btn-small btn-success" type="button" data-notify="${escapeHtml(item.registrationId)}">Retry notify</button>` : ""}</div></td>
                 </tr>
             `;
         }).join("");
@@ -316,6 +317,7 @@
         body.innerHTML = `
             <div class="result-grid">
                 <div class="result-item"><small>Event</small><b>${escapeHtml(registration.event)}</b></div>
+                ${registration.event !== "Checkmate" ? `<div class="result-item"><small>Team name</small><b>${escapeHtml(registration.teamName || "TEAM NAME NOT SET")}</b></div>` : ""}
                 <div class="result-item"><small>Status</small>${statusBadge(paid ? "PAID" : "PENDING")}</div>
                 <div class="result-item"><small>Lead participant</small><b>${escapeHtml(participant.name)}</b></div>
                 <div class="result-item"><small>Email</small><b>${escapeHtml(participant.email)}</b></div>
@@ -334,6 +336,7 @@
                 <p id="proofLoading" class="muted">Loading protected UTR and screenshot...</p>
                 <div id="proofContent"></div>
             </div>
+            <div class="actions"><button class="btn" type="button" data-edit="${escapeHtml(registration.registrationId)}">Edit registration details</button></div>
             ${!paid ? `<div class="actions"><button class="btn btn-primary" type="button" data-approve="${escapeHtml(registration.registrationId)}">Approve payment & notify participant</button></div>` : ""}
             ${notificationIncomplete ? `<div class="actions"><button class="btn btn-success" type="button" data-notify="${escapeHtml(registration.registrationId)}">Retry failed email / SMS</button></div>` : ""}
         `;
@@ -341,6 +344,160 @@
         modal.classList.add("is-open");
         document.body.classList.add("modal-open");
         loadPaymentProof(registration.registrationId);
+    }
+
+
+    function editMemberFields(member, index, required) {
+        const data = member || {};
+        return `
+            <div class="member-card admin-edit-member" data-member-index="${index}">
+                <div class="member-title"><b>Member ${index + 2}${required ? " · required" : " · optional"}</b></div>
+                <div class="form-grid">
+                    <label class="field">Name<input data-edit-member-name maxlength="80" value="${escapeHtml(data.name || "")}" placeholder="Member full name"></label>
+                    <label class="field">Email<input data-edit-member-email type="email" maxlength="120" value="${escapeHtml(data.email || "")}" placeholder="member@example.com"></label>
+                    <label class="field">Phone<input data-edit-member-phone type="tel" inputmode="numeric" maxlength="10" value="${escapeHtml(data.phone || "")}" placeholder="10-digit number"></label>
+                </div>
+            </div>
+        `;
+    }
+
+    function openEditModal(registrationId) {
+        const registration = findRegistration(registrationId);
+        if (!registration) {
+            showToast("Registration was not found in the current dashboard data.");
+            return;
+        }
+
+        const participant = registration.participant || {};
+        const members = Array.isArray(registration.members) ? registration.members : [];
+        const teamEvent = registration.event !== "Checkmate";
+        const exactThree = ["UI/UX Arena", "Code Sprint"].includes(registration.event);
+        const modal = document.getElementById("detailsModal");
+        const body = document.getElementById("modalBody");
+
+        modal.dataset.registrationId = registration.registrationId;
+        document.getElementById("modalTitle").textContent = `Edit ${registration.registrationId}`;
+
+        body.innerHTML = `
+            <form id="adminEditRegistrationForm" class="form-shell" novalidate>
+                <div class="notice is-visible">
+                    <b>Event cannot be changed here:</b> ${escapeHtml(registration.event)}.
+                    ${teamEvent ? "Changing the team name can change the competition login password, so share the updated password with the team." : ""}
+                </div>
+
+                <div class="form-grid" style="margin-top:18px">
+                    <label class="field">Event
+                        <input value="${escapeHtml(registration.event)}" disabled>
+                    </label>
+                    ${teamEvent ? `
+                    <label class="field">Team name
+                        <input id="adminEditTeamName" minlength="2" maxlength="60" required value="${escapeHtml(registration.teamName || "")}" placeholder="Team name">
+                    </label>` : ""}
+                    <label class="field">Lead participant name
+                        <input id="adminEditLeadName" maxlength="80" required value="${escapeHtml(participant.name || "")}">
+                    </label>
+                    <label class="field">Lead email
+                        <input id="adminEditLeadEmail" type="email" maxlength="120" required value="${escapeHtml(participant.email || "")}">
+                    </label>
+                    <label class="field">Lead phone
+                        <input id="adminEditLeadPhone" type="tel" inputmode="numeric" maxlength="10" required value="${escapeHtml(participant.phone || "")}">
+                    </label>
+                    <label class="field">Department
+                        <input id="adminEditDepartment" maxlength="80" required value="${escapeHtml(participant.department || "")}">
+                    </label>
+                    <label class="field">Year
+                        <select id="adminEditYear" required>
+                            ${["1st Year","2nd Year","3rd Year","4th Year"].map(year => `<option value="${year}"${participant.year === year ? " selected" : ""}>${year}</option>`).join("")}
+                        </select>
+                    </label>
+                </div>
+
+                ${teamEvent ? `
+                <div style="margin-top:20px">
+                    <h3>Team members</h3>
+                    <p class="muted">${exactThree ? "Member 2 and Member 3 are required." : "Bug Hunt requires Member 2; Member 3 is optional."}</p>
+                    ${editMemberFields(members[0], 0, true)}
+                    ${editMemberFields(members[1], 1, exactThree)}
+                </div>` : ""}
+
+                <div class="form-status" id="adminEditStatus" role="status"></div>
+                <div class="actions">
+                    <button class="btn btn-primary" id="adminEditSaveButton" type="submit">Save changes</button>
+                    <button class="btn" type="button" data-view="${escapeHtml(registration.registrationId)}">Cancel</button>
+                </div>
+            </form>
+        `;
+
+        modal.classList.add("is-open");
+        document.body.classList.add("modal-open");
+
+        document.getElementById("adminEditRegistrationForm").addEventListener("submit", event => {
+            event.preventDefault();
+            saveRegistrationEdits(registration.registrationId);
+        });
+    }
+
+    async function saveRegistrationEdits(registrationId) {
+        const registration = findRegistration(registrationId);
+        const form = document.getElementById("adminEditRegistrationForm");
+        const statusBox = document.getElementById("adminEditStatus");
+        const saveButton = document.getElementById("adminEditSaveButton");
+
+        if (!registration || !form || !statusBox || !saveButton) return;
+        if (!form.reportValidity()) {
+            showFormStatus(statusBox, "Complete all required fields.", "error");
+            return;
+        }
+
+        const members = [...form.querySelectorAll(".admin-edit-member")].map(card => ({
+            name: card.querySelector("[data-edit-member-name]")?.value.trim() || "",
+            email: card.querySelector("[data-edit-member-email]")?.value.trim().toLowerCase() || "",
+            phone: card.querySelector("[data-edit-member-phone]")?.value.trim() || ""
+        })).filter(member => member.name || member.email || member.phone);
+
+        const payload = {
+            teamName: registration.event === "Checkmate"
+                ? ""
+                : document.getElementById("adminEditTeamName")?.value.trim() || "",
+            participant: {
+                name: document.getElementById("adminEditLeadName").value.trim(),
+                email: document.getElementById("adminEditLeadEmail").value.trim().toLowerCase(),
+                phone: document.getElementById("adminEditLeadPhone").value.trim(),
+                department: document.getElementById("adminEditDepartment").value.trim(),
+                year: document.getElementById("adminEditYear").value
+            },
+            members
+        };
+
+        saveButton.disabled = true;
+        saveButton.textContent = "Saving...";
+        showFormStatus(statusBox, "Saving registration changes...");
+
+        try {
+            const data = await apiRequest(
+                `/api/admin/registrations/${encodeURIComponent(registrationId)}/edit`,
+                {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                },
+                true
+            );
+
+            const updated = data.registration;
+            const index = registrations.findIndex(item => item.registrationId === registrationId);
+            if (index >= 0 && updated) registrations[index] = updated;
+
+            updateStatistics();
+            applyFilters();
+            showToast("Registration details updated.");
+            openModal(registrationId);
+        } catch (error) {
+            console.error(error);
+            showFormStatus(statusBox, error.message || "Could not update registration.", "error");
+            saveButton.disabled = false;
+            saveButton.textContent = "Save changes";
+        }
     }
 
     async function loadPaymentProof(registrationId) {
@@ -467,6 +624,7 @@
         const headers = [
             "Registration ID",
             "Event",
+            "Team Name",
             "Lead Name",
             "Lead Email",
             "Lead Phone",
@@ -497,6 +655,7 @@
             return [
                 item.registrationId,
                 item.event,
+                item.teamName || "",
                 item.participant?.name,
                 item.participant?.email,
                 exportPhone(item.participant?.phone),
@@ -567,11 +726,16 @@
         });
         document.addEventListener("click", event => {
             const viewButton = event.target.closest("[data-view]");
+            const editButton = event.target.closest("[data-edit]");
             const approveButton = event.target.closest("[data-approve]");
             const notifyButton = event.target.closest("[data-notify]");
 
             if (viewButton) {
                 openModal(viewButton.dataset.view);
+            }
+
+            if (editButton) {
+                openEditModal(editButton.dataset.edit);
             }
 
             if (approveButton) {
