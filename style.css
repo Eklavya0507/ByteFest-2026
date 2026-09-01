@@ -1623,9 +1623,10 @@ body.admin-mode > .public-site-footer { display: none !important; }
 
 .bytefest-wordmark {
     margin: 17px 0 -4px;
-    font-size: clamp(70px, 10.5vw, 146px);
-    letter-spacing: -.085em;
-    line-height: .78;
+    font-size: clamp(70px, 8vw, 120px);
+    letter-spacing: -.075em;
+    line-height: .85;
+    white-space: nowrap;
     text-shadow: 0 0 34px rgba(130, 79, 255, .14);
 }
 
