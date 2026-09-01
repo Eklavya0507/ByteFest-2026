@@ -1,0 +1,41 @@
+BYTEFEST 2026 — FREE REGISTRATION UPDATE
+
+Date: Friday, 4 September 2026
+Reporting Time: 9:50 AM
+Event Start: 10:00 AM
+Registration Fee: NO REGISTRATION FEE
+
+NEW FLOW
+Register -> Confirmed -> Join registered Event Group -> Join BYTEFEST Community -> Brevo confirmation email -> My Registration.
+
+PAYMENT REMOVED
+- No payment QR
+- No UTR
+- No payment screenshot
+- No manual payment verification
+
+GROUP LINKS
+The backend reads these existing Render variables:
+BYTEFEST_GROUP_UIUX
+BYTEFEST_GROUP_CODE_SPRINT
+BYTEFEST_GROUP_BUG_HUNT
+BYTEFEST_GROUP_CHECKMATE
+BYTEFEST_COMMUNITY_LINK
+
+EMAIL
+Brevo email is automatically sent immediately after a successful registration using the existing BREVO_API_KEY and sender configuration. The email includes Registration ID, Event, Team Name (team events), Event Group link, BYTEFEST Community link, and updated event timing.
+
+TEAM SIZE
+UI/UX Arena: 3
+Code Sprint: 3
+Bug Hunt: 3
+Checkmate: Individual
+
+DEPLOYMENT ORDER
+1. Replace backend repository files with the backend ZIP contents and deploy on Render.
+2. Confirm Render starts successfully and all group-link/Brevo variables are configured.
+3. Replace frontend repository files with the frontend ZIP contents and push to GitHub Pages.
+4. Test one fresh registration and verify group buttons + confirmation email.
+
+NOTE
+The backend keeps the old MongoDB payment object internally only for compatibility with existing records/admin code. New registrations store amount 0 and are auto-confirmed; there is no participant payment flow.

@@ -1,16 +1,15 @@
-BYTEFEST 2026 FRONTEND — COMPLETE BUILD
+BYTEFEST 2026 FRONTEND SETUP — FREE REGISTRATION
 
-1. Deploy the rebuilt backend to Render first.
-2. Confirm https://byte-fest-backend.onrender.com returns status OK.
-3. Upload every file and the complete assets folder to the frontend GitHub repository.
-4. Keep assets/bytefest-payment-qr.jpeg in the repository.
-5. In GitHub Pages, wait for the new deployment to complete, then hard-refresh with Ctrl+F5.
+1. Upload all frontend files to the ByteFest-2026 GitHub repository root.
+2. GitHub Pages should continue serving the repository root.
+3. Deploy the matching backend to Render first.
+4. No payment QR assets are required.
 
-PUBLIC FLOW
-Register -> generated registration ID -> scan payment QR -> submit UTR and screenshot -> pending -> admin approves -> Brevo email/optional SMS with private group links -> participant sees PAID and checks email/SMS.
+CURRENT FLOW
+Register -> registration confirmed -> Join Event Group + Join BYTEFEST Community -> Brevo confirmation email -> My Registration lookup.
 
-ADMIN FLOW
-Open admin-login.html -> approved email + Render ADMIN_LOGIN_PASSWORD -> review UTR/screenshot -> approve -> notification result shown.
-
-EVENT COUNTDOWN
-config.js counts down to reporting opening on 29 August 2026 at 9:10 AM India time. The public reporting window is 9:10 AM–9:30 AM.
+EVENT
+Friday, 4 September 2026
+Reporting: 9:50 AM
+Event Start: 10:00 AM
+Registration Fee: NO REGISTRATION FEE

@@ -12,7 +12,7 @@ What changed
    - Edit button added to every registration.
    - Admin can correct Team Name, lead participant name/email/phone,
      department/year, and team member details.
-   - Event and payment status are intentionally not editable here.
+   - Event and registration status are intentionally not editable here.
 
 3. Existing paid registrations with missing Team Name:
    - Open Registration Admin -> View/Edit -> enter Team Name -> Save.
