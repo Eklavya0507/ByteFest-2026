@@ -34,8 +34,8 @@
             .replaceAll("'", "&#039;");
     }
 
-    function feeForEvent(eventName) {
-        return Number(window.BYTEFEST_CONFIG?.EVENT_FEES?.[eventName] ?? window.BYTEFEST_CONFIG?.REGISTRATION_FEE ?? 150);
+    function feeForEvent() {
+        return 0;
     }
 
     function formatDate(value) {
@@ -123,7 +123,9 @@
 
     function statusBadge(status) {
         const safeStatus = String(status || "NOT_ATTEMPTED").toUpperCase();
-        return `<span class="status-badge status-${safeStatus.toLowerCase()}">${escapeHtml(safeStatus)}</span>`;
+        const label = safeStatus === "PAID" ? "CONFIRMED" : safeStatus;
+        const cssStatus = safeStatus === "PAID" ? "paid" : safeStatus.toLowerCase();
+        return `<span class="status-badge status-${cssStatus}">${escapeHtml(label)}</span>`;
     }
 
     function deliverySummary(label, delivery) {
@@ -197,10 +199,10 @@
     function updateStatistics() {
         const pending = registrations.filter(item => item.payment?.status !== "PAID").length;
         const paid = registrations.filter(item => item.payment?.status === "PAID").length;
-        const proof = registrations.filter(item => item.payment?.status !== "PAID" && paymentProofSubmitted(item)).length;
+        const emailSent = registrations.filter(item => item.payment?.emailNotification?.status === "SENT").length;
         document.getElementById("totalCount").textContent = registrations.length;
         document.getElementById("pendingCount").textContent = pending;
-        document.getElementById("proofCount").textContent = proof;
+        document.getElementById("proofCount").textContent = emailSent;
         document.getElementById("paidCount").textContent = paid;
     }
 
@@ -221,16 +223,11 @@
                 participant.department,
                 participant.year,
                 item.teamName,
-                item.payment?.utr,
                 ...members.flatMap(member => [member.name, member.email, member.phone])
             ].join(" ").toLowerCase();
             const matchesSearch = !search || haystack.includes(search);
             const matchesEvent = !event || item.event === event;
             let matchesPayment = !payment || item.payment?.status === payment;
-
-            if (payment === "PROOF") {
-                matchesPayment = item.payment?.status !== "PAID" && paymentProofSubmitted(item);
-            }
 
             return matchesSearch && matchesEvent && matchesPayment;
         });
@@ -250,10 +247,10 @@
             const participant = item.participant || {};
             const payment = item.payment || {};
             const paid = payment.status === "PAID";
-            const proof = paymentProofSubmitted(item);
+            const linksReady = Boolean(item.groupLink && item.communityLink);
             const emailStatus = payment.emailNotification?.status || "NOT_ATTEMPTED";
             const smsStatus = payment.smsNotification?.status || "NOT_ATTEMPTED";
-            const notificationIncomplete = paid && (emailStatus !== "SENT" || smsStatus !== "SENT");
+            const notificationIncomplete = paid && (emailStatus !== "SENT" || !["SENT", "SKIPPED"].includes(smsStatus));
             const teamSize = 1 + (Array.isArray(item.members) ? item.members.length : 0);
 
             return `
@@ -261,10 +258,10 @@
                     <td><span class="cell-title">${escapeHtml(item.registrationId)}</span><span class="cell-subtitle">${escapeHtml(formatDate(item.createdAt))}</span></td>
                     <td><span class="cell-title">${escapeHtml(item.event)}</span><span class="cell-subtitle">${item.event !== "Checkmate" ? `${escapeHtml(item.teamName || "TEAM NAME NOT SET")}<br>` : ""}${teamSize} participant${teamSize === 1 ? "" : "s"}</span></td>
                     <td><span class="cell-title">${escapeHtml(participant.name)}</span><span class="cell-subtitle">${escapeHtml(participant.email)}<br>+91 ${escapeHtml(participant.phone)}</span></td>
-                    <td>${statusBadge(paid ? "PAID" : "PENDING")}<span class="cell-subtitle">₹${escapeHtml(payment.amount || feeForEvent(item.event))}${payment.approvedAt ? `<br>${escapeHtml(formatDate(payment.approvedAt))}` : ""}</span></td>
-                    <td>${proof ? statusBadge("SUBMITTED") : statusBadge("NOT_ATTEMPTED")}<span class="cell-subtitle">${proof ? `UTR: ${escapeHtml(payment.utr)}` : "Waiting for participant"}</span></td>
+                    <td>${statusBadge(paid ? "PAID" : "PENDING")}<span class="cell-subtitle">No registration fee${payment.approvedAt ? `<br>${escapeHtml(formatDate(payment.approvedAt))}` : ""}</span></td>
+                    <td>${statusBadge(linksReady ? "SENT" : "NOT_ATTEMPTED")}<span class="cell-subtitle">${linksReady ? "Event + Community links ready" : "One or more links missing"}</span></td>
                     <td><div class="notification-stack"><span>Email ${statusBadge(emailStatus)}</span><span>SMS ${statusBadge(smsStatus)}</span></div></td>
-                    <td><div class="admin-actions"><button class="btn btn-small" type="button" data-view="${escapeHtml(item.registrationId)}">View</button><button class="btn btn-small" type="button" data-edit="${escapeHtml(item.registrationId)}">Edit</button>${!paid && proof ? `<button class="btn btn-small btn-success" type="button" data-approve="${escapeHtml(item.registrationId)}">Approve</button>` : ""}${notificationIncomplete ? `<button class="btn btn-small btn-success" type="button" data-notify="${escapeHtml(item.registrationId)}">Retry notify</button>` : ""}</div></td>
+                    <td><div class="admin-actions"><button class="btn btn-small" type="button" data-view="${escapeHtml(item.registrationId)}">View</button><button class="btn btn-small" type="button" data-edit="${escapeHtml(item.registrationId)}">Edit</button>${!paid ? `<button class="btn btn-small btn-success" type="button" data-approve="${escapeHtml(item.registrationId)}">Confirm</button>` : ""}${notificationIncomplete ? `<button class="btn btn-small btn-success" type="button" data-notify="${escapeHtml(item.registrationId)}">Retry notify</button>` : ""}</div></td>
                 </tr>
             `;
         }).join("");
@@ -308,7 +305,7 @@
         const paid = payment.status === "PAID";
         const emailStatus = payment.emailNotification?.status || "NOT_ATTEMPTED";
         const smsStatus = payment.smsNotification?.status || "NOT_ATTEMPTED";
-        const notificationIncomplete = paid && (emailStatus !== "SENT" || smsStatus !== "SENT");
+        const notificationIncomplete = paid && (emailStatus !== "SENT" || !["SENT", "SKIPPED"].includes(smsStatus));
         const modal = document.getElementById("detailsModal");
         const body = document.getElementById("modalBody");
         modal.dataset.registrationId = registration.registrationId;
@@ -325,25 +322,19 @@
                 <div class="result-item"><small>Department / year</small><b>${escapeHtml(participant.department)} · ${escapeHtml(participant.year)}</b></div>
                 ${members.map((member, index) => `<div class="result-item"><small>Member ${index + 2}</small><b>${escapeHtml(member.name)}</b><br><span class="muted">${escapeHtml(member.email)} · +91 ${escapeHtml(member.phone)}</span></div>`).join("")}
                 <div class="result-item"><small>Registered</small><b>${escapeHtml(formatDate(registration.createdAt))}</b></div>
-                <div class="result-item"><small>Approved</small><b>${escapeHtml(formatDate(payment.approvedAt))}</b></div>
+                <div class="result-item"><small>Confirmed</small><b>${escapeHtml(formatDate(payment.approvedAt))}</b></div>
                 <div class="result-item"><small>${escapeHtml(registration.event)} group link</small><b>${escapeHtml(registration.groupLink || "Not configured")}</b></div>
                 <div class="result-item"><small>BYTEFEST Community link</small><b>${escapeHtml(registration.communityLink || "Not configured")}</b></div>
                 <div class="result-item"><small>Email notification</small>${statusBadge(payment.emailNotification?.status || "NOT_ATTEMPTED")}<br><span class="muted">${escapeHtml(payment.emailNotification?.error || payment.emailNotification?.messageId || "")}</span></div>
                 <div class="result-item"><small>SMS notification</small>${statusBadge(payment.smsNotification?.status || "NOT_ATTEMPTED")}<br><span class="muted">${escapeHtml(payment.smsNotification?.error || payment.smsNotification?.messageId || "")}</span></div>
             </div>
-            <div class="detail-card" style="margin-top:20px">
-                <div class="detail-card-header"><h3>Payment proof</h3><span class="detail-badge">₹${escapeHtml(payment.amount || feeForEvent(registration.event))}</span></div>
-                <p id="proofLoading" class="muted">Loading protected UTR and screenshot...</p>
-                <div id="proofContent"></div>
-            </div>
             <div class="actions"><button class="btn" type="button" data-edit="${escapeHtml(registration.registrationId)}">Edit registration details</button></div>
-            ${!paid ? `<div class="actions"><button class="btn btn-primary" type="button" data-approve="${escapeHtml(registration.registrationId)}">Approve payment & notify participant</button></div>` : ""}
+            ${!paid ? `<div class="actions"><button class="btn btn-primary" type="button" data-approve="${escapeHtml(registration.registrationId)}">Confirm registration & notify participant</button></div>` : ""}
             ${notificationIncomplete ? `<div class="actions"><button class="btn btn-success" type="button" data-notify="${escapeHtml(registration.registrationId)}">Retry failed email / SMS</button></div>` : ""}
         `;
 
         modal.classList.add("is-open");
         document.body.classList.add("modal-open");
-        loadPaymentProof(registration.registrationId);
     }
 
 
@@ -371,7 +362,7 @@
         const participant = registration.participant || {};
         const members = Array.isArray(registration.members) ? registration.members : [];
         const teamEvent = registration.event !== "Checkmate";
-        const exactThree = ["UI/UX Arena", "Code Sprint"].includes(registration.event);
+        const exactThree = ["UI/UX Arena", "Code Sprint", "Bug Hunt"].includes(registration.event);
         const modal = document.getElementById("detailsModal");
         const body = document.getElementById("modalBody");
 
@@ -547,7 +538,7 @@
             return;
         }
 
-        const confirmed = window.confirm(`Approve ₹${registration.payment?.amount || feeForEvent(registration.event)} payment for ${registration.participant?.name || registrationId}? This will confirm registration and send the approval notification.`);
+        const confirmed = window.confirm(`Confirm registration for ${registration.participant?.name || registrationId} and send the official group-link notification?`);
 
         if (!confirmed) {
             return;
@@ -555,14 +546,14 @@
 
         document.querySelectorAll(`[data-approve="${CSS.escape(registrationId)}"]`).forEach(button => {
             button.disabled = true;
-            button.textContent = "Approving...";
+            button.textContent = "Confirming...";
         });
 
         try {
             const data = await apiRequest(`/api/admin/registrations/${encodeURIComponent(registrationId)}/approve`, { method: "PATCH" }, true);
             const email = data.notification?.email || data.registration?.payment?.emailNotification;
             const sms = data.notification?.sms || data.registration?.payment?.smsNotification;
-            showToast(`Payment approved. ${deliverySummary("Email", email)}. ${deliverySummary("SMS", sms)}.`);
+            showToast(`Registration confirmed. ${deliverySummary("Email", email)}. ${deliverySummary("SMS", sms)}.`);
             closeModal();
             await loadRegistrations();
         } catch (error) {
@@ -579,7 +570,7 @@
         const registration = findRegistration(registrationId);
 
         if (!registration || registration.payment?.status !== "PAID") {
-            showToast("Approve the payment before retrying notifications.");
+            showToast("Confirm the registration before retrying notifications.");
             return;
         }
 
@@ -637,10 +628,10 @@
             "Member 3 Email",
             "Member 3 Phone",
             "Team Size",
-            "Payment",
-            "Amount",
-            "UTR",
-            "Proof Submitted",
+            "Registration Status",
+            "Registration Fee",
+            "Event Group Link",
+            "Community Link",
             "Email Notification",
             "SMS Notification",
             "Created At",
@@ -668,10 +659,10 @@
                 member3.email || "",
                 exportPhone(member3.phone),
                 1 + members.length,
-                payment.status || "PENDING",
-                payment.amount || feeForEvent(item.event),
-                payment.utr || "",
-                paymentProofSubmitted(item) ? "Yes" : "No",
+                payment.status === "PAID" ? "CONFIRMED" : "PENDING",
+                "NO REGISTRATION FEE",
+                item.groupLink || "",
+                item.communityLink || "",
                 payment.emailNotification?.status || "NOT_ATTEMPTED",
                 payment.smsNotification?.status || "NOT_ATTEMPTED",
                 item.createdAt || "",

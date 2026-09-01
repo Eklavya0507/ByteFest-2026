@@ -1,9 +1,6 @@
 (function () {
     const form = document.getElementById("registrationForm");
-
-    if (!form) {
-        return;
-    }
+    if (!form) return;
 
     const eventInput = document.getElementById("event");
     const teamNameField = document.getElementById("teamNameField");
@@ -16,7 +13,7 @@
     const membersHelp = document.getElementById("membersHelp");
     const feeAmount = document.getElementById("registrationFeeAmount");
     const allowedEvents = ["UI/UX Arena", "Code Sprint", "Bug Hunt", "Checkmate"];
-    const exactThreeEvents = new Set(["UI/UX Arena", "Code Sprint"]);
+    const threeMemberEvents = new Set(["UI/UX Arena", "Code Sprint", "Bug Hunt"]);
 
     function showStatus(message, type = "") {
         statusBox.textContent = message;
@@ -37,15 +34,11 @@
             card.querySelector("[data-member-title]").textContent = `Member ${index + 2}`;
             card.querySelector("[data-remove-member]").disabled = false;
         });
-
-        // Lead participant is Member 1. Two extra member cards = 3 participants total.
         addMemberButton.disabled = memberCards().length >= 2;
     }
 
     function addMember() {
-        if (memberCards().length >= 2) {
-            return;
-        }
+        if (memberCards().length >= 2) return;
 
         const card = document.createElement("div");
         card.className = "member-card";
@@ -70,19 +63,12 @@
         updateMemberLabels();
     }
 
-    function feeForEvent(eventName) {
-        return Number(window.BYTEFEST_CONFIG?.EVENT_FEES?.[eventName] ?? window.BYTEFEST_CONFIG?.REGISTRATION_FEE ?? 150);
-    }
-
     function updateEventMode() {
         const selectedEvent = eventInput.value;
         const individual = selectedEvent === "Checkmate";
         const teamEvent = Boolean(selectedEvent) && !individual;
-        const exactThree = exactThreeEvents.has(selectedEvent);
 
-        if (feeAmount) {
-            feeAmount.textContent = selectedEvent ? `₹${feeForEvent(selectedEvent)}` : "Select event";
-        }
+        if (feeAmount) feeAmount.textContent = "NO REGISTRATION FEE";
 
         if (teamNameField && teamNameInput) {
             teamNameField.classList.toggle("hidden", !teamEvent);
@@ -97,12 +83,9 @@
             memberList.replaceChildren();
             membersHelp.textContent = "Checkmate is an individual event.";
         } else if (selectedEvent) {
-            // Lead participant is Member 1. Add Member 2 and Member 3 as needed.
-            membersHelp.textContent = exactThree
-                ? `${selectedEvent} requires exactly 3 participants in total. Add Member 2 and Member 3.`
-                : "Bug Hunt requires 2–3 participants in total. Add members as needed.";
+            membersHelp.textContent = `${selectedEvent} requires exactly 3 participants in total. Add Member 2 and Member 3.`;
         } else {
-            membersHelp.textContent = "UI/UX Arena and Code Sprint require 3 people; Bug Hunt requires 2–3.";
+            membersHelp.textContent = "UI/UX Arena, Code Sprint and Bug Hunt require exactly 3 participants; Checkmate is individual.";
         }
 
         updateMemberLabels();
@@ -122,12 +105,8 @@
 
     async function readJson(response) {
         const text = await response.text();
-
-        try {
-            return text ? JSON.parse(text) : {};
-        } catch {
-            return {};
-        }
+        try { return text ? JSON.parse(text) : {}; }
+        catch { return {}; }
     }
 
     eventInput.addEventListener("change", updateEventMode);
@@ -173,13 +152,8 @@
             return;
         }
 
-        if (exactThreeEvents.has(selectedEvent) && members.length !== 2) {
+        if (threeMemberEvents.has(selectedEvent) && members.length !== 2) {
             showStatus(`${selectedEvent} requires exactly 3 participants in total.`, "error");
-            return;
-        }
-
-        if (selectedEvent === "Bug Hunt" && (members.length < 1 || members.length > 2)) {
-            showStatus("Bug Hunt requires 2–3 participants in total.", "error");
             return;
         }
 
@@ -192,8 +166,8 @@
         };
 
         submitButton.disabled = true;
-        submitButton.textContent = "Creating registration...";
-        showStatus("Connecting to the BYTEFEST server...");
+        submitButton.textContent = "Confirming registration...";
+        showStatus("Creating your BYTEFEST registration...");
 
         try {
             const response = await fetch(`${window.BYTEFEST_CONFIG.API_URL}/api/registrations`, {
@@ -207,24 +181,33 @@
                 throw new Error(data.message || `Registration failed (HTTP ${response.status})`);
             }
 
-            sessionStorage.setItem(`bytefest_payment_email_${data.registrationId}`, participant.email);
             sessionStorage.setItem("bytefest_last_registration_id", data.registrationId);
-            showStatus(`Registration ${data.registrationId} created. Opening payment...`, "success");
+            sessionStorage.setItem("bytefest_last_registration_email", participant.email);
+            sessionStorage.setItem("bytefest_active_registration_id", data.registrationId);
+            sessionStorage.setItem("bytefest_last_registration_event", data.event || selectedEvent);
+            sessionStorage.setItem("bytefest_last_registration_team", data.teamName || teamName || "");
+            if (data.groupLink) sessionStorage.setItem(`bytefest_group_link_${data.registrationId}`, data.groupLink);
+            if (data.communityLink) sessionStorage.setItem(`bytefest_community_link_${data.registrationId}`, data.communityLink);
+
+            showStatus(`Registration ${data.registrationId} confirmed. Opening your group link...`, "success");
 
             window.setTimeout(() => {
                 form.reset();
                 memberList.replaceChildren();
                 submitButton.disabled = false;
-                submitButton.textContent = "Create registration & continue →";
+                submitButton.textContent = "Create registration & join group →";
                 updateEventMode();
-                if (window.ByteFestSPA) window.ByteFestSPA.open("payment", { registrationId: data.registrationId });
-                else window.location.href = "./";
-            }, 650);
+                if (window.ByteFestSPA) {
+                    window.ByteFestSPA.open("groups", { registrationId: data.registrationId });
+                } else {
+                    window.location.href = "./groups.html";
+                }
+            }, 250);
         } catch (error) {
             console.error(error);
             showStatus(error.message || "Cannot connect to the BYTEFEST server.", "error");
             submitButton.disabled = false;
-            submitButton.textContent = "Create registration & continue →";
+            submitButton.textContent = "Create registration & join group →";
         }
     });
 }());

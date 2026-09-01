@@ -1,47 +1,39 @@
-# BYTEFEST 2026 Frontend
+# BYTEFEST 2026 Frontend — v3.1
 
-Static GitHub Pages frontend for the complete participant and administrator flow.
+Complete static GitHub Pages frontend for BYTEFEST 2026.
 
-## Included pages
+## Participant flow
 
-- `index.html` — unique registration CTA, event summary and live countdown to 29 August 2026
-- `events.html` — all four event choices
-- `details.html` — expanded format, preparation and rules; Code Sprint and Bug Hunt use venue systems
-- `register.html` — participant/team registration
-- `payment.html` — supplied QR, UTR and compressed screenshot upload
-- `my-registration.html` — participant status lookup; approved invite links are delivered privately by email and optional SMS
-- `admin-login.html` — separate administrator login
-- `admin.html` — protected registration/payment dashboard with event/community links, Brevo delivery errors, retry controls, and a CSV export containing lead plus Member 2/Member 3 details
+`Home -> Register -> Registration Successful -> Join Official Event Group`
 
-The layout includes larger, higher-contrast typography and mobile-sized controls for participant phones. Asset version query strings are included so GitHub Pages does not keep serving the older small-text CSS after deployment.
+There is no payment page, payment QR, UTR, screenshot upload, or payment approval step.
 
-## Configuration
+## Event schedule
 
-Edit `config.js` only if the Render URL or reporting time changes:
+- Date: Friday, 4 September 2026
+- Reporting: 9:50 AM
+- Event Start: 10:00 AM
+- Venue: EPCET B Block Seminar Hall
+- Registration Fee: NO REGISTRATION FEE
 
-```js
-window.BYTEFEST_CONFIG = Object.freeze({
-    API_URL: "https://byte-fest-backend.onrender.com",
-    EVENT_START: "2026-08-29T09:10:00+05:30",
-    EVENT_DATE_LABEL: "29 August 2026 · Reporting 9:10 AM–9:30 AM",
-    REGISTRATION_FEE: 150\nEVENT_FEES: Checkmate = 50, other events = 150
-});
-```
+## Design update
 
-The countdown currently reaches zero when reporting opens at 9:10 AM in India. Change `EVENT_START` if the official reporting time is different.
+The existing BYTEFEST layout is preserved. Only selected areas (main Home hero + countdown) use the darker purple/cyber/data style inspired by the supplied reference video. Event cards, details, registration form, My Registration, and admin remain familiar and functional.
 
-## Deploy to GitHub Pages
+## Instant group-link behavior
 
-Replace the files in the `ByteFest-2026` repository with this folder, then commit and push:
+After the participant submits the registration form, the backend response includes:
 
-```powershell
-git add .
-git commit -m "Complete BYTEFEST registration payment and admin flow"
-git push origin main
-```
+- `registrationId`
+- `event`
+- `teamName`
+- `groupLink`
+- optional `communityLink`
 
-Do not remove `assets/bytefest-payment-qr.jpeg`; it is the QR displayed on the payment page. `assets/bytefest-registration-qr.png` opens `https://eklavya0507.github.io/ByteFest-2026/` and must not be used as the payment QR.
+The frontend stores these values in `sessionStorage` and opens the Join Group screen immediately. It does not wait for Brevo email delivery and does not make a second API request when the fresh registration response already contains the event group link.
 
-## Required backend deployment order
+## Deployment
 
-Deploy the new backend to Render first. After Render reports `MongoDB connected successfully`, deploy this frontend. The new frontend depends on the lookup and payment-proof endpoints included in the rebuilt backend.
+Upload/replace the complete contents of this folder in the `ByteFest-2026` frontend repository and push to GitHub Pages.
+
+Deploy the matching backend first so `/api/registrations` returns the instant group link.

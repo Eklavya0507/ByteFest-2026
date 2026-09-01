@@ -8,7 +8,7 @@
         events: "Events | BYTEFEST 2026",
         details: "Event Details | BYTEFEST 2026",
         register: "Register | BYTEFEST 2026",
-        payment: "Payment | BYTEFEST 2026",
+        groups: "Join Groups | BYTEFEST 2026",
         "my-registration": "My Registration | BYTEFEST 2026",
         "admin-login": "Admin Login | BYTEFEST 2026",
         "admin-dashboard": "Registration Dashboard | BYTEFEST 2026"

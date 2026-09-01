@@ -1569,3 +1569,224 @@ body.admin-mode > .public-site-footer { display: none !important; }
 .admin-view { min-height: 100vh; }
 .admin-inner-header { position: sticky; top: 0; z-index: 50; }
 .site-nav a[aria-current="page"] { color: var(--text); opacity: 1; }
+
+/* v3.1 — selective video-inspired treatment: hero + countdown only */
+.bytefest-video-hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    min-height: calc(100vh - 74px);
+    border-bottom: 1px solid rgba(155, 124, 255, 0.14);
+}
+
+.bytefest-video-hero::before {
+    position: absolute;
+    inset: 5% 0 7%;
+    z-index: -2;
+    background:
+        radial-gradient(circle at 58% 44%, rgba(138, 92, 246, 0.24), transparent 28%),
+        repeating-linear-gradient(90deg, transparent 0 38px, rgba(155, 124, 255, 0.035) 39px 40px),
+        repeating-linear-gradient(0deg, transparent 0 38px, rgba(69, 231, 255, 0.025) 39px 40px);
+    content: "";
+    mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 86%, transparent);
+}
+
+.bytefest-video-hero::after {
+    position: absolute;
+    right: 6%;
+    bottom: 8%;
+    left: 6%;
+    z-index: -1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(155,124,255,.6), rgba(69,231,255,.35), transparent);
+    content: "";
+    box-shadow: 0 -160px 65px rgba(116, 68, 255, 0.06);
+}
+
+.video-hero-copy {
+    position: relative;
+    z-index: 3;
+}
+
+.festival-kicker {
+    display: inline-flex;
+    margin: 9px 0 2px;
+    padding: 7px 11px;
+    border: 1px solid rgba(155, 124, 255, 0.28);
+    border-radius: 999px;
+    background: rgba(77, 36, 142, 0.12);
+    color: #c9b8ff;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: .18em;
+}
+
+.bytefest-wordmark {
+    margin: 17px 0 -4px;
+    font-size: clamp(70px, 10.5vw, 146px);
+    letter-spacing: -.085em;
+    line-height: .78;
+    text-shadow: 0 0 34px rgba(130, 79, 255, .14);
+}
+
+.bytefest-wordmark span {
+    color: #f7f9ff;
+}
+
+.bytefest-wordmark i {
+    background: linear-gradient(95deg, #b49aff 3%, #7c55ff 42%, #45e7ff 100%);
+    background-clip: text;
+    color: transparent;
+    font-style: normal;
+}
+
+.bytefest-year {
+    margin: 8px 0 2px;
+    background: linear-gradient(90deg, #45e7ff, #9b7cff 48%, #ff7b45);
+    background-clip: text;
+    color: transparent;
+    font-size: clamp(46px, 7vw, 90px);
+    font-weight: 950;
+    letter-spacing: .04em;
+    line-height: 1;
+}
+
+.video-tagline {
+    margin: 12px 0 18px;
+    color: #d8d5e8;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: .24em;
+}
+
+.video-tagline b {
+    color: #8b5cf6;
+}
+
+.hero-code-rail {
+    position: absolute;
+    z-index: 1;
+    color: rgba(179, 148, 255, .20);
+    font: 800 10px/2.15 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    user-select: none;
+}
+
+.hero-code-rail-left { left: 1.5%; top: 18%; transform: rotate(-90deg) translateX(-100%); transform-origin: left top; }
+.hero-code-rail-right { right: 1.5%; bottom: 17%; text-align: right; }
+
+.video-hero-visual {
+    min-height: 610px;
+}
+
+.video-hero-visual .logo-orb {
+    width: min(390px, 77vw);
+    border-color: rgba(155, 124, 255, .34);
+    background:
+        radial-gradient(circle, rgba(111, 59, 221, .18), rgba(8, 10, 25, .2) 55%, transparent 70%);
+    box-shadow:
+        0 0 0 18px rgba(155, 124, 255, .018),
+        0 0 80px rgba(117, 70, 255, .2),
+        inset 0 0 50px rgba(69, 231, 255, .04);
+}
+
+.video-hero-visual .orbit {
+    width: min(550px, 94vw);
+    border-color: rgba(155, 124, 255, .28);
+    box-shadow: 0 0 40px rgba(155, 124, 255, .08);
+}
+
+.data-halo {
+    position: absolute;
+    width: min(600px, 95vw);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background:
+        repeating-radial-gradient(circle, transparent 0 24px, rgba(155,124,255,.04) 25px 26px),
+        repeating-conic-gradient(from 30deg, rgba(69,231,255,.08) 0 1deg, transparent 1deg 7deg);
+    opacity: .62;
+    mask-image: radial-gradient(circle, transparent 0 24%, #000 25% 62%, transparent 72%);
+    animation: spinData 28s linear infinite;
+}
+
+@keyframes spinData { to { transform: rotate(360deg); } }
+
+.system-line {
+    position: absolute;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(155,124,255,.75), transparent);
+}
+.system-line-one { width: 62%; top: 24%; right: 7%; }
+.system-line-two { width: 48%; right: 14%; bottom: 23%; }
+
+.video-quick-stats span {
+    min-width: 122px;
+    border-color: rgba(155,124,255,.19);
+}
+
+.video-quick-stats b {
+    color: #d9ccff;
+}
+
+.countdown-panel {
+    border-color: rgba(155, 124, 255, 0.34);
+    background:
+        linear-gradient(120deg, rgba(7, 7, 18, 0.98), rgba(18, 9, 35, 0.95)),
+        repeating-linear-gradient(90deg, transparent 0 30px, rgba(155,124,255,.03) 31px 32px);
+    box-shadow: 0 26px 90px rgba(0,0,0,.46), 0 0 45px rgba(102, 54, 215, .09);
+}
+
+.countdown-panel::before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #8b5cf6, #45e7ff, transparent);
+    content: "";
+}
+
+.countdown-unit {
+    border-color: rgba(155, 124, 255, 0.22);
+    background: linear-gradient(180deg, rgba(155,124,255,.07), rgba(255,255,255,.025));
+}
+
+.countdown-unit b {
+    color: #cbb9ff;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    text-shadow: 0 0 18px rgba(155,124,255,.28);
+}
+
+@media (max-width: 900px) {
+    .bytefest-video-hero { grid-template-columns: 1fr; }
+    .video-hero-visual { min-height: 420px; }
+    .hero-code-rail { display: none; }
+    .bytefest-wordmark { font-size: clamp(62px, 17vw, 105px); }
+    .bytefest-year { font-size: clamp(44px, 14vw, 74px); }
+}
+
+@media (max-width: 560px) {
+    .bytefest-video-hero { padding-top: 62px; }
+    .video-hero-visual { min-height: 330px; }
+    .video-tagline { letter-spacing: .15em; }
+    .video-quick-stats { display: grid; grid-template-columns: 1fr 1fr; }
+    .video-quick-stats span { min-width: 0; padding: 10px 12px; border: 1px solid rgba(155,124,255,.14); border-radius: 11px; }
+}
+
+.group-success-card {
+    border-color: rgba(110, 231, 161, .22);
+    background: linear-gradient(145deg, rgba(9,17,31,.98), rgba(18,10,35,.95));
+}
+
+.instant-group-box {
+    border-color: rgba(155,124,255,.28);
+    background: linear-gradient(120deg, rgba(92,51,186,.13), rgba(25,120,255,.08));
+}
+
+.instant-join-button {
+    min-height: 54px;
+    padding-inline: 24px;
+    background: linear-gradient(105deg, #6d4aff, #287cff);
+    box-shadow: 0 14px 38px rgba(109,74,255,.24);
+}
